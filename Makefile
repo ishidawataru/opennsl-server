@@ -13,7 +13,7 @@ PROTOS_PATH = proto
 vpath %.proto $(PROTOS_PATH)
 
 
-opennsl-server: driver.pb.o driver.grpc.pb.o driverservice.pb.o driverservice.grpc.pb.o init.pb.o init.grpc.pb.o initservice.pb.o initservice.grpc.pb.o l2.pb.o l2.grpc.pb.o l2service.pb.o l2service.grpc.pb.o port.pb.o port.grpc.pb.o server.o
+opennsl-server: driver.pb.o driver.grpc.pb.o driverservice.pb.o driverservice.grpc.pb.o init.pb.o init.grpc.pb.o initservice.pb.o initservice.grpc.pb.o l2.pb.o l2.grpc.pb.o l2service.pb.o l2service.grpc.pb.o port.pb.o port.grpc.pb.o portservice.pb.o portservice.grpc.pb.o port.o server.o
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $^ $(LDFLAGS) -o $@
 
 %.grpc.pb.cc: %.proto

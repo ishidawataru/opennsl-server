@@ -51,7 +51,8 @@ func NewRootCmd() *cobra.Command {
 
 	l2 := NewL2Cmd()
 	driver := NewDriverCmd()
-	root.AddCommand(l2, driver)
+	port := NewPortCmd()
+	root.AddCommand(l2, driver, port)
 	return root
 }
 

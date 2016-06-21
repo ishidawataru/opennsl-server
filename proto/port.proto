@@ -18,31 +18,31 @@ syntax = "proto3";
 package port;
 
 message PortConfig {
-    bytes fe = 1;
-    bytes ge = 2;
-    bytes xe = 3;
-    bytes ce = 4;
-    bytes e = 5;
-    bytes hg = 6;
-    bytes sci = 7;
-    bytes sfi = 8;
-    bytes spi = 9;
-    bytes spi_subport = 10;
-    bytes port = 11;
-    bytes cpu = 12;
-    bytes all = 13;
-    bytes stack_int = 14;
-    bytes stack_ext = 15;
-    bytes tdm = 16;
-    bytes pon = 17;
-    bytes llid = 18;
-    bytes xl = 19;
-    bytes rcy = 20;
+    repeated uint32 fe = 1;
+    repeated uint32 ge = 2;
+    repeated uint32 xe = 3;
+    repeated uint32 ce = 4;
+    repeated uint32 e = 5;
+    repeated uint32 hg = 6;
+    repeated uint32 sci = 7;
+    repeated uint32 sfi = 8;
+    repeated uint32 spi = 9;
+    repeated uint32 spi_subport = 10;
+    repeated uint32 port = 11;
+    repeated uint32 cpu = 12;
+    repeated uint32 all = 13;
+    repeated uint32 stack_int = 14;
+    repeated uint32 stack_ext = 15;
+    repeated uint32 tdm = 16;
+    repeated uint32 pon = 17;
+    repeated uint32 llid = 18;
+    repeated uint32 xl = 19;
+    repeated uint32 rcy = 20;
 //    opennsl_pbmp_t per_pipe[OPENNSL_PIPES_MAX]; /**< Mask of ports per pipe. The number of
 //                                           pipes per device can be obtained via
 //                                           num_pipes field of opennsl_info_t. */
-    bytes nif = 22;
-    bytes control = 23;
+    repeated uint32 nif = 22;
+    repeated uint32 control = 23;
 }
 
 message PortInfo {
@@ -100,25 +100,25 @@ message ClearRequest {
     int64 unit = 1;
 }
 
-message ClearRespones {
+message ClearResponse {
 }
 
 message ProbeRequest {
     int64 unit = 1;
-    bytes pbmp = 2;
+    repeated uint32 pbmp = 2;
 }
 
 message ProbeResponse {
-    bytes pbmp = 1;
+    repeated uint32 pbmp = 1;
 }
 
 message DetachRequest {
     int64 unit = 1;
-    bytes pbmp = 2;
+    repeated uint32 pbmp = 2;
 }
 
 message DetachResponse {
-    bytes pbmp = 1;
+    repeated uint32 pbmp = 1;
 }
 
 message GetConfigRequest {

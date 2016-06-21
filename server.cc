@@ -8,6 +8,7 @@
 #include "driverservice.grpc.pb.h"
 #include "driver.grpc.pb.h"
 #include "l2service.grpc.pb.h"
+#include "port.h"
 
 extern "C" {
 #include "sal/driver.h"
@@ -55,10 +56,12 @@ int main(int argc, char** argv) {
     std::string server_address("0.0.0.0:50051");
     DriverServiceImpl driverservice;
     L2ServiceImpl l2service;
+    PortServiceImpl portservice;
 
     ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&driverservice);
+    builder.RegisterService(&portservice);
     builder.RegisterService(&l2service);
     std::unique_ptr<Server> server(builder.BuildAndStart());
     std::cout << "Server listening on " << server_address << std::endl;
