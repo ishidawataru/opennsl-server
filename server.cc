@@ -13,6 +13,7 @@
 extern "C" {
 #include "sal/driver.h"
 #include "sal/version.h"
+#include "opennsl/error.h"
 }
 
 using grpc::Server;
@@ -29,10 +30,9 @@ using l2service::L2;
 class DriverServiceImpl final : public driverservice::Driver::Service {
     public:
         Status Init(ServerContext* context, const driver::InitRequest* req, driver::InitResponse* res) {
-            opennsl_init_t config;
-            int ret = 0;
-            ret = opennsl_driver_init(&config);
-            if( ret == 0 ){
+            int rv = 0;
+            rv = opennsl_driver_init((opennsl_init_t *) NULL);
+            if(rv == OPENNSL_E_NONE){
                 return Status::OK;
             }
             return Status(grpc::UNAVAILABLE, "");
