@@ -1,0 +1,161 @@
+// Copyright (C) 2016 Nippon Telegraph and Telephone Corporation.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+// implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+package l2service;
+
+import "l2.proto";
+
+service L2 {
+    rpc Init(InitRequest) returns (InitResponse) {}
+    rpc Clear(ClearRequest) returns (ClearResponse) {}
+    rpc Detach(DetachRequest) returns (DetachResponse) {}
+    rpc AddAddress(AddAddressRequest) returns (AddAddressResponse) {}
+    rpc DeleteAddress(DeleteAddressRequest) returns (DeleteAddressResponse) {}
+    rpc DeleteAddressByPort(DeleteAddressByPortRequest) returns (DeleteAddressByPortResponse) {}
+    rpc DeleteAddressByMAC(DeleteAddressByMACRequest) returns (DeleteAddressByMACResponse) {}
+    rpc DeleteAddressByVLAN(DeleteAddressByVLANRequest) returns (DeleteAddressByVLANResponse) {}
+    rpc DeleteAddressByTrunk(DeleteAddressByTrunkRequest) returns (DeleteAddressByTrunkResponse) {}
+    rpc DeleteAddressByMACPort(DeleteAddressByMACPortRequest) returns (DeleteAddressByMACPortResponse) {}
+    rpc DeleteAddressByVLANPort(DeleteAddressByVLANPortRequest) returns (DeleteAddressByVLANPortResponse) {}
+    rpc DeleteAddressByVLANTrunk(DeleteAddressByVLANTrunkRequest) returns (DeleteAddressByVLANTrunkResponse) {}
+    rpc GetAddress(GetAddressRequest) returns (GetAddressResponse) {}
+    rpc DumpAddress(DumpAddressRequest) returns (DumpAddressResponse) {}
+    rpc DumpKey(DumpKeyRequest) returns (DumpKeyResponse) {}
+    rpc RegisterAddress(RegisterAddressRequest) returns (RegisterAddressResponse) {}
+    rpc UnregisterAddress(UnregisterAddressRequest) returns (UnregisterAddressResponse) {}
+    rpc SetAgeTimer(SetAgeTimerRequest) returns (SetAgeTimerResponse) {}
+    rpc GetAgeTimer(GetAgeTimerRequest) returns (GetAgeTimerResponse) {}
+}
+
+message InitRequest {
+    int64 unit = 1;
+}
+
+message InitResponse {
+}
+
+message ClearRequest {
+    int64 unit = 1;
+}
+
+message ClearResponse {
+}
+
+message DetachRequest {
+    int64 unit = 1;
+}
+
+message DetachResponse {
+}
+
+message AddAddressRequest {
+    int64 unit = 1;
+    l2.Address address = 2;
+}
+
+message AddAddressResponse {
+}
+
+message DeleteAddressRequest {
+}
+
+message DeleteAddressResponse {
+}
+
+message DeleteAddressByPortRequest {
+}
+
+message DeleteAddressByPortResponse {
+}
+
+message DeleteAddressByMACRequest {
+}
+
+message DeleteAddressByMACResponse {
+}
+
+message DeleteAddressByVLANRequest {
+}
+
+message DeleteAddressByVLANResponse {
+}
+
+message DeleteAddressByTrunkRequest {
+}
+
+message DeleteAddressByTrunkResponse {
+}
+
+message DeleteAddressByMACPortRequest {
+}
+
+message DeleteAddressByMACPortResponse {
+}
+
+message DeleteAddressByVLANPortRequest {
+}
+
+message DeleteAddressByVLANPortResponse {
+}
+
+message DeleteAddressByVLANTrunkRequest {
+}
+
+message DeleteAddressByVLANTrunkResponse {
+}
+
+message GetAddressRequest {
+}
+
+message GetAddressResponse {
+}
+
+message DumpAddressRequest {
+}
+
+message DumpAddressResponse {
+}
+
+message DumpKeyRequest {
+}
+
+message DumpKeyResponse {
+}
+
+message RegisterAddressRequest {
+}
+
+message RegisterAddressResponse {
+}
+
+message UnregisterAddressRequest {
+}
+
+message UnregisterAddressResponse {
+}
+
+message SetAgeTimerRequest {
+}
+
+message SetAgeTimerResponse {
+}
+
+message GetAgeTimerRequest {
+}
+
+message GetAgeTimerResponse {
+}
