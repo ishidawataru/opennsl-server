@@ -50,7 +50,8 @@ func NewRootCmd() *cobra.Command {
 	root.PersistentFlags().IntVarP(&opts.Port, "port", "p", 50051, "port")
 
 	l2 := NewL2Cmd()
-	root.AddCommand(l2)
+	driver := NewDriverCmd()
+	root.AddCommand(l2, driver)
 	return root
 }
 
