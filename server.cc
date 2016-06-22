@@ -5,10 +5,12 @@
 #include <grpc++/server_builder.h>
 #include <grpc++/server_context.h>
 #include <grpc++/security/server_credentials.h>
+
 #include "driverservice.grpc.pb.h"
 #include "driver.grpc.pb.h"
 #include "l2service.grpc.pb.h"
 #include "port.h"
+#include "stat.h"
 
 extern "C" {
 #include "sal/driver.h"
@@ -57,11 +59,13 @@ int main(int argc, char** argv) {
     DriverServiceImpl driverservice;
     L2ServiceImpl l2service;
     PortServiceImpl portservice;
+    StatServiceImpl statservice;
 
     ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&driverservice);
     builder.RegisterService(&portservice);
+    builder.RegisterService(&statservice);
     builder.RegisterService(&l2service);
     std::unique_ptr<Server> server(builder.BuildAndStart());
     std::cout << "Server listening on " << server_address << std::endl;
