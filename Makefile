@@ -18,7 +18,8 @@ opennsl-server: driver.pb.o driver.grpc.pb.o driverservice.pb.o driverservice.gr
     l2.pb.o l2.grpc.pb.o l2service.pb.o l2service.grpc.pb.o \
     port.pb.o port.grpc.pb.o portservice.pb.o portservice.grpc.pb.o \
     stat.pb.o stat.grpc.pb.o statservice.pb.o statservice.grpc.pb.o \
-    stat.o port.o server.o
+    link.pb.o link.grpc.pb.o linkservice.pb.o linkservice.grpc.pb.o \
+    link.o stat.o port.o server.o
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $^ $(LDFLAGS) -o $@
 
 %.grpc.pb.cc: %.proto

@@ -11,6 +11,7 @@
 #include "l2service.grpc.pb.h"
 #include "port.h"
 #include "stat.h"
+#include "link.h"
 
 extern "C" {
 #include "sal/driver.h"
@@ -60,6 +61,7 @@ int main(int argc, char** argv) {
     L2ServiceImpl l2service;
     PortServiceImpl portservice;
     StatServiceImpl statservice;
+    LinkServiceImpl linkservice;
 
     ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
@@ -67,6 +69,7 @@ int main(int argc, char** argv) {
     builder.RegisterService(&portservice);
     builder.RegisterService(&statservice);
     builder.RegisterService(&l2service);
+    builder.RegisterService(&linkservice);
     std::unique_ptr<Server> server(builder.BuildAndStart());
     std::cout << "Server listening on " << server_address << std::endl;
     server->Wait();
