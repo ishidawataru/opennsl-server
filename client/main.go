@@ -54,7 +54,8 @@ func NewRootCmd() *cobra.Command {
 	port := NewPortCmd()
 	stat := NewStatCmd()
 	link := NewLinkCmd()
-	root.AddCommand(l2, driver, port, stat, link)
+	vlan := NewVlanCmd()
+	root.AddCommand(l2, driver, port, stat, link, vlan)
 	return root
 }
 

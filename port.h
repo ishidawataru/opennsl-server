@@ -2,6 +2,13 @@
 
 #include "portservice.grpc.pb.h"
 
+extern "C" {
+#include "opennsl/port.h"
+}
+
+opennsl_pbmp_t get_port_config(const google::protobuf::RepeatedField<google::protobuf::uint32>& pbmp);
+void set_protobuf_port_config(google::protobuf::RepeatedField<google::protobuf::uint32>* dst, const opennsl_pbmp_t& src);
+
 class PortServiceImpl final : public portservice::Port::Service {
     public:
         grpc::Status Init(grpc::ServerContext* context, const port::InitRequest* req, port::InitResponse* res);

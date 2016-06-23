@@ -12,6 +12,7 @@
 #include "port.h"
 #include "stat.h"
 #include "link.h"
+#include "vlan.h"
 
 extern "C" {
 #include "sal/driver.h"
@@ -62,6 +63,7 @@ int main(int argc, char** argv) {
     PortServiceImpl portservice;
     StatServiceImpl statservice;
     LinkServiceImpl linkservice;
+    VLANServiceImpl vlanservice;
 
     ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
@@ -70,6 +72,7 @@ int main(int argc, char** argv) {
     builder.RegisterService(&statservice);
     builder.RegisterService(&l2service);
     builder.RegisterService(&linkservice);
+    builder.RegisterService(&vlanservice);
     std::unique_ptr<Server> server(builder.BuildAndStart());
     std::cout << "Server listening on " << server_address << std::endl;
     server->Wait();
