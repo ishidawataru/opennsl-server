@@ -114,10 +114,73 @@ func NewPortCmd() *cobra.Command {
 			res, err := portClient.GetPortName(context.Background(), &port.GetPortNameRequest{
 				Port: int64(i),
 			})
+			if err != nil {
+				log.Fatal(err)
+			}
 			log.Info("response:", res)
 		},
 	}
 
-	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName)
+	enable := &cobra.Command{
+		Use: "enable",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port enable <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			_, err = portClient.PortEnableSet(context.Background(), &port.PortEnableSetRequest{
+				Port:   int64(i),
+				Enable: true,
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+		},
+	}
+
+	disable := &cobra.Command{
+		Use: "disable",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port disable <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			_, err = portClient.PortEnableSet(context.Background(), &port.PortEnableSetRequest{
+				Port:   int64(i),
+				Enable: false,
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+		},
+	}
+
+	enabled := &cobra.Command{
+		Use: "enabled",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port enabled <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortEnableGet(context.Background(), &port.PortEnableGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info(res)
+		},
+	}
+
+	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled)
 	return portCmd
 }

@@ -9,6 +9,7 @@ It is generated from these files:
 	port.proto
 
 It has these top-level messages:
+	Ability
 	PortConfig
 	PortInfo
 	InitRequest
@@ -23,6 +24,26 @@ It has these top-level messages:
 	GetConfigResponse
 	GetPortNameRequest
 	GetPortNameResponse
+	PortEnableSetRequest
+	PortEnableSetResponse
+	PortEnableGetRequest
+	PortEnableGetResponse
+	PortAdvertSetRequest
+	PortAdvertSetResponse
+	PortAdvertGetRequest
+	PortAdvertGetResponse
+	PortAbilityAdvertSetRequest
+	PortAbilityAdvertSetResponse
+	PortAbilityAdvertGetRequest
+	PortAbilityAdvertGetResponse
+	PortAdvertRemoteGetRequest
+	PortAdvertRemoteGetResponse
+	PortAbilityRemoteGetRequest
+	PortAbilityRemoteGetResponse
+	PortAbilityGetRequest
+	PortAbilityGetResponse
+	PortAbilityLocalGetRequest
+	PortAbilityLocalGetResponse
 */
 package port
 
@@ -40,6 +61,60 @@ var _ = math.Inf
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
+// enum MODE {
+//    MODE_10MB_HD = 0;
+//    MODE_10MB_FD = 1;
+//    MODE_100MB_HD = 2;
+//    MODE_100MB_FD = 3;
+//    MODE_1000MB_HD = 4;
+//    MODE_1000MB_FD = 5;
+//    MODE_2500MB_HD = 6;
+//    MODE_2500MB_FD = 7;
+//    MODE_10GB_HD = 8;
+//    MODE_10GB_FD = 9;
+//    MODE_PAUSE_TX = 10;
+//    MODE_PAUSE_RX = 11;
+//    MODE_PAUSE_ASYMM = 12;
+//    MODE_TBI = 13;
+//    MODE_MII = 14;
+//    MODE_GMII = 15;
+//    MODE_SGMII = 16;
+//    MODE_XGMII = 17;
+//    MODE_LB_MAC = 18;
+//    MODE_LB_NONE = 19;
+//    MODE_LB_PHY = 20;
+//    MODE_AN = 21;
+//    MODE_12GB_HD = 22;
+//    MODE_12GB_FD = 23;
+//    MODE_13GB_HD = 24;
+//    MODE_13GB_FD = 25;
+//    MODE_16GB_HD = 26;
+//    MODE_16GB_FD = 27;
+//
+//    MODE_3000MB_HD = 29;
+//    MODE_3000MB_FD = 30;
+//    MODE_COMBO = 31;
+// }
+//
+type Ability struct {
+	SpeedHalfDuplex uint64 `protobuf:"varint,1,opt,name=speed_half_duplex,json=speedHalfDuplex" json:"speed_half_duplex,omitempty"`
+	SpeedFullDuplex uint64 `protobuf:"varint,2,opt,name=speed_full_duplex,json=speedFullDuplex" json:"speed_full_duplex,omitempty"`
+	Pause           uint64 `protobuf:"varint,3,opt,name=pause" json:"pause,omitempty"`
+	Interface       uint64 `protobuf:"varint,4,opt,name=interface" json:"interface,omitempty"`
+	Medium          uint64 `protobuf:"varint,5,opt,name=medium" json:"medium,omitempty"`
+	Loopback        uint64 `protobuf:"varint,6,opt,name=loopback" json:"loopback,omitempty"`
+	Flags           uint64 `protobuf:"varint,7,opt,name=flags" json:"flags,omitempty"`
+	Eee             uint64 `protobuf:"varint,8,opt,name=eee" json:"eee,omitempty"`
+	Fcmap           uint64 `protobuf:"varint,9,opt,name=fcmap" json:"fcmap,omitempty"`
+	//    encap = 10;
+	Fec uint64 `protobuf:"varint,11,opt,name=fec" json:"fec,omitempty"`
+}
+
+func (m *Ability) Reset()                    { *m = Ability{} }
+func (m *Ability) String() string            { return proto.CompactTextString(m) }
+func (*Ability) ProtoMessage()               {}
+func (*Ability) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
 type PortConfig struct {
 	Fe         []uint32 `protobuf:"varint,1,rep,name=fe" json:"fe,omitempty"`
@@ -72,7 +147,7 @@ type PortConfig struct {
 func (m *PortConfig) Reset()                    { *m = PortConfig{} }
 func (m *PortConfig) String() string            { return proto.CompactTextString(m) }
 func (*PortConfig) ProtoMessage()               {}
-func (*PortConfig) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*PortConfig) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
 type PortInfo struct {
 	ActionMask       uint32 `protobuf:"varint,1,opt,name=action_mask,json=actionMask" json:"action_mask,omitempty"`
@@ -92,7 +167,7 @@ type PortInfo struct {
 func (m *PortInfo) Reset()                    { *m = PortInfo{} }
 func (m *PortInfo) String() string            { return proto.CompactTextString(m) }
 func (*PortInfo) ProtoMessage()               {}
-func (*PortInfo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*PortInfo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
 type InitRequest struct {
 	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
@@ -101,7 +176,7 @@ type InitRequest struct {
 func (m *InitRequest) Reset()                    { *m = InitRequest{} }
 func (m *InitRequest) String() string            { return proto.CompactTextString(m) }
 func (*InitRequest) ProtoMessage()               {}
-func (*InitRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*InitRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
 type InitResponse struct {
 }
@@ -109,7 +184,7 @@ type InitResponse struct {
 func (m *InitResponse) Reset()                    { *m = InitResponse{} }
 func (m *InitResponse) String() string            { return proto.CompactTextString(m) }
 func (*InitResponse) ProtoMessage()               {}
-func (*InitResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+func (*InitResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
 type ClearRequest struct {
 	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
@@ -118,7 +193,7 @@ type ClearRequest struct {
 func (m *ClearRequest) Reset()                    { *m = ClearRequest{} }
 func (m *ClearRequest) String() string            { return proto.CompactTextString(m) }
 func (*ClearRequest) ProtoMessage()               {}
-func (*ClearRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (*ClearRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 type ClearResponse struct {
 }
@@ -126,45 +201,45 @@ type ClearResponse struct {
 func (m *ClearResponse) Reset()                    { *m = ClearResponse{} }
 func (m *ClearResponse) String() string            { return proto.CompactTextString(m) }
 func (*ClearResponse) ProtoMessage()               {}
-func (*ClearResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+func (*ClearResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
 
 type ProbeRequest struct {
-	Unit int64  `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
-	Pbmp []byte `protobuf:"bytes,2,opt,name=pbmp,proto3" json:"pbmp,omitempty"`
+	Unit int64    `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Pbmp []uint32 `protobuf:"varint,2,rep,name=pbmp" json:"pbmp,omitempty"`
 }
 
 func (m *ProbeRequest) Reset()                    { *m = ProbeRequest{} }
 func (m *ProbeRequest) String() string            { return proto.CompactTextString(m) }
 func (*ProbeRequest) ProtoMessage()               {}
-func (*ProbeRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+func (*ProbeRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
 
 type ProbeResponse struct {
-	Pbmp []byte `protobuf:"bytes,1,opt,name=pbmp,proto3" json:"pbmp,omitempty"`
+	Pbmp []uint32 `protobuf:"varint,1,rep,name=pbmp" json:"pbmp,omitempty"`
 }
 
 func (m *ProbeResponse) Reset()                    { *m = ProbeResponse{} }
 func (m *ProbeResponse) String() string            { return proto.CompactTextString(m) }
 func (*ProbeResponse) ProtoMessage()               {}
-func (*ProbeResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+func (*ProbeResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
 
 type DetachRequest struct {
-	Unit int64  `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
-	Pbmp []byte `protobuf:"bytes,2,opt,name=pbmp,proto3" json:"pbmp,omitempty"`
+	Unit int64    `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Pbmp []uint32 `protobuf:"varint,2,rep,name=pbmp" json:"pbmp,omitempty"`
 }
 
 func (m *DetachRequest) Reset()                    { *m = DetachRequest{} }
 func (m *DetachRequest) String() string            { return proto.CompactTextString(m) }
 func (*DetachRequest) ProtoMessage()               {}
-func (*DetachRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+func (*DetachRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 type DetachResponse struct {
-	Pbmp []byte `protobuf:"bytes,1,opt,name=pbmp,proto3" json:"pbmp,omitempty"`
+	Pbmp []uint32 `protobuf:"varint,1,rep,name=pbmp" json:"pbmp,omitempty"`
 }
 
 func (m *DetachResponse) Reset()                    { *m = DetachResponse{} }
 func (m *DetachResponse) String() string            { return proto.CompactTextString(m) }
 func (*DetachResponse) ProtoMessage()               {}
-func (*DetachResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
+func (*DetachResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
 
 type GetConfigRequest struct {
 	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
@@ -173,7 +248,7 @@ type GetConfigRequest struct {
 func (m *GetConfigRequest) Reset()                    { *m = GetConfigRequest{} }
 func (m *GetConfigRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetConfigRequest) ProtoMessage()               {}
-func (*GetConfigRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
+func (*GetConfigRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
 
 type GetConfigResponse struct {
 	Config *PortConfig `protobuf:"bytes,1,opt,name=config" json:"config,omitempty"`
@@ -182,7 +257,7 @@ type GetConfigResponse struct {
 func (m *GetConfigResponse) Reset()                    { *m = GetConfigResponse{} }
 func (m *GetConfigResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetConfigResponse) ProtoMessage()               {}
-func (*GetConfigResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
+func (*GetConfigResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
 
 func (m *GetConfigResponse) GetConfig() *PortConfig {
 	if m != nil {
@@ -199,7 +274,7 @@ type GetPortNameRequest struct {
 func (m *GetPortNameRequest) Reset()                    { *m = GetPortNameRequest{} }
 func (m *GetPortNameRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetPortNameRequest) ProtoMessage()               {}
-func (*GetPortNameRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
+func (*GetPortNameRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
 
 type GetPortNameResponse struct {
 	Name string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
@@ -208,9 +283,228 @@ type GetPortNameResponse struct {
 func (m *GetPortNameResponse) Reset()                    { *m = GetPortNameResponse{} }
 func (m *GetPortNameResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetPortNameResponse) ProtoMessage()               {}
-func (*GetPortNameResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
+func (*GetPortNameResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
+
+type PortEnableSetRequest struct {
+	Unit   int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port   int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+	Enable bool  `protobuf:"varint,3,opt,name=enable" json:"enable,omitempty"`
+}
+
+func (m *PortEnableSetRequest) Reset()                    { *m = PortEnableSetRequest{} }
+func (m *PortEnableSetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortEnableSetRequest) ProtoMessage()               {}
+func (*PortEnableSetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{15} }
+
+type PortEnableSetResponse struct {
+}
+
+func (m *PortEnableSetResponse) Reset()                    { *m = PortEnableSetResponse{} }
+func (m *PortEnableSetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortEnableSetResponse) ProtoMessage()               {}
+func (*PortEnableSetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{16} }
+
+type PortEnableGetRequest struct {
+	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+}
+
+func (m *PortEnableGetRequest) Reset()                    { *m = PortEnableGetRequest{} }
+func (m *PortEnableGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortEnableGetRequest) ProtoMessage()               {}
+func (*PortEnableGetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{17} }
+
+type PortEnableGetResponse struct {
+	Enable bool `protobuf:"varint,1,opt,name=enable" json:"enable,omitempty"`
+}
+
+func (m *PortEnableGetResponse) Reset()                    { *m = PortEnableGetResponse{} }
+func (m *PortEnableGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortEnableGetResponse) ProtoMessage()               {}
+func (*PortEnableGetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{18} }
+
+type PortAdvertSetRequest struct {
+	Unit    int64  `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port    int64  `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+	Ability uint64 `protobuf:"varint,3,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAdvertSetRequest) Reset()                    { *m = PortAdvertSetRequest{} }
+func (m *PortAdvertSetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAdvertSetRequest) ProtoMessage()               {}
+func (*PortAdvertSetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{19} }
+
+type PortAdvertSetResponse struct {
+}
+
+func (m *PortAdvertSetResponse) Reset()                    { *m = PortAdvertSetResponse{} }
+func (m *PortAdvertSetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAdvertSetResponse) ProtoMessage()               {}
+func (*PortAdvertSetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{20} }
+
+type PortAdvertGetRequest struct {
+	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+}
+
+func (m *PortAdvertGetRequest) Reset()                    { *m = PortAdvertGetRequest{} }
+func (m *PortAdvertGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAdvertGetRequest) ProtoMessage()               {}
+func (*PortAdvertGetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{21} }
+
+type PortAdvertGetResponse struct {
+	Ability uint64 `protobuf:"varint,1,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAdvertGetResponse) Reset()                    { *m = PortAdvertGetResponse{} }
+func (m *PortAdvertGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAdvertGetResponse) ProtoMessage()               {}
+func (*PortAdvertGetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{22} }
+
+type PortAbilityAdvertSetRequest struct {
+	Unit    int64    `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port    int64    `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+	Ability *Ability `protobuf:"bytes,3,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAbilityAdvertSetRequest) Reset()                    { *m = PortAbilityAdvertSetRequest{} }
+func (m *PortAbilityAdvertSetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityAdvertSetRequest) ProtoMessage()               {}
+func (*PortAbilityAdvertSetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{23} }
+
+func (m *PortAbilityAdvertSetRequest) GetAbility() *Ability {
+	if m != nil {
+		return m.Ability
+	}
+	return nil
+}
+
+type PortAbilityAdvertSetResponse struct {
+}
+
+func (m *PortAbilityAdvertSetResponse) Reset()                    { *m = PortAbilityAdvertSetResponse{} }
+func (m *PortAbilityAdvertSetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityAdvertSetResponse) ProtoMessage()               {}
+func (*PortAbilityAdvertSetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{24} }
+
+type PortAbilityAdvertGetRequest struct {
+	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+}
+
+func (m *PortAbilityAdvertGetRequest) Reset()                    { *m = PortAbilityAdvertGetRequest{} }
+func (m *PortAbilityAdvertGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityAdvertGetRequest) ProtoMessage()               {}
+func (*PortAbilityAdvertGetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{25} }
+
+type PortAbilityAdvertGetResponse struct {
+	Ability *Ability `protobuf:"bytes,1,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAbilityAdvertGetResponse) Reset()                    { *m = PortAbilityAdvertGetResponse{} }
+func (m *PortAbilityAdvertGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityAdvertGetResponse) ProtoMessage()               {}
+func (*PortAbilityAdvertGetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{26} }
+
+func (m *PortAbilityAdvertGetResponse) GetAbility() *Ability {
+	if m != nil {
+		return m.Ability
+	}
+	return nil
+}
+
+type PortAdvertRemoteGetRequest struct {
+	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+}
+
+func (m *PortAdvertRemoteGetRequest) Reset()                    { *m = PortAdvertRemoteGetRequest{} }
+func (m *PortAdvertRemoteGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAdvertRemoteGetRequest) ProtoMessage()               {}
+func (*PortAdvertRemoteGetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{27} }
+
+type PortAdvertRemoteGetResponse struct {
+	Ability uint64 `protobuf:"varint,3,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAdvertRemoteGetResponse) Reset()                    { *m = PortAdvertRemoteGetResponse{} }
+func (m *PortAdvertRemoteGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAdvertRemoteGetResponse) ProtoMessage()               {}
+func (*PortAdvertRemoteGetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{28} }
+
+type PortAbilityRemoteGetRequest struct {
+	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+}
+
+func (m *PortAbilityRemoteGetRequest) Reset()                    { *m = PortAbilityRemoteGetRequest{} }
+func (m *PortAbilityRemoteGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityRemoteGetRequest) ProtoMessage()               {}
+func (*PortAbilityRemoteGetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{29} }
+
+type PortAbilityRemoteGetResponse struct {
+	Ability *Ability `protobuf:"bytes,1,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAbilityRemoteGetResponse) Reset()                    { *m = PortAbilityRemoteGetResponse{} }
+func (m *PortAbilityRemoteGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityRemoteGetResponse) ProtoMessage()               {}
+func (*PortAbilityRemoteGetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{30} }
+
+func (m *PortAbilityRemoteGetResponse) GetAbility() *Ability {
+	if m != nil {
+		return m.Ability
+	}
+	return nil
+}
+
+type PortAbilityGetRequest struct {
+	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+}
+
+func (m *PortAbilityGetRequest) Reset()                    { *m = PortAbilityGetRequest{} }
+func (m *PortAbilityGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityGetRequest) ProtoMessage()               {}
+func (*PortAbilityGetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{31} }
+
+type PortAbilityGetResponse struct {
+	Ability uint64 `protobuf:"varint,1,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAbilityGetResponse) Reset()                    { *m = PortAbilityGetResponse{} }
+func (m *PortAbilityGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityGetResponse) ProtoMessage()               {}
+func (*PortAbilityGetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{32} }
+
+type PortAbilityLocalGetRequest struct {
+	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
+	Port int64 `protobuf:"varint,2,opt,name=port" json:"port,omitempty"`
+}
+
+func (m *PortAbilityLocalGetRequest) Reset()                    { *m = PortAbilityLocalGetRequest{} }
+func (m *PortAbilityLocalGetRequest) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityLocalGetRequest) ProtoMessage()               {}
+func (*PortAbilityLocalGetRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{33} }
+
+type PortAbilityLocalGetResponse struct {
+	Ability *Ability `protobuf:"bytes,1,opt,name=ability" json:"ability,omitempty"`
+}
+
+func (m *PortAbilityLocalGetResponse) Reset()                    { *m = PortAbilityLocalGetResponse{} }
+func (m *PortAbilityLocalGetResponse) String() string            { return proto.CompactTextString(m) }
+func (*PortAbilityLocalGetResponse) ProtoMessage()               {}
+func (*PortAbilityLocalGetResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{34} }
+
+func (m *PortAbilityLocalGetResponse) GetAbility() *Ability {
+	if m != nil {
+		return m.Ability
+	}
+	return nil
+}
 
 func init() {
+	proto.RegisterType((*Ability)(nil), "port.Ability")
 	proto.RegisterType((*PortConfig)(nil), "port.PortConfig")
 	proto.RegisterType((*PortInfo)(nil), "port.PortInfo")
 	proto.RegisterType((*InitRequest)(nil), "port.InitRequest")
@@ -225,51 +519,92 @@ func init() {
 	proto.RegisterType((*GetConfigResponse)(nil), "port.GetConfigResponse")
 	proto.RegisterType((*GetPortNameRequest)(nil), "port.GetPortNameRequest")
 	proto.RegisterType((*GetPortNameResponse)(nil), "port.GetPortNameResponse")
+	proto.RegisterType((*PortEnableSetRequest)(nil), "port.PortEnableSetRequest")
+	proto.RegisterType((*PortEnableSetResponse)(nil), "port.PortEnableSetResponse")
+	proto.RegisterType((*PortEnableGetRequest)(nil), "port.PortEnableGetRequest")
+	proto.RegisterType((*PortEnableGetResponse)(nil), "port.PortEnableGetResponse")
+	proto.RegisterType((*PortAdvertSetRequest)(nil), "port.PortAdvertSetRequest")
+	proto.RegisterType((*PortAdvertSetResponse)(nil), "port.PortAdvertSetResponse")
+	proto.RegisterType((*PortAdvertGetRequest)(nil), "port.PortAdvertGetRequest")
+	proto.RegisterType((*PortAdvertGetResponse)(nil), "port.PortAdvertGetResponse")
+	proto.RegisterType((*PortAbilityAdvertSetRequest)(nil), "port.PortAbilityAdvertSetRequest")
+	proto.RegisterType((*PortAbilityAdvertSetResponse)(nil), "port.PortAbilityAdvertSetResponse")
+	proto.RegisterType((*PortAbilityAdvertGetRequest)(nil), "port.PortAbilityAdvertGetRequest")
+	proto.RegisterType((*PortAbilityAdvertGetResponse)(nil), "port.PortAbilityAdvertGetResponse")
+	proto.RegisterType((*PortAdvertRemoteGetRequest)(nil), "port.PortAdvertRemoteGetRequest")
+	proto.RegisterType((*PortAdvertRemoteGetResponse)(nil), "port.PortAdvertRemoteGetResponse")
+	proto.RegisterType((*PortAbilityRemoteGetRequest)(nil), "port.PortAbilityRemoteGetRequest")
+	proto.RegisterType((*PortAbilityRemoteGetResponse)(nil), "port.PortAbilityRemoteGetResponse")
+	proto.RegisterType((*PortAbilityGetRequest)(nil), "port.PortAbilityGetRequest")
+	proto.RegisterType((*PortAbilityGetResponse)(nil), "port.PortAbilityGetResponse")
+	proto.RegisterType((*PortAbilityLocalGetRequest)(nil), "port.PortAbilityLocalGetRequest")
+	proto.RegisterType((*PortAbilityLocalGetResponse)(nil), "port.PortAbilityLocalGetResponse")
 }
 
 func init() { proto.RegisterFile("port.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 644 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x94, 0x54, 0xcf, 0x6e, 0xd3, 0x4c,
-	0x10, 0x57, 0x92, 0x36, 0x4d, 0x27, 0x4e, 0x9a, 0x6e, 0xab, 0x7e, 0xfb, 0x81, 0x04, 0xd4, 0x20,
-	0x54, 0x84, 0xd4, 0x43, 0x91, 0xe0, 0x02, 0xa7, 0x82, 0x50, 0x0f, 0x54, 0x95, 0xfb, 0x00, 0x91,
-	0x63, 0x6f, 0xdc, 0x55, 0x37, 0x6b, 0x63, 0xaf, 0x51, 0xfa, 0x68, 0x3c, 0x12, 0x6f, 0xc1, 0xcc,
-	0xec, 0xa6, 0x09, 0x97, 0x20, 0x4e, 0xfe, 0xfd, 0x99, 0x19, 0xef, 0xce, 0x8c, 0x16, 0xa0, 0x2a,
-	0x6b, 0x77, 0x5e, 0xd5, 0xa5, 0x2b, 0xc5, 0x0e, 0xe1, 0xf8, 0x67, 0x0f, 0xe0, 0x06, 0xc1, 0x65,
-	0x69, 0xe7, 0xba, 0x10, 0x63, 0xe8, 0xce, 0x95, 0xec, 0xbc, 0xe8, 0x9d, 0x8d, 0x12, 0x44, 0xc4,
-	0x0b, 0x25, 0xbb, 0x9e, 0x17, 0xcc, 0x97, 0x4a, 0xf6, 0x3c, 0x5f, 0x32, 0xcf, 0x94, 0xdc, 0xf1,
-	0x3c, 0x53, 0x22, 0x82, 0x8e, 0x92, 0xbb, 0x4c, 0x3b, 0xec, 0xde, 0x15, 0xb2, 0xef, 0xdd, 0xbb,
-	0x42, 0x4c, 0xa0, 0xd7, 0x64, 0x5a, 0xee, 0xb1, 0x40, 0x90, 0x95, 0xb9, 0x96, 0x83, 0xa0, 0xcc,
-	0xbd, 0x52, 0x69, 0xb9, 0x1f, 0x94, 0x4a, 0x8b, 0xe7, 0x30, 0xc4, 0xcf, 0xb4, 0x69, 0x67, 0x74,
-	0x62, 0x09, 0xec, 0x00, 0x4a, 0xb7, 0x5e, 0x11, 0x02, 0xf8, 0x2e, 0x72, 0xc8, 0x0e, 0x63, 0x2a,
-	0x93, 0x55, 0xad, 0x8c, 0x7c, 0x19, 0x84, 0xa4, 0xa4, 0xc6, 0xc8, 0x91, 0x57, 0x10, 0x8a, 0xa7,
-	0xb0, 0xdf, 0xb8, 0x34, 0xbb, 0x9f, 0x6a, 0xeb, 0xe4, 0x98, 0xf5, 0x01, 0x0b, 0x57, 0xd6, 0xad,
-	0x4d, 0xb5, 0x74, 0xf2, 0x60, 0xc3, 0xfc, 0xb2, 0xe4, 0xea, 0x2e, 0x5f, 0xc8, 0x89, 0xaf, 0x85,
-	0x90, 0x94, 0xaa, 0xb4, 0xf2, 0xd0, 0x2b, 0x08, 0xe9, 0x54, 0xc6, 0xe8, 0x5c, 0x0a, 0x7f, 0x2a,
-	0xc2, 0xdc, 0x3e, 0x23, 0x8f, 0x42, 0xfb, 0x0c, 0x65, 0xd5, 0xd9, 0x83, 0x3c, 0xf6, 0x59, 0x08,
-	0x49, 0xb1, 0x7a, 0x2e, 0x4f, 0xbc, 0x82, 0x50, 0x48, 0xd8, 0xcb, 0x4a, 0xeb, 0xea, 0xd2, 0xc8,
-	0xff, 0x58, 0x5d, 0xd1, 0xf8, 0x57, 0x17, 0x06, 0x34, 0xbb, 0x2b, 0x3b, 0x2f, 0xa9, 0x4b, 0x69,
-	0xe6, 0x74, 0x69, 0xa7, 0x8b, 0xb4, 0xb9, 0xc7, 0x11, 0x76, 0xa8, 0x4b, 0x5e, 0xfa, 0x86, 0x8a,
-	0x38, 0x85, 0x68, 0x23, 0xe0, 0x02, 0x87, 0x4a, 0x11, 0xc3, 0x75, 0xc4, 0x85, 0x38, 0x81, 0xbe,
-	0xb2, 0xe9, 0xcc, 0xd0, 0x84, 0x3b, 0x67, 0xbd, 0x24, 0x30, 0xaa, 0x6d, 0xb4, 0xbd, 0x9f, 0xe2,
-	0xfd, 0x5d, 0xdb, 0xe0, 0xb8, 0xc9, 0x04, 0x92, 0x6e, 0x59, 0x11, 0xff, 0xc3, 0x20, 0x6d, 0x5d,
-	0x39, 0xb5, 0xaa, 0xc0, 0xe9, 0x93, 0xbb, 0x47, 0xfc, 0x5a, 0x15, 0xe2, 0x18, 0x76, 0x9b, 0x4a,
-	0xa9, 0x1c, 0xd7, 0x80, 0x74, 0x4f, 0xe8, 0x4f, 0x79, 0x5b, 0x19, 0xb5, 0xc4, 0x65, 0xe0, 0x3f,
-	0x79, 0x26, 0x9e, 0xc0, 0x80, 0xca, 0x36, 0x59, 0x6a, 0x71, 0x29, 0xc8, 0x79, 0xe4, 0x54, 0xc9,
-	0xa8, 0xb4, 0xb6, 0xb8, 0x1b, 0x74, 0x72, 0x4f, 0xa8, 0x3d, 0xb9, 0x46, 0xbf, 0xce, 0x71, 0x33,
-	0xf8, 0xcf, 0x81, 0x8a, 0x67, 0x00, 0x3f, 0x4c, 0x8a, 0x6b, 0x6d, 0x9c, 0xaa, 0x71, 0x39, 0xb8,
-	0x21, 0x6b, 0x45, 0xbc, 0x85, 0xc3, 0xd6, 0xba, 0xb4, 0x28, 0x54, 0x3e, 0xad, 0x6a, 0x5d, 0xd6,
-	0xda, 0x3d, 0xe0, 0xc2, 0x50, 0x8d, 0xc9, 0xca, 0xb8, 0x09, 0x7a, 0x7c, 0x0a, 0xc3, 0x2b, 0xab,
-	0x5d, 0xa2, 0xbe, 0xb7, 0xaa, 0xe1, 0x95, 0x6b, 0x91, 0x72, 0x9b, 0x7b, 0x09, 0xe3, 0x78, 0x0c,
-	0x91, 0x0f, 0x69, 0x70, 0xfc, 0x8d, 0x8a, 0x63, 0x88, 0x2e, 0xe9, 0x8c, 0xdb, 0x72, 0x0e, 0x60,
-	0x14, 0x62, 0x42, 0xd2, 0x7b, 0x88, 0x6e, 0xea, 0x72, 0xa6, 0xb6, 0x24, 0xf1, 0xbe, 0xcf, 0x16,
-	0x15, 0x4f, 0x30, 0x4a, 0x18, 0xc7, 0x2f, 0x61, 0x14, 0xf2, 0x7c, 0xa1, 0xc7, 0xa0, 0xce, 0x46,
-	0xd0, 0x07, 0x18, 0x7d, 0x56, 0xb8, 0xc3, 0x77, 0xff, 0x5a, 0xfd, 0x15, 0x8c, 0x57, 0x89, 0x5b,
-	0xca, 0xbf, 0x86, 0xc9, 0x57, 0x15, 0x5e, 0x92, 0x6d, 0x97, 0xfe, 0x04, 0x87, 0x1b, 0x71, 0xa1,
-	0xe0, 0x19, 0xf4, 0x33, 0x56, 0x38, 0x74, 0x78, 0x31, 0x39, 0xe7, 0xb7, 0x6a, 0xfd, 0x36, 0x25,
-	0xc1, 0x8f, 0x3f, 0x82, 0xc0, 0x74, 0x32, 0xae, 0xd3, 0xc5, 0x5f, 0x1b, 0x45, 0x0f, 0x43, 0xd7,
-	0x6b, 0xfc, 0xe0, 0xbd, 0x81, 0xa3, 0x3f, 0xb2, 0xd7, 0xf7, 0xb1, 0xc8, 0x39, 0x7d, 0x3f, 0x61,
-	0x3c, 0xeb, 0xf3, 0x43, 0xf9, 0xee, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0x56, 0x18, 0xf0, 0xef,
-	0x36, 0x05, 0x00, 0x00,
+	// 984 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x9c, 0x56, 0xdb, 0x6e, 0xdb, 0x46,
+	0x10, 0x85, 0x44, 0xc7, 0x92, 0x47, 0x92, 0x2d, 0x33, 0xae, 0xb3, 0x4d, 0x82, 0xb4, 0x61, 0x8b,
+	0xc6, 0x6d, 0x81, 0x14, 0x55, 0x81, 0xe6, 0xa5, 0x17, 0x04, 0xb1, 0xe3, 0x1a, 0x68, 0x03, 0x83,
+	0x06, 0x8a, 0xbe, 0x09, 0x2b, 0x6a, 0x49, 0x13, 0x5e, 0x91, 0x2c, 0x2f, 0x81, 0xf2, 0x29, 0xfd,
+	0x94, 0x7e, 0x52, 0xff, 0xa2, 0x33, 0xb3, 0x2b, 0x93, 0x54, 0x5c, 0xa7, 0xd6, 0x93, 0xe7, 0x9c,
+	0x99, 0x9d, 0xdb, 0x9e, 0xa5, 0x0c, 0x90, 0xa5, 0x79, 0xf9, 0x3c, 0xcb, 0xd3, 0x32, 0x75, 0xb7,
+	0xc8, 0xf6, 0xfe, 0xea, 0x42, 0xef, 0xe5, 0x2c, 0xd6, 0x71, 0xf9, 0xce, 0xfd, 0x0a, 0xf6, 0x8b,
+	0x4c, 0xa9, 0xf9, 0xf4, 0x52, 0xea, 0x70, 0x3a, 0xaf, 0x32, 0xad, 0x96, 0xa2, 0xf3, 0x69, 0xe7,
+	0x68, 0xcb, 0xdf, 0x63, 0xc7, 0x2f, 0xc8, 0x1f, 0x33, 0x5d, 0xc7, 0x86, 0x95, 0xd6, 0xab, 0xd8,
+	0x6e, 0x23, 0xf6, 0x35, 0xf2, 0x36, 0xf6, 0x00, 0xee, 0x65, 0xb2, 0x2a, 0x94, 0x70, 0xd8, 0x6f,
+	0x80, 0xfb, 0x18, 0x76, 0xe2, 0xa4, 0x54, 0x79, 0x28, 0x03, 0x25, 0xb6, 0xd8, 0x53, 0x13, 0xee,
+	0x21, 0x6c, 0x2f, 0xd4, 0x3c, 0xae, 0x16, 0xe2, 0x1e, 0xbb, 0x2c, 0x72, 0x1f, 0x42, 0x5f, 0xa7,
+	0x69, 0x36, 0x93, 0xc1, 0x95, 0xd8, 0x66, 0xcf, 0x35, 0xa6, 0x3a, 0xa1, 0x96, 0x51, 0x21, 0x7a,
+	0xa6, 0x0e, 0x03, 0x77, 0x0c, 0x8e, 0x52, 0x4a, 0xf4, 0x99, 0x23, 0x93, 0xe3, 0x82, 0x85, 0xcc,
+	0xc4, 0x8e, 0x8d, 0x23, 0x40, 0x71, 0xa1, 0x0a, 0xc4, 0xc0, 0xc4, 0xa1, 0xe9, 0xfd, 0xed, 0x00,
+	0x9c, 0xe3, 0x92, 0x5e, 0xa5, 0x49, 0x18, 0x47, 0xee, 0x2e, 0x74, 0x43, 0x85, 0xfb, 0x70, 0x8e,
+	0x46, 0x3e, 0x5a, 0x84, 0x23, 0x85, 0x33, 0x33, 0x8e, 0x18, 0x2f, 0x69, 0x46, 0xc6, 0x4b, 0xc6,
+	0x3c, 0x19, 0x63, 0x1c, 0x69, 0x08, 0x1d, 0x85, 0xd3, 0x10, 0xec, 0xb0, 0xf7, 0x32, 0xc2, 0x11,
+	0xd8, 0x7b, 0x19, 0x51, 0xf9, 0x22, 0x88, 0xb1, 0x75, 0x22, 0xc8, 0x64, 0x26, 0x8c, 0xb1, 0x71,
+	0xc3, 0x84, 0x86, 0xc9, 0x62, 0x6c, 0xdb, 0x30, 0x59, 0xec, 0x7e, 0x02, 0x03, 0xfc, 0x33, 0x2d,
+	0xaa, 0x19, 0xdd, 0xa6, 0x00, 0xf6, 0x00, 0x52, 0x17, 0x86, 0x71, 0x5d, 0xe0, 0x7b, 0xc6, 0xb1,
+	0xc8, 0xc3, 0x36, 0xa5, 0x09, 0xb2, 0x4a, 0x0c, 0x4d, 0x1a, 0x34, 0x89, 0x91, 0x5a, 0x8b, 0x91,
+	0x61, 0xd0, 0x74, 0x1f, 0xc1, 0x4e, 0x51, 0xe2, 0x52, 0xa7, 0x78, 0x25, 0x62, 0x97, 0xf9, 0x3e,
+	0x13, 0x67, 0x49, 0x59, 0x3b, 0xd5, 0xb2, 0x14, 0x7b, 0x0d, 0xe7, 0xc9, 0x92, 0xb3, 0x97, 0xf3,
+	0x85, 0x18, 0x9b, 0x5c, 0x68, 0x12, 0x93, 0xa5, 0x89, 0xd8, 0x37, 0x0c, 0x9a, 0xd4, 0x95, 0xd6,
+	0xf1, 0x5c, 0xb8, 0xa6, 0x2b, 0xb2, 0x79, 0x7d, 0x5a, 0xdc, 0xb7, 0xeb, 0xd3, 0x74, 0x2a, 0x0f,
+	0xde, 0x89, 0x03, 0x73, 0x0a, 0x4d, 0x62, 0x92, 0x38, 0x14, 0x87, 0x86, 0x41, 0xd3, 0x15, 0xd0,
+	0x0b, 0xd2, 0xa4, 0xcc, 0x53, 0x2d, 0x1e, 0x30, 0xbb, 0x82, 0xde, 0x3f, 0x5d, 0xe8, 0xd3, 0xdd,
+	0x9d, 0x25, 0x61, 0x4a, 0x5b, 0x92, 0x41, 0x19, 0xa7, 0xc9, 0x74, 0x21, 0x8b, 0x2b, 0x96, 0x34,
+	0x6e, 0xc9, 0x50, 0xbf, 0x21, 0xe3, 0x3e, 0x85, 0x61, 0x23, 0x60, 0xc2, 0x42, 0x1e, 0xf9, 0x83,
+	0x3a, 0x62, 0x42, 0x82, 0x54, 0x89, 0x9c, 0x69, 0xa3, 0x62, 0xc7, 0xb7, 0x88, 0x72, 0xeb, 0x38,
+	0xb9, 0x9a, 0xe2, 0xfc, 0x65, 0x55, 0xb0, 0x90, 0x1d, 0x1f, 0x88, 0xba, 0x60, 0xc6, 0xfd, 0x18,
+	0xfa, 0xb2, 0x2a, 0xd3, 0x69, 0xa2, 0x22, 0xd6, 0xb2, 0xe3, 0xf7, 0x08, 0xbf, 0x51, 0x11, 0x09,
+	0x91, 0xdf, 0x0a, 0x2b, 0xd9, 0xf1, 0x0d, 0xa0, 0x4a, 0xf6, 0x3d, 0xf5, 0x4c, 0x25, 0x83, 0x58,
+	0xfa, 0x98, 0xb6, 0x08, 0x64, 0xc2, 0x6a, 0x76, 0xfc, 0x6b, 0x4c, 0x99, 0xb4, 0x92, 0x79, 0xc2,
+	0x92, 0x1e, 0xf9, 0x06, 0xd0, 0x7a, 0xe6, 0x31, 0xfa, 0xf3, 0x39, 0x2a, 0x83, 0x2b, 0x5b, 0xe8,
+	0x3e, 0x01, 0x78, 0xab, 0x25, 0xca, 0x5a, 0xe3, 0x83, 0x63, 0xcd, 0xe3, 0x42, 0x6a, 0xc6, 0xfd,
+	0x1a, 0xf6, 0xab, 0xa4, 0x94, 0x51, 0x84, 0x2f, 0x3c, 0xcb, 0xe3, 0x34, 0xc7, 0xef, 0x03, 0x0a,
+	0x86, 0x72, 0x8c, 0x57, 0x8e, 0x73, 0xcb, 0x7b, 0x4f, 0x61, 0x70, 0x96, 0xc4, 0xa5, 0xaf, 0xfe,
+	0xac, 0x54, 0xc1, 0x92, 0xab, 0x10, 0xf2, 0x9a, 0x1d, 0x9f, 0x6d, 0x6f, 0x17, 0x86, 0x26, 0xa4,
+	0xc0, 0xeb, 0x2f, 0x94, 0xe7, 0xc1, 0xf0, 0x15, 0xf5, 0x78, 0xdb, 0x99, 0x3d, 0x18, 0xd9, 0x18,
+	0x7b, 0xe8, 0x7b, 0x18, 0x9e, 0xe7, 0xe9, 0x4c, 0xdd, 0x72, 0x88, 0xf5, 0x3e, 0x5b, 0x64, 0xf6,
+	0x59, 0xb2, 0xed, 0x7d, 0x06, 0x23, 0x7b, 0xce, 0x24, 0xba, 0x0e, 0xea, 0x34, 0x82, 0x5e, 0xc0,
+	0xe8, 0x58, 0xa1, 0x86, 0x2f, 0xef, 0x9a, 0xfd, 0x73, 0xd8, 0x5d, 0x1d, 0xbc, 0x25, 0xfd, 0x17,
+	0x30, 0x3e, 0x55, 0xf6, 0x4b, 0x72, 0xdb, 0xd0, 0x3f, 0xc2, 0x7e, 0x23, 0xce, 0x26, 0x3c, 0x82,
+	0xed, 0x80, 0x19, 0x0e, 0x1d, 0x4c, 0xc6, 0xcf, 0xf9, 0x3b, 0x5e, 0x7f, 0x9b, 0x7c, 0xeb, 0xf7,
+	0x7e, 0x00, 0x17, 0x8f, 0x93, 0xe3, 0x8d, 0x5c, 0x7c, 0x70, 0x51, 0xf4, 0x61, 0xe8, 0x1a, 0x8e,
+	0x7f, 0x0c, 0xbe, 0x84, 0xfb, 0xad, 0xd3, 0xf5, 0x3c, 0x09, 0x62, 0x3e, 0xbe, 0xe3, 0xb3, 0xed,
+	0xfd, 0x0e, 0x07, 0x14, 0x77, 0xc2, 0x8f, 0xe0, 0x42, 0x95, 0x77, 0x2c, 0xb5, 0xf6, 0x9c, 0xfa,
+	0xab, 0xe7, 0xe4, 0x3d, 0x80, 0x8f, 0xd6, 0xf2, 0xda, 0xcb, 0xff, 0xa9, 0x59, 0xf0, 0xf4, 0xce,
+	0x05, 0xbd, 0x6f, 0x9a, 0x89, 0x4f, 0xeb, 0xc4, 0x8d, 0x4e, 0x3a, 0xad, 0x4e, 0xfe, 0x30, 0x05,
+	0x5f, 0xce, 0xdf, 0xaa, 0xbc, 0xdc, 0x60, 0x42, 0x7c, 0x7c, 0xd2, 0xfc, 0xb0, 0xda, 0xdf, 0xbd,
+	0x15, 0x5c, 0xcd, 0xd8, 0xc8, 0xdc, 0x9e, 0xd1, 0x38, 0x36, 0x98, 0xf1, 0xdb, 0x66, 0xe2, 0xe6,
+	0x8c, 0x8d, 0x5e, 0x3a, 0xed, 0x5e, 0x12, 0x78, 0xc4, 0x47, 0x0c, 0xdc, 0x78, 0xd8, 0x67, 0xed,
+	0x61, 0x07, 0x93, 0x91, 0x91, 0xa8, 0xcd, 0x5b, 0xd7, 0x7b, 0x02, 0x8f, 0x6f, 0xae, 0x67, 0x57,
+	0x70, 0x72, 0x43, 0x3f, 0x1b, 0x6c, 0xe2, 0xf4, 0x86, 0x32, 0xcd, 0x85, 0x3c, 0x6b, 0x2f, 0xe4,
+	0xbf, 0xfb, 0x3d, 0x86, 0x87, 0xf5, 0x4a, 0x7d, 0xb5, 0x48, 0xcb, 0x4d, 0xc4, 0xf7, 0xc2, 0x4e,
+	0xb5, 0x9e, 0xe5, 0xfd, 0xeb, 0x59, 0x93, 0x4a, 0x7b, 0x1d, 0x1b, 0xd7, 0x6f, 0xaf, 0xe3, 0xfd,
+	0x06, 0xfe, 0xf7, 0x3a, 0x7e, 0xb6, 0x0a, 0x33, 0x70, 0x83, 0x4e, 0x26, 0x70, 0xb8, 0x9e, 0xe0,
+	0x83, 0x1a, 0x5d, 0xdd, 0x81, 0x81, 0xbf, 0xa6, 0x81, 0xd4, 0x1b, 0x54, 0x7e, 0xdd, 0x5a, 0x65,
+	0x9d, 0xe5, 0x8e, 0x2b, 0x98, 0x6d, 0xf3, 0xbf, 0xcf, 0xdf, 0xfd, 0x1b, 0x00, 0x00, 0xff, 0xff,
+	0x25, 0x37, 0xed, 0x16, 0x4c, 0x0b, 0x00, 0x00,
 }

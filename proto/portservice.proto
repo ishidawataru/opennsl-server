@@ -26,16 +26,37 @@ service Port {
     rpc Detach(port.DetachRequest) returns (port.DetachResponse) {}
     rpc GetConfig(port.GetConfigRequest) returns (port.GetConfigResponse) {}
     rpc GetPortName(port.GetPortNameRequest) returns (port.GetPortNameResponse) {}
-//    rpc PortEnableSet(port.PortEnableSetRequest) returns (port.PortEnableSetResponse) {}
-//    rpc PortEnableGet(port.PortEnableGetRequest) returns (port.PortEnableGetResponse) {}
-//    rpc PortAdvertSet(port.PortAdvertSetRequest) returns (port.PortAdvertSetResponse) {}
-//    rpc PortAbilityAdvertSet(port.PortAbilityAdvertSetRequest) returns (port.PortAbilityAdvertSetResponse) {}
-//    rpc PortAdvertGet(port.PortAdvertGetRequest) returns (port.PortAdvertGetResponse) {}
-//    rpc PortAbilityAdvertGet(port.PortAbilityAdvertGetRequest) returns (port.PortAbilityAdvertGetResponse) {}
-//    rpc PortAdvertRemoteGet(port.PortAdvertRemoteGetRequest) returns (port.PortAdvertRemoteGetResponse) {}
-//    rpc PortAbilityRemoteGet(port.PortAbilityRemoteGetRequest) returns (port.PortAbilityRemoteGetResponse) {}
-//    rpc PortAbilityGet(port.PortAbilityGetRequest) returns (port.PortAbilityRemoteGetResponse) {}
-//    rpc PortAbilityLocalGet(port.PortAbilityLocalGetRequest) returns (port.PortAbilityLocalGetResponse) {}
+
+    rpc PortEnableSet(port.PortEnableSetRequest) returns (port.PortEnableSetResponse) {}
+    rpc PortEnableGet(port.PortEnableGetRequest) returns (port.PortEnableGetResponse) {}
+
+    rpc PortAdvertSet(port.PortAdvertSetRequest) returns (port.PortAdvertSetResponse) {}
+    rpc PortAdvertGet(port.PortAdvertGetRequest) returns (port.PortAdvertGetResponse) {}
+
+    rpc PortAbilityAdvertSet(port.PortAbilityAdvertSetRequest) returns (port.PortAbilityAdvertSetResponse) {}
+    rpc PortAbilityAdvertGet(port.PortAbilityAdvertGetRequest) returns (port.PortAbilityAdvertGetResponse) {}
+
+    rpc PortAdvertRemoteGet(port.PortAdvertRemoteGetRequest) returns (port.PortAdvertRemoteGetResponse) {}
+
+    rpc PortAbilityRemoteGet(port.PortAbilityRemoteGetRequest) returns (port.PortAbilityRemoteGetResponse) {}
+
+    rpc PortAbilityGet(port.PortAbilityGetRequest) returns (port.PortAbilityRemoteGetResponse) {}
+
+    rpc PortAbilityLocalGet(port.PortAbilityLocalGetRequest) returns (port.PortAbilityLocalGetResponse) {}
+
 //    rpc PortUntaggedVlanSet(port.PortUntaggedVlanSetRequest) returns (port.PortUntaggedVlanSetResponse) {}
 //    rpc PortUntaggedVlanGet(port.PortUntaggedVlanGetRequest) returns (port.PortUntaggedVlanGetResponse) {}
+//    rpc PortUntaggedPrioritySet(port.PortUntaggedPrioritySetRequest) returns (port.PortUntaggedPrioritySetResponse) {}
+//    rpc PortUntaggedPriorityGet(port.PortUntaggedPriorityGetRequest) returns (port.PortUntaggedPriorityGetResponse) {}
+//    rpc PortDSCPMapModeSet(port.PortDSCPMapModeSetRequest) returns (port.PortDSCPMapModeSetResponse) {}
+//    rpc PortDSCPMapModeGet(port.PortDSCPMapModeGetRequest) returns (port.PortDSCPMapModeGetResponse) {}
+//    rpc PortDSCPMapSet(port.PortDSCPMapSetRequest) returns (port.PortDSCPMapSetResponse) {}
+//    rpc PortDSCPMapGet(port.PortDSCPMapGetRequest) returns (port.PortDSCPMapGetResponse) {}
+//    rpc PortLinkscanSet(port.PortLinkscanSetRequest) returns (port.PortLinkscanSetResponse) {}
+//    rpc PortLinkscanGet(port.PortLinkscanGetRequest) returns (port.PortLinkscanGetResponse) {}
+//    rpc PortAutonegSet(port.PortAutonegSetRequest) returns (port.PortAutonegSetResponse) {}
+//    rpc PortAutonegGet(port.PortAutonegGetRequest) returns (port.PortAutonegGetResponse) {}
+//    rpc PortSpeedMAX(port.PortSpeedMAXRequest) returns (port.PortSpeedMAXResponse) {}
+//    rpc PortSpeedSet(port.PortSpeedSetRequest) returns (port.PortSpeedSetResponse) {}
+//    rpc PortSpeedGet(port.PortSpeedGetRequest) returns (port.PortSpeedGetResponse) {}
 }

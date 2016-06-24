@@ -17,6 +17,55 @@ syntax = "proto3";
 
 package port;
 
+//enum MODE {
+//    MODE_10MB_HD = 0;
+//    MODE_10MB_FD = 1;
+//    MODE_100MB_HD = 2;
+//    MODE_100MB_FD = 3;
+//    MODE_1000MB_HD = 4;
+//    MODE_1000MB_FD = 5;
+//    MODE_2500MB_HD = 6;
+//    MODE_2500MB_FD = 7;
+//    MODE_10GB_HD = 8;
+//    MODE_10GB_FD = 9;
+//    MODE_PAUSE_TX = 10;
+//    MODE_PAUSE_RX = 11;
+//    MODE_PAUSE_ASYMM = 12;
+//    MODE_TBI = 13;
+//    MODE_MII = 14;
+//    MODE_GMII = 15;
+//    MODE_SGMII = 16;
+//    MODE_XGMII = 17;
+//    MODE_LB_MAC = 18;
+//    MODE_LB_NONE = 19;
+//    MODE_LB_PHY = 20;
+//    MODE_AN = 21;
+//    MODE_12GB_HD = 22;
+//    MODE_12GB_FD = 23;
+//    MODE_13GB_HD = 24;
+//    MODE_13GB_FD = 25;
+//    MODE_16GB_HD = 26;
+//    MODE_16GB_FD = 27;
+//
+//    MODE_3000MB_HD = 29;
+//    MODE_3000MB_FD = 30;
+//    MODE_COMBO = 31;
+//}
+//
+message Ability {
+    uint64 speed_half_duplex = 1;
+    uint64 speed_full_duplex = 2;
+    uint64 pause = 3;
+    uint64 interface = 4;
+    uint64 medium = 5;
+    uint64 loopback = 6;
+    uint64 flags = 7;
+    uint64 eee = 8;
+    uint64 fcmap = 9;
+//    encap = 10;
+    uint64 fec = 11;
+}
+
 message PortConfig {
     repeated uint32 fe = 1;
     repeated uint32 ge = 2;
@@ -136,4 +185,94 @@ message GetPortNameRequest {
 
 message GetPortNameResponse {
     string name = 1;
+}
+
+message PortEnableSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    bool enable = 3;
+}
+
+message PortEnableSetResponse {
+}
+
+message PortEnableGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortEnableGetResponse {
+    bool enable = 1;
+}
+
+message PortAdvertSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    uint64 ability = 3;
+}
+
+message PortAdvertSetResponse {
+}
+
+message PortAdvertGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortAdvertGetResponse {
+    uint64 ability = 1;
+}
+
+message PortAbilityAdvertSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    Ability ability = 3;
+}
+
+message PortAbilityAdvertSetResponse {
+}
+
+message PortAbilityAdvertGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortAbilityAdvertGetResponse {
+    Ability ability = 1;
+}
+
+message PortAdvertRemoteGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortAdvertRemoteGetResponse {
+    uint64 ability = 3;
+}
+
+message PortAbilityRemoteGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortAbilityRemoteGetResponse {
+    Ability ability = 1;
+}
+
+message PortAbilityGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortAbilityGetResponse {
+    uint64 ability = 1;
+}
+
+message PortAbilityLocalGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortAbilityLocalGetResponse {
+    Ability ability = 1;
 }
