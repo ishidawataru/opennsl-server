@@ -18,6 +18,7 @@ package main
 import (
 	"strconv"
 
+	"bytes"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ishidawataru/opennsl-server/client/proto/port"
 	"github.com/ishidawataru/opennsl-server/client/proto/portservice"
@@ -26,6 +27,21 @@ import (
 )
 
 var portClient portservice.PortClient
+
+func FormatPortConfig(c *port.PortConfig) string {
+	s := bytes.NewBuffer(make([]byte, 0, 64))
+	s.WriteString("Fe: ")
+	s.WriteString(PBMP(c.Fe).String())
+	s.WriteString("\nGe: ")
+	s.WriteString(PBMP(c.Ge).String())
+	s.WriteString("\nXe: ")
+	s.WriteString(PBMP(c.Xe).String())
+	s.WriteString("\nCe: ")
+	s.WriteString(PBMP(c.Ce).String())
+	s.WriteString("\nE: ")
+	s.WriteString(PBMP(c.E).String())
+	return s.String()
+}
 
 func NewPortCmd() *cobra.Command {
 	portCmd := &cobra.Command{
@@ -69,7 +85,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("reponse:", res)
+			log.Info("reponse:", FormatPortConfig(res.Config))
 		},
 	}
 
