@@ -47,8 +47,8 @@ func NewDriverCmd() *cobra.Command {
 		},
 	}
 
-	getVersion := &cobra.Command{
-		Use: "get-version",
+	version := &cobra.Command{
+		Use: "version",
 		Run: func(cmd *cobra.Command, args []string) {
 			res, err := driverClient.GetVersion(context.Background(), &driver.GetVersionRequest{})
 			if err != nil {
@@ -58,6 +58,6 @@ func NewDriverCmd() *cobra.Command {
 		},
 	}
 
-	driverCmd.AddCommand(init, getVersion)
+	driverCmd.AddCommand(init, version)
 	return driverCmd
 }

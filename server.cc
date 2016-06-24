@@ -13,6 +13,7 @@
 #include "stat.h"
 #include "link.h"
 #include "vlan.h"
+#include "l2.h"
 
 extern "C" {
 #include "sal/driver.h"
@@ -27,9 +28,6 @@ using grpc::ServerReader;
 using grpc::ServerReaderWriter;
 using grpc::ServerWriter;
 using grpc::Status;
-using l2service::InitRequest;
-using l2service::InitResponse;
-using l2service::L2;
 
 class DriverServiceImpl final : public driverservice::Driver::Service {
     public:
@@ -47,32 +45,23 @@ class DriverServiceImpl final : public driverservice::Driver::Service {
         }
 };
 
-class L2ServiceImpl final : public L2::Service {
-    public:
-        explicit L2ServiceImpl() {
-        }
-        Status Init(ServerContext* context, const InitRequest* request, InitResponse* response) {
-            return Status(grpc::UNAVAILABLE, "");
-        }
-};
-
 int main(int argc, char** argv) {
     std::string server_address("0.0.0.0:50051");
     DriverServiceImpl driverservice;
-    L2ServiceImpl l2service;
     PortServiceImpl portservice;
     StatServiceImpl statservice;
     LinkServiceImpl linkservice;
     VLANServiceImpl vlanservice;
+    L2ServiceImpl l2service;
 
     ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
     builder.RegisterService(&driverservice);
     builder.RegisterService(&portservice);
     builder.RegisterService(&statservice);
-    builder.RegisterService(&l2service);
     builder.RegisterService(&linkservice);
     builder.RegisterService(&vlanservice);
+    builder.RegisterService(&l2service);
     std::unique_ptr<Server> server(builder.BuildAndStart());
     std::cout << "Server listening on " << server_address << std::endl;
     server->Wait();

@@ -20,142 +20,36 @@ package l2service;
 import "l2.proto";
 
 service L2 {
-    rpc Init(InitRequest) returns (InitResponse) {}
-    rpc Clear(ClearRequest) returns (ClearResponse) {}
-    rpc Detach(DetachRequest) returns (DetachResponse) {}
-    rpc AddAddress(AddAddressRequest) returns (AddAddressResponse) {}
-    rpc DeleteAddress(DeleteAddressRequest) returns (DeleteAddressResponse) {}
-    rpc DeleteAddressByPort(DeleteAddressByPortRequest) returns (DeleteAddressByPortResponse) {}
-    rpc DeleteAddressByMAC(DeleteAddressByMACRequest) returns (DeleteAddressByMACResponse) {}
-    rpc DeleteAddressByVLAN(DeleteAddressByVLANRequest) returns (DeleteAddressByVLANResponse) {}
-    rpc DeleteAddressByTrunk(DeleteAddressByTrunkRequest) returns (DeleteAddressByTrunkResponse) {}
-    rpc DeleteAddressByMACPort(DeleteAddressByMACPortRequest) returns (DeleteAddressByMACPortResponse) {}
-    rpc DeleteAddressByVLANPort(DeleteAddressByVLANPortRequest) returns (DeleteAddressByVLANPortResponse) {}
-    rpc DeleteAddressByVLANTrunk(DeleteAddressByVLANTrunkRequest) returns (DeleteAddressByVLANTrunkResponse) {}
-    rpc GetAddress(GetAddressRequest) returns (GetAddressResponse) {}
-    rpc DumpAddress(DumpAddressRequest) returns (DumpAddressResponse) {}
-    rpc DumpKey(DumpKeyRequest) returns (DumpKeyResponse) {}
-    rpc RegisterAddress(RegisterAddressRequest) returns (RegisterAddressResponse) {}
-    rpc UnregisterAddress(UnregisterAddressRequest) returns (UnregisterAddressResponse) {}
-    rpc SetAgeTimer(SetAgeTimerRequest) returns (SetAgeTimerResponse) {}
-    rpc GetAgeTimer(GetAgeTimerRequest) returns (GetAgeTimerResponse) {}
+    rpc AddAddress(l2.AddAddressRequest) returns (l2.AddAddressResponse) {}
+    rpc DeleteAddress(l2.DeleteAddressRequest) returns (l2.DeleteAddressResponse) {}
+    rpc DeleteAddressByPort(l2.DeleteAddressByPortRequest) returns (l2.DeleteAddressByPortResponse) {}
+    rpc DeleteAddressByMAC(l2.DeleteAddressByMACRequest) returns (l2.DeleteAddressByMACResponse) {}
+    rpc DeleteAddressByVLAN(l2.DeleteAddressByVLANRequest) returns (l2.DeleteAddressByVLANResponse) {}
+    rpc DeleteAddressByTrunk(l2.DeleteAddressByTrunkRequest) returns (l2.DeleteAddressByTrunkResponse) {}
+    rpc DeleteAddressByMACPort(l2.DeleteAddressByMACPortRequest) returns (l2.DeleteAddressByMACPortResponse) {}
+    rpc DeleteAddressByVLANPort(l2.DeleteAddressByVLANPortRequest) returns (l2.DeleteAddressByVLANPortResponse) {}
+    rpc DeleteAddressByVLANTrunk(l2.DeleteAddressByVLANTrunkRequest) returns (l2.DeleteAddressByVLANTrunkResponse) {}
+    rpc GetAddress(l2.GetAddressRequest) returns (l2.GetAddressResponse) {}
+    rpc Monitor(l2.MonitorRequest) returns (stream l2.MonitorResponse) {}
+    rpc SetAgeTimer(l2.SetAgeTimerRequest) returns (l2.SetAgeTimerResponse) {}
+    rpc GetAgeTimer(l2.GetAgeTimerRequest) returns (l2.GetAgeTimerResponse) {}
+    rpc List(l2.ListRequest) returns (l2.ListResponse) {}
+//    rpc Freeze(l2.FreezeRequest) returns (l2.FreezeResponse) {}
+//    rpc Thaw(l2.ThawRequest) returns (l2.ThawResponse) {}
+//    rpc AddTunnel(l2.AddTunnelRequest) returns (l2.AddTunnelResponse) {}
+//    rpc Replace(l2.ReplaceRequest) returns (l2.ReplaceResponse) {}
 }
 
-message InitRequest {
-    int64 unit = 1;
-}
+//service L2Cache {
+//    rpc Init(l2.CacheInitRequest) returns (l2.CacheInitResponse) {}
+//    rpc Set(l2.CacheSetRequest) returns (l2.CacheSetResponse) {}
+//    rpc Get(l2.CacheGetRequest) returns (l2.CacheGetResponse) {}
+//    rpc Delete(l2.CacheDeleteRequest) returns (l2.CacheDeleteResponse) {}
+//    rpc DeleteAll(l2.CacheDeleteAllRequest) returns (l2.CacheDeleteAllResponse) {}
+//}
 
-message InitResponse {
-}
-
-message ClearRequest {
-    int64 unit = 1;
-}
-
-message ClearResponse {
-}
-
-message DetachRequest {
-    int64 unit = 1;
-}
-
-message DetachResponse {
-}
-
-message AddAddressRequest {
-    int64 unit = 1;
-    l2.Address address = 2;
-}
-
-message AddAddressResponse {
-}
-
-message DeleteAddressRequest {
-}
-
-message DeleteAddressResponse {
-}
-
-message DeleteAddressByPortRequest {
-}
-
-message DeleteAddressByPortResponse {
-}
-
-message DeleteAddressByMACRequest {
-}
-
-message DeleteAddressByMACResponse {
-}
-
-message DeleteAddressByVLANRequest {
-}
-
-message DeleteAddressByVLANResponse {
-}
-
-message DeleteAddressByTrunkRequest {
-}
-
-message DeleteAddressByTrunkResponse {
-}
-
-message DeleteAddressByMACPortRequest {
-}
-
-message DeleteAddressByMACPortResponse {
-}
-
-message DeleteAddressByVLANPortRequest {
-}
-
-message DeleteAddressByVLANPortResponse {
-}
-
-message DeleteAddressByVLANTrunkRequest {
-}
-
-message DeleteAddressByVLANTrunkResponse {
-}
-
-message GetAddressRequest {
-}
-
-message GetAddressResponse {
-}
-
-message DumpAddressRequest {
-}
-
-message DumpAddressResponse {
-}
-
-message DumpKeyRequest {
-}
-
-message DumpKeyResponse {
-}
-
-message RegisterAddressRequest {
-}
-
-message RegisterAddressResponse {
-}
-
-message UnregisterAddressRequest {
-}
-
-message UnregisterAddressResponse {
-}
-
-message SetAgeTimerRequest {
-}
-
-message SetAgeTimerResponse {
-}
-
-message GetAgeTimerRequest {
-}
-
-message GetAgeTimerResponse {
+service L2Station {
+    rpc Add(l2.StationAddRequest) returns (l2.StationAddResponse) {}
+    rpc Delete(l2.StationDeleteRequest) returns (l2.StationDeleteResponse) {}
+    rpc Get(l2.StationGetRequest) returns (l2.StationGetResponse) {}
 }

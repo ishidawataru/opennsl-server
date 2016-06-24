@@ -9,44 +9,6 @@ It is generated from these files:
 	l2service.proto
 
 It has these top-level messages:
-	InitRequest
-	InitResponse
-	ClearRequest
-	ClearResponse
-	DetachRequest
-	DetachResponse
-	AddAddressRequest
-	AddAddressResponse
-	DeleteAddressRequest
-	DeleteAddressResponse
-	DeleteAddressByPortRequest
-	DeleteAddressByPortResponse
-	DeleteAddressByMACRequest
-	DeleteAddressByMACResponse
-	DeleteAddressByVLANRequest
-	DeleteAddressByVLANResponse
-	DeleteAddressByTrunkRequest
-	DeleteAddressByTrunkResponse
-	DeleteAddressByMACPortRequest
-	DeleteAddressByMACPortResponse
-	DeleteAddressByVLANPortRequest
-	DeleteAddressByVLANPortResponse
-	DeleteAddressByVLANTrunkRequest
-	DeleteAddressByVLANTrunkResponse
-	GetAddressRequest
-	GetAddressResponse
-	DumpAddressRequest
-	DumpAddressResponse
-	DumpKeyRequest
-	DumpKeyResponse
-	RegisterAddressRequest
-	RegisterAddressResponse
-	UnregisterAddressRequest
-	UnregisterAddressResponse
-	SetAgeTimerRequest
-	SetAgeTimerResponse
-	GetAgeTimerRequest
-	GetAgeTimerResponse
 */
 package l2service
 
@@ -71,369 +33,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type InitRequest struct {
-	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
-}
-
-func (m *InitRequest) Reset()                    { *m = InitRequest{} }
-func (m *InitRequest) String() string            { return proto.CompactTextString(m) }
-func (*InitRequest) ProtoMessage()               {}
-func (*InitRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
-
-type InitResponse struct {
-}
-
-func (m *InitResponse) Reset()                    { *m = InitResponse{} }
-func (m *InitResponse) String() string            { return proto.CompactTextString(m) }
-func (*InitResponse) ProtoMessage()               {}
-func (*InitResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
-
-type ClearRequest struct {
-	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
-}
-
-func (m *ClearRequest) Reset()                    { *m = ClearRequest{} }
-func (m *ClearRequest) String() string            { return proto.CompactTextString(m) }
-func (*ClearRequest) ProtoMessage()               {}
-func (*ClearRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
-
-type ClearResponse struct {
-}
-
-func (m *ClearResponse) Reset()                    { *m = ClearResponse{} }
-func (m *ClearResponse) String() string            { return proto.CompactTextString(m) }
-func (*ClearResponse) ProtoMessage()               {}
-func (*ClearResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
-
-type DetachRequest struct {
-	Unit int64 `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
-}
-
-func (m *DetachRequest) Reset()                    { *m = DetachRequest{} }
-func (m *DetachRequest) String() string            { return proto.CompactTextString(m) }
-func (*DetachRequest) ProtoMessage()               {}
-func (*DetachRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
-
-type DetachResponse struct {
-}
-
-func (m *DetachResponse) Reset()                    { *m = DetachResponse{} }
-func (m *DetachResponse) String() string            { return proto.CompactTextString(m) }
-func (*DetachResponse) ProtoMessage()               {}
-func (*DetachResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
-
-type AddAddressRequest struct {
-	Unit    int64       `protobuf:"varint,1,opt,name=unit" json:"unit,omitempty"`
-	Address *l2.Address `protobuf:"bytes,2,opt,name=address" json:"address,omitempty"`
-}
-
-func (m *AddAddressRequest) Reset()                    { *m = AddAddressRequest{} }
-func (m *AddAddressRequest) String() string            { return proto.CompactTextString(m) }
-func (*AddAddressRequest) ProtoMessage()               {}
-func (*AddAddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
-
-func (m *AddAddressRequest) GetAddress() *l2.Address {
-	if m != nil {
-		return m.Address
-	}
-	return nil
-}
-
-type AddAddressResponse struct {
-}
-
-func (m *AddAddressResponse) Reset()                    { *m = AddAddressResponse{} }
-func (m *AddAddressResponse) String() string            { return proto.CompactTextString(m) }
-func (*AddAddressResponse) ProtoMessage()               {}
-func (*AddAddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
-
-type DeleteAddressRequest struct {
-}
-
-func (m *DeleteAddressRequest) Reset()                    { *m = DeleteAddressRequest{} }
-func (m *DeleteAddressRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressRequest) ProtoMessage()               {}
-func (*DeleteAddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
-
-type DeleteAddressResponse struct {
-}
-
-func (m *DeleteAddressResponse) Reset()                    { *m = DeleteAddressResponse{} }
-func (m *DeleteAddressResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressResponse) ProtoMessage()               {}
-func (*DeleteAddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
-
-type DeleteAddressByPortRequest struct {
-}
-
-func (m *DeleteAddressByPortRequest) Reset()                    { *m = DeleteAddressByPortRequest{} }
-func (m *DeleteAddressByPortRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByPortRequest) ProtoMessage()               {}
-func (*DeleteAddressByPortRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
-
-type DeleteAddressByPortResponse struct {
-}
-
-func (m *DeleteAddressByPortResponse) Reset()                    { *m = DeleteAddressByPortResponse{} }
-func (m *DeleteAddressByPortResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByPortResponse) ProtoMessage()               {}
-func (*DeleteAddressByPortResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
-
-type DeleteAddressByMACRequest struct {
-}
-
-func (m *DeleteAddressByMACRequest) Reset()                    { *m = DeleteAddressByMACRequest{} }
-func (m *DeleteAddressByMACRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByMACRequest) ProtoMessage()               {}
-func (*DeleteAddressByMACRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
-
-type DeleteAddressByMACResponse struct {
-}
-
-func (m *DeleteAddressByMACResponse) Reset()                    { *m = DeleteAddressByMACResponse{} }
-func (m *DeleteAddressByMACResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByMACResponse) ProtoMessage()               {}
-func (*DeleteAddressByMACResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
-
-type DeleteAddressByVLANRequest struct {
-}
-
-func (m *DeleteAddressByVLANRequest) Reset()                    { *m = DeleteAddressByVLANRequest{} }
-func (m *DeleteAddressByVLANRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByVLANRequest) ProtoMessage()               {}
-func (*DeleteAddressByVLANRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
-
-type DeleteAddressByVLANResponse struct {
-}
-
-func (m *DeleteAddressByVLANResponse) Reset()                    { *m = DeleteAddressByVLANResponse{} }
-func (m *DeleteAddressByVLANResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByVLANResponse) ProtoMessage()               {}
-func (*DeleteAddressByVLANResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{15} }
-
-type DeleteAddressByTrunkRequest struct {
-}
-
-func (m *DeleteAddressByTrunkRequest) Reset()                    { *m = DeleteAddressByTrunkRequest{} }
-func (m *DeleteAddressByTrunkRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByTrunkRequest) ProtoMessage()               {}
-func (*DeleteAddressByTrunkRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{16} }
-
-type DeleteAddressByTrunkResponse struct {
-}
-
-func (m *DeleteAddressByTrunkResponse) Reset()                    { *m = DeleteAddressByTrunkResponse{} }
-func (m *DeleteAddressByTrunkResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByTrunkResponse) ProtoMessage()               {}
-func (*DeleteAddressByTrunkResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{17} }
-
-type DeleteAddressByMACPortRequest struct {
-}
-
-func (m *DeleteAddressByMACPortRequest) Reset()                    { *m = DeleteAddressByMACPortRequest{} }
-func (m *DeleteAddressByMACPortRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByMACPortRequest) ProtoMessage()               {}
-func (*DeleteAddressByMACPortRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{18} }
-
-type DeleteAddressByMACPortResponse struct {
-}
-
-func (m *DeleteAddressByMACPortResponse) Reset()                    { *m = DeleteAddressByMACPortResponse{} }
-func (m *DeleteAddressByMACPortResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByMACPortResponse) ProtoMessage()               {}
-func (*DeleteAddressByMACPortResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{19} }
-
-type DeleteAddressByVLANPortRequest struct {
-}
-
-func (m *DeleteAddressByVLANPortRequest) Reset()                    { *m = DeleteAddressByVLANPortRequest{} }
-func (m *DeleteAddressByVLANPortRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAddressByVLANPortRequest) ProtoMessage()               {}
-func (*DeleteAddressByVLANPortRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{20} }
-
-type DeleteAddressByVLANPortResponse struct {
-}
-
-func (m *DeleteAddressByVLANPortResponse) Reset()         { *m = DeleteAddressByVLANPortResponse{} }
-func (m *DeleteAddressByVLANPortResponse) String() string { return proto.CompactTextString(m) }
-func (*DeleteAddressByVLANPortResponse) ProtoMessage()    {}
-func (*DeleteAddressByVLANPortResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{21}
-}
-
-type DeleteAddressByVLANTrunkRequest struct {
-}
-
-func (m *DeleteAddressByVLANTrunkRequest) Reset()         { *m = DeleteAddressByVLANTrunkRequest{} }
-func (m *DeleteAddressByVLANTrunkRequest) String() string { return proto.CompactTextString(m) }
-func (*DeleteAddressByVLANTrunkRequest) ProtoMessage()    {}
-func (*DeleteAddressByVLANTrunkRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{22}
-}
-
-type DeleteAddressByVLANTrunkResponse struct {
-}
-
-func (m *DeleteAddressByVLANTrunkResponse) Reset()         { *m = DeleteAddressByVLANTrunkResponse{} }
-func (m *DeleteAddressByVLANTrunkResponse) String() string { return proto.CompactTextString(m) }
-func (*DeleteAddressByVLANTrunkResponse) ProtoMessage()    {}
-func (*DeleteAddressByVLANTrunkResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{23}
-}
-
-type GetAddressRequest struct {
-}
-
-func (m *GetAddressRequest) Reset()                    { *m = GetAddressRequest{} }
-func (m *GetAddressRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetAddressRequest) ProtoMessage()               {}
-func (*GetAddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{24} }
-
-type GetAddressResponse struct {
-}
-
-func (m *GetAddressResponse) Reset()                    { *m = GetAddressResponse{} }
-func (m *GetAddressResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetAddressResponse) ProtoMessage()               {}
-func (*GetAddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{25} }
-
-type DumpAddressRequest struct {
-}
-
-func (m *DumpAddressRequest) Reset()                    { *m = DumpAddressRequest{} }
-func (m *DumpAddressRequest) String() string            { return proto.CompactTextString(m) }
-func (*DumpAddressRequest) ProtoMessage()               {}
-func (*DumpAddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{26} }
-
-type DumpAddressResponse struct {
-}
-
-func (m *DumpAddressResponse) Reset()                    { *m = DumpAddressResponse{} }
-func (m *DumpAddressResponse) String() string            { return proto.CompactTextString(m) }
-func (*DumpAddressResponse) ProtoMessage()               {}
-func (*DumpAddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{27} }
-
-type DumpKeyRequest struct {
-}
-
-func (m *DumpKeyRequest) Reset()                    { *m = DumpKeyRequest{} }
-func (m *DumpKeyRequest) String() string            { return proto.CompactTextString(m) }
-func (*DumpKeyRequest) ProtoMessage()               {}
-func (*DumpKeyRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{28} }
-
-type DumpKeyResponse struct {
-}
-
-func (m *DumpKeyResponse) Reset()                    { *m = DumpKeyResponse{} }
-func (m *DumpKeyResponse) String() string            { return proto.CompactTextString(m) }
-func (*DumpKeyResponse) ProtoMessage()               {}
-func (*DumpKeyResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{29} }
-
-type RegisterAddressRequest struct {
-}
-
-func (m *RegisterAddressRequest) Reset()                    { *m = RegisterAddressRequest{} }
-func (m *RegisterAddressRequest) String() string            { return proto.CompactTextString(m) }
-func (*RegisterAddressRequest) ProtoMessage()               {}
-func (*RegisterAddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{30} }
-
-type RegisterAddressResponse struct {
-}
-
-func (m *RegisterAddressResponse) Reset()                    { *m = RegisterAddressResponse{} }
-func (m *RegisterAddressResponse) String() string            { return proto.CompactTextString(m) }
-func (*RegisterAddressResponse) ProtoMessage()               {}
-func (*RegisterAddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{31} }
-
-type UnregisterAddressRequest struct {
-}
-
-func (m *UnregisterAddressRequest) Reset()                    { *m = UnregisterAddressRequest{} }
-func (m *UnregisterAddressRequest) String() string            { return proto.CompactTextString(m) }
-func (*UnregisterAddressRequest) ProtoMessage()               {}
-func (*UnregisterAddressRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{32} }
-
-type UnregisterAddressResponse struct {
-}
-
-func (m *UnregisterAddressResponse) Reset()                    { *m = UnregisterAddressResponse{} }
-func (m *UnregisterAddressResponse) String() string            { return proto.CompactTextString(m) }
-func (*UnregisterAddressResponse) ProtoMessage()               {}
-func (*UnregisterAddressResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{33} }
-
-type SetAgeTimerRequest struct {
-}
-
-func (m *SetAgeTimerRequest) Reset()                    { *m = SetAgeTimerRequest{} }
-func (m *SetAgeTimerRequest) String() string            { return proto.CompactTextString(m) }
-func (*SetAgeTimerRequest) ProtoMessage()               {}
-func (*SetAgeTimerRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{34} }
-
-type SetAgeTimerResponse struct {
-}
-
-func (m *SetAgeTimerResponse) Reset()                    { *m = SetAgeTimerResponse{} }
-func (m *SetAgeTimerResponse) String() string            { return proto.CompactTextString(m) }
-func (*SetAgeTimerResponse) ProtoMessage()               {}
-func (*SetAgeTimerResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{35} }
-
-type GetAgeTimerRequest struct {
-}
-
-func (m *GetAgeTimerRequest) Reset()                    { *m = GetAgeTimerRequest{} }
-func (m *GetAgeTimerRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetAgeTimerRequest) ProtoMessage()               {}
-func (*GetAgeTimerRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{36} }
-
-type GetAgeTimerResponse struct {
-}
-
-func (m *GetAgeTimerResponse) Reset()                    { *m = GetAgeTimerResponse{} }
-func (m *GetAgeTimerResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetAgeTimerResponse) ProtoMessage()               {}
-func (*GetAgeTimerResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{37} }
-
-func init() {
-	proto.RegisterType((*InitRequest)(nil), "l2service.InitRequest")
-	proto.RegisterType((*InitResponse)(nil), "l2service.InitResponse")
-	proto.RegisterType((*ClearRequest)(nil), "l2service.ClearRequest")
-	proto.RegisterType((*ClearResponse)(nil), "l2service.ClearResponse")
-	proto.RegisterType((*DetachRequest)(nil), "l2service.DetachRequest")
-	proto.RegisterType((*DetachResponse)(nil), "l2service.DetachResponse")
-	proto.RegisterType((*AddAddressRequest)(nil), "l2service.AddAddressRequest")
-	proto.RegisterType((*AddAddressResponse)(nil), "l2service.AddAddressResponse")
-	proto.RegisterType((*DeleteAddressRequest)(nil), "l2service.DeleteAddressRequest")
-	proto.RegisterType((*DeleteAddressResponse)(nil), "l2service.DeleteAddressResponse")
-	proto.RegisterType((*DeleteAddressByPortRequest)(nil), "l2service.DeleteAddressByPortRequest")
-	proto.RegisterType((*DeleteAddressByPortResponse)(nil), "l2service.DeleteAddressByPortResponse")
-	proto.RegisterType((*DeleteAddressByMACRequest)(nil), "l2service.DeleteAddressByMACRequest")
-	proto.RegisterType((*DeleteAddressByMACResponse)(nil), "l2service.DeleteAddressByMACResponse")
-	proto.RegisterType((*DeleteAddressByVLANRequest)(nil), "l2service.DeleteAddressByVLANRequest")
-	proto.RegisterType((*DeleteAddressByVLANResponse)(nil), "l2service.DeleteAddressByVLANResponse")
-	proto.RegisterType((*DeleteAddressByTrunkRequest)(nil), "l2service.DeleteAddressByTrunkRequest")
-	proto.RegisterType((*DeleteAddressByTrunkResponse)(nil), "l2service.DeleteAddressByTrunkResponse")
-	proto.RegisterType((*DeleteAddressByMACPortRequest)(nil), "l2service.DeleteAddressByMACPortRequest")
-	proto.RegisterType((*DeleteAddressByMACPortResponse)(nil), "l2service.DeleteAddressByMACPortResponse")
-	proto.RegisterType((*DeleteAddressByVLANPortRequest)(nil), "l2service.DeleteAddressByVLANPortRequest")
-	proto.RegisterType((*DeleteAddressByVLANPortResponse)(nil), "l2service.DeleteAddressByVLANPortResponse")
-	proto.RegisterType((*DeleteAddressByVLANTrunkRequest)(nil), "l2service.DeleteAddressByVLANTrunkRequest")
-	proto.RegisterType((*DeleteAddressByVLANTrunkResponse)(nil), "l2service.DeleteAddressByVLANTrunkResponse")
-	proto.RegisterType((*GetAddressRequest)(nil), "l2service.GetAddressRequest")
-	proto.RegisterType((*GetAddressResponse)(nil), "l2service.GetAddressResponse")
-	proto.RegisterType((*DumpAddressRequest)(nil), "l2service.DumpAddressRequest")
-	proto.RegisterType((*DumpAddressResponse)(nil), "l2service.DumpAddressResponse")
-	proto.RegisterType((*DumpKeyRequest)(nil), "l2service.DumpKeyRequest")
-	proto.RegisterType((*DumpKeyResponse)(nil), "l2service.DumpKeyResponse")
-	proto.RegisterType((*RegisterAddressRequest)(nil), "l2service.RegisterAddressRequest")
-	proto.RegisterType((*RegisterAddressResponse)(nil), "l2service.RegisterAddressResponse")
-	proto.RegisterType((*UnregisterAddressRequest)(nil), "l2service.UnregisterAddressRequest")
-	proto.RegisterType((*UnregisterAddressResponse)(nil), "l2service.UnregisterAddressResponse")
-	proto.RegisterType((*SetAgeTimerRequest)(nil), "l2service.SetAgeTimerRequest")
-	proto.RegisterType((*SetAgeTimerResponse)(nil), "l2service.SetAgeTimerResponse")
-	proto.RegisterType((*GetAgeTimerRequest)(nil), "l2service.GetAgeTimerRequest")
-	proto.RegisterType((*GetAgeTimerResponse)(nil), "l2service.GetAgeTimerResponse")
-}
-
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
 var _ grpc.ClientConn
@@ -445,25 +44,20 @@ const _ = grpc.SupportPackageIsVersion3
 // Client API for L2 service
 
 type L2Client interface {
-	Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*InitResponse, error)
-	Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error)
-	Detach(ctx context.Context, in *DetachRequest, opts ...grpc.CallOption) (*DetachResponse, error)
-	AddAddress(ctx context.Context, in *AddAddressRequest, opts ...grpc.CallOption) (*AddAddressResponse, error)
-	DeleteAddress(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressResponse, error)
-	DeleteAddressByPort(ctx context.Context, in *DeleteAddressByPortRequest, opts ...grpc.CallOption) (*DeleteAddressByPortResponse, error)
-	DeleteAddressByMAC(ctx context.Context, in *DeleteAddressByMACRequest, opts ...grpc.CallOption) (*DeleteAddressByMACResponse, error)
-	DeleteAddressByVLAN(ctx context.Context, in *DeleteAddressByVLANRequest, opts ...grpc.CallOption) (*DeleteAddressByVLANResponse, error)
-	DeleteAddressByTrunk(ctx context.Context, in *DeleteAddressByTrunkRequest, opts ...grpc.CallOption) (*DeleteAddressByTrunkResponse, error)
-	DeleteAddressByMACPort(ctx context.Context, in *DeleteAddressByMACPortRequest, opts ...grpc.CallOption) (*DeleteAddressByMACPortResponse, error)
-	DeleteAddressByVLANPort(ctx context.Context, in *DeleteAddressByVLANPortRequest, opts ...grpc.CallOption) (*DeleteAddressByVLANPortResponse, error)
-	DeleteAddressByVLANTrunk(ctx context.Context, in *DeleteAddressByVLANTrunkRequest, opts ...grpc.CallOption) (*DeleteAddressByVLANTrunkResponse, error)
-	GetAddress(ctx context.Context, in *GetAddressRequest, opts ...grpc.CallOption) (*GetAddressResponse, error)
-	DumpAddress(ctx context.Context, in *DumpAddressRequest, opts ...grpc.CallOption) (*DumpAddressResponse, error)
-	DumpKey(ctx context.Context, in *DumpKeyRequest, opts ...grpc.CallOption) (*DumpKeyResponse, error)
-	RegisterAddress(ctx context.Context, in *RegisterAddressRequest, opts ...grpc.CallOption) (*RegisterAddressResponse, error)
-	UnregisterAddress(ctx context.Context, in *UnregisterAddressRequest, opts ...grpc.CallOption) (*UnregisterAddressResponse, error)
-	SetAgeTimer(ctx context.Context, in *SetAgeTimerRequest, opts ...grpc.CallOption) (*SetAgeTimerResponse, error)
-	GetAgeTimer(ctx context.Context, in *GetAgeTimerRequest, opts ...grpc.CallOption) (*GetAgeTimerResponse, error)
+	AddAddress(ctx context.Context, in *l2.AddAddressRequest, opts ...grpc.CallOption) (*l2.AddAddressResponse, error)
+	DeleteAddress(ctx context.Context, in *l2.DeleteAddressRequest, opts ...grpc.CallOption) (*l2.DeleteAddressResponse, error)
+	DeleteAddressByPort(ctx context.Context, in *l2.DeleteAddressByPortRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByPortResponse, error)
+	DeleteAddressByMAC(ctx context.Context, in *l2.DeleteAddressByMACRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByMACResponse, error)
+	DeleteAddressByVLAN(ctx context.Context, in *l2.DeleteAddressByVLANRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByVLANResponse, error)
+	DeleteAddressByTrunk(ctx context.Context, in *l2.DeleteAddressByTrunkRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByTrunkResponse, error)
+	DeleteAddressByMACPort(ctx context.Context, in *l2.DeleteAddressByMACPortRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByMACPortResponse, error)
+	DeleteAddressByVLANPort(ctx context.Context, in *l2.DeleteAddressByVLANPortRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByVLANPortResponse, error)
+	DeleteAddressByVLANTrunk(ctx context.Context, in *l2.DeleteAddressByVLANTrunkRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByVLANTrunkResponse, error)
+	GetAddress(ctx context.Context, in *l2.GetAddressRequest, opts ...grpc.CallOption) (*l2.GetAddressResponse, error)
+	Monitor(ctx context.Context, in *l2.MonitorRequest, opts ...grpc.CallOption) (L2_MonitorClient, error)
+	SetAgeTimer(ctx context.Context, in *l2.SetAgeTimerRequest, opts ...grpc.CallOption) (*l2.SetAgeTimerResponse, error)
+	GetAgeTimer(ctx context.Context, in *l2.GetAgeTimerRequest, opts ...grpc.CallOption) (*l2.GetAgeTimerResponse, error)
+	List(ctx context.Context, in *l2.ListRequest, opts ...grpc.CallOption) (*l2.ListResponse, error)
 }
 
 type l2Client struct {
@@ -474,35 +68,8 @@ func NewL2Client(cc *grpc.ClientConn) L2Client {
 	return &l2Client{cc}
 }
 
-func (c *l2Client) Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*InitResponse, error) {
-	out := new(InitResponse)
-	err := grpc.Invoke(ctx, "/l2service.L2/Init", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *l2Client) Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error) {
-	out := new(ClearResponse)
-	err := grpc.Invoke(ctx, "/l2service.L2/Clear", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *l2Client) Detach(ctx context.Context, in *DetachRequest, opts ...grpc.CallOption) (*DetachResponse, error) {
-	out := new(DetachResponse)
-	err := grpc.Invoke(ctx, "/l2service.L2/Detach", in, out, c.cc, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *l2Client) AddAddress(ctx context.Context, in *AddAddressRequest, opts ...grpc.CallOption) (*AddAddressResponse, error) {
-	out := new(AddAddressResponse)
+func (c *l2Client) AddAddress(ctx context.Context, in *l2.AddAddressRequest, opts ...grpc.CallOption) (*l2.AddAddressResponse, error) {
+	out := new(l2.AddAddressResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/AddAddress", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -510,8 +77,8 @@ func (c *l2Client) AddAddress(ctx context.Context, in *AddAddressRequest, opts .
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddress(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressResponse, error) {
-	out := new(DeleteAddressResponse)
+func (c *l2Client) DeleteAddress(ctx context.Context, in *l2.DeleteAddressRequest, opts ...grpc.CallOption) (*l2.DeleteAddressResponse, error) {
+	out := new(l2.DeleteAddressResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddress", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -519,8 +86,8 @@ func (c *l2Client) DeleteAddress(ctx context.Context, in *DeleteAddressRequest, 
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddressByPort(ctx context.Context, in *DeleteAddressByPortRequest, opts ...grpc.CallOption) (*DeleteAddressByPortResponse, error) {
-	out := new(DeleteAddressByPortResponse)
+func (c *l2Client) DeleteAddressByPort(ctx context.Context, in *l2.DeleteAddressByPortRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByPortResponse, error) {
+	out := new(l2.DeleteAddressByPortResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddressByPort", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -528,8 +95,8 @@ func (c *l2Client) DeleteAddressByPort(ctx context.Context, in *DeleteAddressByP
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddressByMAC(ctx context.Context, in *DeleteAddressByMACRequest, opts ...grpc.CallOption) (*DeleteAddressByMACResponse, error) {
-	out := new(DeleteAddressByMACResponse)
+func (c *l2Client) DeleteAddressByMAC(ctx context.Context, in *l2.DeleteAddressByMACRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByMACResponse, error) {
+	out := new(l2.DeleteAddressByMACResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddressByMAC", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -537,8 +104,8 @@ func (c *l2Client) DeleteAddressByMAC(ctx context.Context, in *DeleteAddressByMA
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddressByVLAN(ctx context.Context, in *DeleteAddressByVLANRequest, opts ...grpc.CallOption) (*DeleteAddressByVLANResponse, error) {
-	out := new(DeleteAddressByVLANResponse)
+func (c *l2Client) DeleteAddressByVLAN(ctx context.Context, in *l2.DeleteAddressByVLANRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByVLANResponse, error) {
+	out := new(l2.DeleteAddressByVLANResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddressByVLAN", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -546,8 +113,8 @@ func (c *l2Client) DeleteAddressByVLAN(ctx context.Context, in *DeleteAddressByV
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddressByTrunk(ctx context.Context, in *DeleteAddressByTrunkRequest, opts ...grpc.CallOption) (*DeleteAddressByTrunkResponse, error) {
-	out := new(DeleteAddressByTrunkResponse)
+func (c *l2Client) DeleteAddressByTrunk(ctx context.Context, in *l2.DeleteAddressByTrunkRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByTrunkResponse, error) {
+	out := new(l2.DeleteAddressByTrunkResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddressByTrunk", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -555,8 +122,8 @@ func (c *l2Client) DeleteAddressByTrunk(ctx context.Context, in *DeleteAddressBy
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddressByMACPort(ctx context.Context, in *DeleteAddressByMACPortRequest, opts ...grpc.CallOption) (*DeleteAddressByMACPortResponse, error) {
-	out := new(DeleteAddressByMACPortResponse)
+func (c *l2Client) DeleteAddressByMACPort(ctx context.Context, in *l2.DeleteAddressByMACPortRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByMACPortResponse, error) {
+	out := new(l2.DeleteAddressByMACPortResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddressByMACPort", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -564,8 +131,8 @@ func (c *l2Client) DeleteAddressByMACPort(ctx context.Context, in *DeleteAddress
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddressByVLANPort(ctx context.Context, in *DeleteAddressByVLANPortRequest, opts ...grpc.CallOption) (*DeleteAddressByVLANPortResponse, error) {
-	out := new(DeleteAddressByVLANPortResponse)
+func (c *l2Client) DeleteAddressByVLANPort(ctx context.Context, in *l2.DeleteAddressByVLANPortRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByVLANPortResponse, error) {
+	out := new(l2.DeleteAddressByVLANPortResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddressByVLANPort", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -573,8 +140,8 @@ func (c *l2Client) DeleteAddressByVLANPort(ctx context.Context, in *DeleteAddres
 	return out, nil
 }
 
-func (c *l2Client) DeleteAddressByVLANTrunk(ctx context.Context, in *DeleteAddressByVLANTrunkRequest, opts ...grpc.CallOption) (*DeleteAddressByVLANTrunkResponse, error) {
-	out := new(DeleteAddressByVLANTrunkResponse)
+func (c *l2Client) DeleteAddressByVLANTrunk(ctx context.Context, in *l2.DeleteAddressByVLANTrunkRequest, opts ...grpc.CallOption) (*l2.DeleteAddressByVLANTrunkResponse, error) {
+	out := new(l2.DeleteAddressByVLANTrunkResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/DeleteAddressByVLANTrunk", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -582,8 +149,8 @@ func (c *l2Client) DeleteAddressByVLANTrunk(ctx context.Context, in *DeleteAddre
 	return out, nil
 }
 
-func (c *l2Client) GetAddress(ctx context.Context, in *GetAddressRequest, opts ...grpc.CallOption) (*GetAddressResponse, error) {
-	out := new(GetAddressResponse)
+func (c *l2Client) GetAddress(ctx context.Context, in *l2.GetAddressRequest, opts ...grpc.CallOption) (*l2.GetAddressResponse, error) {
+	out := new(l2.GetAddressResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/GetAddress", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -591,44 +158,40 @@ func (c *l2Client) GetAddress(ctx context.Context, in *GetAddressRequest, opts .
 	return out, nil
 }
 
-func (c *l2Client) DumpAddress(ctx context.Context, in *DumpAddressRequest, opts ...grpc.CallOption) (*DumpAddressResponse, error) {
-	out := new(DumpAddressResponse)
-	err := grpc.Invoke(ctx, "/l2service.L2/DumpAddress", in, out, c.cc, opts...)
+func (c *l2Client) Monitor(ctx context.Context, in *l2.MonitorRequest, opts ...grpc.CallOption) (L2_MonitorClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_L2_serviceDesc.Streams[0], c.cc, "/l2service.L2/Monitor", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
-}
-
-func (c *l2Client) DumpKey(ctx context.Context, in *DumpKeyRequest, opts ...grpc.CallOption) (*DumpKeyResponse, error) {
-	out := new(DumpKeyResponse)
-	err := grpc.Invoke(ctx, "/l2service.L2/DumpKey", in, out, c.cc, opts...)
-	if err != nil {
+	x := &l2MonitorClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
-	return out, nil
-}
-
-func (c *l2Client) RegisterAddress(ctx context.Context, in *RegisterAddressRequest, opts ...grpc.CallOption) (*RegisterAddressResponse, error) {
-	out := new(RegisterAddressResponse)
-	err := grpc.Invoke(ctx, "/l2service.L2/RegisterAddress", in, out, c.cc, opts...)
-	if err != nil {
+	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return x, nil
 }
 
-func (c *l2Client) UnregisterAddress(ctx context.Context, in *UnregisterAddressRequest, opts ...grpc.CallOption) (*UnregisterAddressResponse, error) {
-	out := new(UnregisterAddressResponse)
-	err := grpc.Invoke(ctx, "/l2service.L2/UnregisterAddress", in, out, c.cc, opts...)
-	if err != nil {
+type L2_MonitorClient interface {
+	Recv() (*l2.MonitorResponse, error)
+	grpc.ClientStream
+}
+
+type l2MonitorClient struct {
+	grpc.ClientStream
+}
+
+func (x *l2MonitorClient) Recv() (*l2.MonitorResponse, error) {
+	m := new(l2.MonitorResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return m, nil
 }
 
-func (c *l2Client) SetAgeTimer(ctx context.Context, in *SetAgeTimerRequest, opts ...grpc.CallOption) (*SetAgeTimerResponse, error) {
-	out := new(SetAgeTimerResponse)
+func (c *l2Client) SetAgeTimer(ctx context.Context, in *l2.SetAgeTimerRequest, opts ...grpc.CallOption) (*l2.SetAgeTimerResponse, error) {
+	out := new(l2.SetAgeTimerResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/SetAgeTimer", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -636,9 +199,18 @@ func (c *l2Client) SetAgeTimer(ctx context.Context, in *SetAgeTimerRequest, opts
 	return out, nil
 }
 
-func (c *l2Client) GetAgeTimer(ctx context.Context, in *GetAgeTimerRequest, opts ...grpc.CallOption) (*GetAgeTimerResponse, error) {
-	out := new(GetAgeTimerResponse)
+func (c *l2Client) GetAgeTimer(ctx context.Context, in *l2.GetAgeTimerRequest, opts ...grpc.CallOption) (*l2.GetAgeTimerResponse, error) {
+	out := new(l2.GetAgeTimerResponse)
 	err := grpc.Invoke(ctx, "/l2service.L2/GetAgeTimer", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *l2Client) List(ctx context.Context, in *l2.ListRequest, opts ...grpc.CallOption) (*l2.ListResponse, error) {
+	out := new(l2.ListResponse)
+	err := grpc.Invoke(ctx, "/l2service.L2/List", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -648,87 +220,28 @@ func (c *l2Client) GetAgeTimer(ctx context.Context, in *GetAgeTimerRequest, opts
 // Server API for L2 service
 
 type L2Server interface {
-	Init(context.Context, *InitRequest) (*InitResponse, error)
-	Clear(context.Context, *ClearRequest) (*ClearResponse, error)
-	Detach(context.Context, *DetachRequest) (*DetachResponse, error)
-	AddAddress(context.Context, *AddAddressRequest) (*AddAddressResponse, error)
-	DeleteAddress(context.Context, *DeleteAddressRequest) (*DeleteAddressResponse, error)
-	DeleteAddressByPort(context.Context, *DeleteAddressByPortRequest) (*DeleteAddressByPortResponse, error)
-	DeleteAddressByMAC(context.Context, *DeleteAddressByMACRequest) (*DeleteAddressByMACResponse, error)
-	DeleteAddressByVLAN(context.Context, *DeleteAddressByVLANRequest) (*DeleteAddressByVLANResponse, error)
-	DeleteAddressByTrunk(context.Context, *DeleteAddressByTrunkRequest) (*DeleteAddressByTrunkResponse, error)
-	DeleteAddressByMACPort(context.Context, *DeleteAddressByMACPortRequest) (*DeleteAddressByMACPortResponse, error)
-	DeleteAddressByVLANPort(context.Context, *DeleteAddressByVLANPortRequest) (*DeleteAddressByVLANPortResponse, error)
-	DeleteAddressByVLANTrunk(context.Context, *DeleteAddressByVLANTrunkRequest) (*DeleteAddressByVLANTrunkResponse, error)
-	GetAddress(context.Context, *GetAddressRequest) (*GetAddressResponse, error)
-	DumpAddress(context.Context, *DumpAddressRequest) (*DumpAddressResponse, error)
-	DumpKey(context.Context, *DumpKeyRequest) (*DumpKeyResponse, error)
-	RegisterAddress(context.Context, *RegisterAddressRequest) (*RegisterAddressResponse, error)
-	UnregisterAddress(context.Context, *UnregisterAddressRequest) (*UnregisterAddressResponse, error)
-	SetAgeTimer(context.Context, *SetAgeTimerRequest) (*SetAgeTimerResponse, error)
-	GetAgeTimer(context.Context, *GetAgeTimerRequest) (*GetAgeTimerResponse, error)
+	AddAddress(context.Context, *l2.AddAddressRequest) (*l2.AddAddressResponse, error)
+	DeleteAddress(context.Context, *l2.DeleteAddressRequest) (*l2.DeleteAddressResponse, error)
+	DeleteAddressByPort(context.Context, *l2.DeleteAddressByPortRequest) (*l2.DeleteAddressByPortResponse, error)
+	DeleteAddressByMAC(context.Context, *l2.DeleteAddressByMACRequest) (*l2.DeleteAddressByMACResponse, error)
+	DeleteAddressByVLAN(context.Context, *l2.DeleteAddressByVLANRequest) (*l2.DeleteAddressByVLANResponse, error)
+	DeleteAddressByTrunk(context.Context, *l2.DeleteAddressByTrunkRequest) (*l2.DeleteAddressByTrunkResponse, error)
+	DeleteAddressByMACPort(context.Context, *l2.DeleteAddressByMACPortRequest) (*l2.DeleteAddressByMACPortResponse, error)
+	DeleteAddressByVLANPort(context.Context, *l2.DeleteAddressByVLANPortRequest) (*l2.DeleteAddressByVLANPortResponse, error)
+	DeleteAddressByVLANTrunk(context.Context, *l2.DeleteAddressByVLANTrunkRequest) (*l2.DeleteAddressByVLANTrunkResponse, error)
+	GetAddress(context.Context, *l2.GetAddressRequest) (*l2.GetAddressResponse, error)
+	Monitor(*l2.MonitorRequest, L2_MonitorServer) error
+	SetAgeTimer(context.Context, *l2.SetAgeTimerRequest) (*l2.SetAgeTimerResponse, error)
+	GetAgeTimer(context.Context, *l2.GetAgeTimerRequest) (*l2.GetAgeTimerResponse, error)
+	List(context.Context, *l2.ListRequest) (*l2.ListResponse, error)
 }
 
 func RegisterL2Server(s *grpc.Server, srv L2Server) {
 	s.RegisterService(&_L2_serviceDesc, srv)
 }
 
-func _L2_Init_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(L2Server).Init(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/l2service.L2/Init",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).Init(ctx, req.(*InitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _L2_Clear_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ClearRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(L2Server).Clear(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/l2service.L2/Clear",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).Clear(ctx, req.(*ClearRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _L2_Detach_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DetachRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(L2Server).Detach(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/l2service.L2/Detach",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).Detach(ctx, req.(*DetachRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _L2_AddAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddAddressRequest)
+	in := new(l2.AddAddressRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -740,13 +253,13 @@ func _L2_AddAddress_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: "/l2service.L2/AddAddress",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).AddAddress(ctx, req.(*AddAddressRequest))
+		return srv.(L2Server).AddAddress(ctx, req.(*l2.AddAddressRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressRequest)
+	in := new(l2.DeleteAddressRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -758,13 +271,13 @@ func _L2_DeleteAddress_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/l2service.L2/DeleteAddress",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddress(ctx, req.(*DeleteAddressRequest))
+		return srv.(L2Server).DeleteAddress(ctx, req.(*l2.DeleteAddressRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddressByPort_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressByPortRequest)
+	in := new(l2.DeleteAddressByPortRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -776,13 +289,13 @@ func _L2_DeleteAddressByPort_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/l2service.L2/DeleteAddressByPort",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddressByPort(ctx, req.(*DeleteAddressByPortRequest))
+		return srv.(L2Server).DeleteAddressByPort(ctx, req.(*l2.DeleteAddressByPortRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddressByMAC_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressByMACRequest)
+	in := new(l2.DeleteAddressByMACRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -794,13 +307,13 @@ func _L2_DeleteAddressByMAC_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/l2service.L2/DeleteAddressByMAC",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddressByMAC(ctx, req.(*DeleteAddressByMACRequest))
+		return srv.(L2Server).DeleteAddressByMAC(ctx, req.(*l2.DeleteAddressByMACRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddressByVLAN_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressByVLANRequest)
+	in := new(l2.DeleteAddressByVLANRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -812,13 +325,13 @@ func _L2_DeleteAddressByVLAN_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/l2service.L2/DeleteAddressByVLAN",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddressByVLAN(ctx, req.(*DeleteAddressByVLANRequest))
+		return srv.(L2Server).DeleteAddressByVLAN(ctx, req.(*l2.DeleteAddressByVLANRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddressByTrunk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressByTrunkRequest)
+	in := new(l2.DeleteAddressByTrunkRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -830,13 +343,13 @@ func _L2_DeleteAddressByTrunk_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/l2service.L2/DeleteAddressByTrunk",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddressByTrunk(ctx, req.(*DeleteAddressByTrunkRequest))
+		return srv.(L2Server).DeleteAddressByTrunk(ctx, req.(*l2.DeleteAddressByTrunkRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddressByMACPort_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressByMACPortRequest)
+	in := new(l2.DeleteAddressByMACPortRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -848,13 +361,13 @@ func _L2_DeleteAddressByMACPort_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/l2service.L2/DeleteAddressByMACPort",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddressByMACPort(ctx, req.(*DeleteAddressByMACPortRequest))
+		return srv.(L2Server).DeleteAddressByMACPort(ctx, req.(*l2.DeleteAddressByMACPortRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddressByVLANPort_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressByVLANPortRequest)
+	in := new(l2.DeleteAddressByVLANPortRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -866,13 +379,13 @@ func _L2_DeleteAddressByVLANPort_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/l2service.L2/DeleteAddressByVLANPort",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddressByVLANPort(ctx, req.(*DeleteAddressByVLANPortRequest))
+		return srv.(L2Server).DeleteAddressByVLANPort(ctx, req.(*l2.DeleteAddressByVLANPortRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_DeleteAddressByVLANTrunk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteAddressByVLANTrunkRequest)
+	in := new(l2.DeleteAddressByVLANTrunkRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -884,13 +397,13 @@ func _L2_DeleteAddressByVLANTrunk_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/l2service.L2/DeleteAddressByVLANTrunk",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DeleteAddressByVLANTrunk(ctx, req.(*DeleteAddressByVLANTrunkRequest))
+		return srv.(L2Server).DeleteAddressByVLANTrunk(ctx, req.(*l2.DeleteAddressByVLANTrunkRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_GetAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAddressRequest)
+	in := new(l2.GetAddressRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -902,85 +415,34 @@ func _L2_GetAddress_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: "/l2service.L2/GetAddress",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).GetAddress(ctx, req.(*GetAddressRequest))
+		return srv.(L2Server).GetAddress(ctx, req.(*l2.GetAddressRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _L2_DumpAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DumpAddressRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _L2_Monitor_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(l2.MonitorRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(L2Server).DumpAddress(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/l2service.L2/DumpAddress",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DumpAddress(ctx, req.(*DumpAddressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(L2Server).Monitor(m, &l2MonitorServer{stream})
 }
 
-func _L2_DumpKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DumpKeyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(L2Server).DumpKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/l2service.L2/DumpKey",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).DumpKey(ctx, req.(*DumpKeyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+type L2_MonitorServer interface {
+	Send(*l2.MonitorResponse) error
+	grpc.ServerStream
 }
 
-func _L2_RegisterAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterAddressRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(L2Server).RegisterAddress(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/l2service.L2/RegisterAddress",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).RegisterAddress(ctx, req.(*RegisterAddressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+type l2MonitorServer struct {
+	grpc.ServerStream
 }
 
-func _L2_UnregisterAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnregisterAddressRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(L2Server).UnregisterAddress(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/l2service.L2/UnregisterAddress",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).UnregisterAddress(ctx, req.(*UnregisterAddressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+func (x *l2MonitorServer) Send(m *l2.MonitorResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _L2_SetAgeTimer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetAgeTimerRequest)
+	in := new(l2.SetAgeTimerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -992,13 +454,13 @@ func _L2_SetAgeTimer_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/l2service.L2/SetAgeTimer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).SetAgeTimer(ctx, req.(*SetAgeTimerRequest))
+		return srv.(L2Server).SetAgeTimer(ctx, req.(*l2.SetAgeTimerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _L2_GetAgeTimer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAgeTimerRequest)
+	in := new(l2.GetAgeTimerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1010,7 +472,25 @@ func _L2_GetAgeTimer_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/l2service.L2/GetAgeTimer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(L2Server).GetAgeTimer(ctx, req.(*GetAgeTimerRequest))
+		return srv.(L2Server).GetAgeTimer(ctx, req.(*l2.GetAgeTimerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _L2_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(l2.ListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(L2Server).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/l2service.L2/List",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(L2Server).List(ctx, req.(*l2.ListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1019,18 +499,6 @@ var _L2_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "l2service.L2",
 	HandlerType: (*L2Server)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Init",
-			Handler:    _L2_Init_Handler,
-		},
-		{
-			MethodName: "Clear",
-			Handler:    _L2_Clear_Handler,
-		},
-		{
-			MethodName: "Detach",
-			Handler:    _L2_Detach_Handler,
-		},
 		{
 			MethodName: "AddAddress",
 			Handler:    _L2_AddAddress_Handler,
@@ -1072,28 +540,152 @@ var _L2_serviceDesc = grpc.ServiceDesc{
 			Handler:    _L2_GetAddress_Handler,
 		},
 		{
-			MethodName: "DumpAddress",
-			Handler:    _L2_DumpAddress_Handler,
-		},
-		{
-			MethodName: "DumpKey",
-			Handler:    _L2_DumpKey_Handler,
-		},
-		{
-			MethodName: "RegisterAddress",
-			Handler:    _L2_RegisterAddress_Handler,
-		},
-		{
-			MethodName: "UnregisterAddress",
-			Handler:    _L2_UnregisterAddress_Handler,
-		},
-		{
 			MethodName: "SetAgeTimer",
 			Handler:    _L2_SetAgeTimer_Handler,
 		},
 		{
 			MethodName: "GetAgeTimer",
 			Handler:    _L2_GetAgeTimer_Handler,
+		},
+		{
+			MethodName: "List",
+			Handler:    _L2_List_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Monitor",
+			Handler:       _L2_Monitor_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: fileDescriptor0,
+}
+
+// Client API for L2Station service
+
+type L2StationClient interface {
+	Add(ctx context.Context, in *l2.StationAddRequest, opts ...grpc.CallOption) (*l2.StationAddResponse, error)
+	Delete(ctx context.Context, in *l2.StationDeleteRequest, opts ...grpc.CallOption) (*l2.StationDeleteResponse, error)
+	Get(ctx context.Context, in *l2.StationGetRequest, opts ...grpc.CallOption) (*l2.StationGetResponse, error)
+}
+
+type l2StationClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewL2StationClient(cc *grpc.ClientConn) L2StationClient {
+	return &l2StationClient{cc}
+}
+
+func (c *l2StationClient) Add(ctx context.Context, in *l2.StationAddRequest, opts ...grpc.CallOption) (*l2.StationAddResponse, error) {
+	out := new(l2.StationAddResponse)
+	err := grpc.Invoke(ctx, "/l2service.L2Station/Add", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *l2StationClient) Delete(ctx context.Context, in *l2.StationDeleteRequest, opts ...grpc.CallOption) (*l2.StationDeleteResponse, error) {
+	out := new(l2.StationDeleteResponse)
+	err := grpc.Invoke(ctx, "/l2service.L2Station/Delete", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *l2StationClient) Get(ctx context.Context, in *l2.StationGetRequest, opts ...grpc.CallOption) (*l2.StationGetResponse, error) {
+	out := new(l2.StationGetResponse)
+	err := grpc.Invoke(ctx, "/l2service.L2Station/Get", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for L2Station service
+
+type L2StationServer interface {
+	Add(context.Context, *l2.StationAddRequest) (*l2.StationAddResponse, error)
+	Delete(context.Context, *l2.StationDeleteRequest) (*l2.StationDeleteResponse, error)
+	Get(context.Context, *l2.StationGetRequest) (*l2.StationGetResponse, error)
+}
+
+func RegisterL2StationServer(s *grpc.Server, srv L2StationServer) {
+	s.RegisterService(&_L2Station_serviceDesc, srv)
+}
+
+func _L2Station_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(l2.StationAddRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(L2StationServer).Add(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/l2service.L2Station/Add",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(L2StationServer).Add(ctx, req.(*l2.StationAddRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _L2Station_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(l2.StationDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(L2StationServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/l2service.L2Station/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(L2StationServer).Delete(ctx, req.(*l2.StationDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _L2Station_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(l2.StationGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(L2StationServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/l2service.L2Station/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(L2StationServer).Get(ctx, req.(*l2.StationGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _L2Station_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "l2service.L2Station",
+	HandlerType: (*L2StationServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Add",
+			Handler:    _L2Station_Add_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _L2Station_Delete_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _L2Station_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1103,49 +695,31 @@ var _L2_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("l2service.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 695 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x8c, 0x96, 0x5d, 0x4f, 0x1a, 0x4f,
-	0x14, 0xc6, 0xd5, 0xbf, 0x7f, 0x6d, 0x0f, 0x2a, 0xe5, 0xa8, 0xb0, 0x8c, 0xf2, 0xb6, 0x4a, 0xab,
-	0x6d, 0xc2, 0x05, 0xbd, 0x6a, 0xd2, 0xa4, 0x41, 0x49, 0x36, 0x8d, 0x96, 0x34, 0x94, 0xf6, 0xa2,
-	0x57, 0xa5, 0x38, 0xb5, 0xa4, 0x08, 0x74, 0x77, 0x69, 0xe2, 0x77, 0xe9, 0x87, 0xed, 0x02, 0xb3,
-	0xb3, 0x33, 0x3b, 0x2f, 0x90, 0x78, 0xa1, 0xe7, 0xfc, 0x9e, 0xe7, 0xec, 0xcc, 0xce, 0x3e, 0x23,
-	0x64, 0x47, 0xcd, 0x80, 0xfa, 0x7f, 0x86, 0x03, 0xda, 0x98, 0xfa, 0x93, 0x70, 0x82, 0x4f, 0x79,
-	0x81, 0x3c, 0x19, 0x35, 0x97, 0x45, 0xb7, 0x06, 0x99, 0xf7, 0xe3, 0x61, 0xd8, 0xa5, 0xbf, 0x67,
-	0x34, 0x08, 0x11, 0x61, 0x7b, 0x16, 0xfd, 0xe9, 0x6c, 0x56, 0x37, 0x2f, 0xfe, 0xeb, 0x2e, 0x7e,
-	0x77, 0x0f, 0x60, 0x6f, 0x89, 0x04, 0xd3, 0xc9, 0x38, 0xa0, 0xae, 0x0b, 0x7b, 0xd7, 0x23, 0xda,
-	0xf7, 0x6d, 0x9a, 0x2c, 0xec, 0x33, 0x86, 0x89, 0xce, 0x60, 0xbf, 0x4d, 0xc3, 0xfe, 0xe0, 0xa7,
-	0x4d, 0xf5, 0x0c, 0x0e, 0x62, 0x88, 0xc9, 0x3a, 0x90, 0x6b, 0xdd, 0xdd, 0x45, 0x3f, 0x3e, 0x0d,
-	0x02, 0x8b, 0x14, 0xeb, 0xb0, 0xdb, 0x5f, 0x52, 0xce, 0x56, 0x54, 0xce, 0x34, 0x33, 0x8d, 0x68,
-	0x8d, 0xb1, 0x30, 0xee, 0xb9, 0x47, 0x80, 0xa2, 0x1f, 0x9b, 0x92, 0x87, 0xa3, 0x36, 0x1d, 0xd1,
-	0x90, 0xca, 0x83, 0xdc, 0x02, 0x1c, 0xa7, 0xea, 0x4c, 0x70, 0x0a, 0x44, 0x6a, 0x5c, 0x3d, 0x7e,
-	0x9c, 0xf8, 0xf1, 0x26, 0xba, 0x25, 0x38, 0xd1, 0x76, 0x99, 0xf8, 0x04, 0x8a, 0xa9, 0xf6, 0x87,
-	0xd6, 0x75, 0xac, 0x55, 0x9d, 0x17, 0x4d, 0xe3, 0xdc, 0x2f, 0xb7, 0xad, 0x8e, 0x79, 0xee, 0xb2,
-	0xcb, 0xc4, 0x6a, 0xbb, 0xe7, 0xcf, 0xc6, 0xbf, 0x62, 0x75, 0x19, 0x4e, 0xf5, 0x6d, 0x26, 0xaf,
-	0x40, 0x49, 0x7d, 0x32, 0x71, 0xd9, 0x55, 0x28, 0x9b, 0x00, 0x66, 0xa1, 0x12, 0xf3, 0x07, 0x14,
-	0x3d, 0x6a, 0x50, 0x31, 0x12, 0xcc, 0x44, 0x8f, 0x48, 0x4b, 0x71, 0xa1, 0x6a, 0x46, 0x98, 0xcd,
-	0x21, 0xe4, 0x3c, 0x1a, 0xa6, 0x5e, 0x78, 0x74, 0x3c, 0xc4, 0x22, 0x43, 0xa3, 0x6a, 0x7b, 0xf6,
-	0x30, 0x4d, 0xb1, 0xc7, 0x70, 0x28, 0x55, 0x19, 0x3c, 0x3f, 0xc3, 0x51, 0xf9, 0x86, 0x3e, 0xc6,
-	0x60, 0x0e, 0xb2, 0xbc, 0xc2, 0x20, 0x07, 0xf2, 0x5d, 0x7a, 0x3f, 0x0c, 0x42, 0xea, 0xa7, 0x5c,
-	0x8b, 0x50, 0x50, 0x3a, 0x4c, 0x44, 0xc0, 0xf9, 0x3c, 0xf6, 0xf5, 0xb2, 0xe8, 0x4c, 0x69, 0x7a,
-	0xc9, 0xf3, 0x7f, 0x8a, 0x56, 0x75, 0x4f, 0x7b, 0xc3, 0x07, 0xea, 0x0b, 0xcf, 0x2f, 0x55, 0x13,
-	0xd8, 0xd3, 0xc2, 0x9e, 0x0a, 0x37, 0xff, 0xee, 0xc3, 0xd6, 0x6d, 0x13, 0xdf, 0xc0, 0xf6, 0x3c,
-	0x21, 0x30, 0xdf, 0x48, 0x32, 0x47, 0x48, 0x15, 0x52, 0x50, 0xea, 0x6c, 0xd8, 0x06, 0xbe, 0x85,
-	0xff, 0x17, 0x41, 0x81, 0x22, 0x23, 0xc6, 0x0b, 0x71, 0xd4, 0x06, 0x57, 0xbf, 0x83, 0x9d, 0x65,
-	0x60, 0xa0, 0x48, 0x49, 0x41, 0x43, 0x8a, 0x9a, 0x0e, 0x37, 0xb8, 0x01, 0x48, 0xf2, 0x00, 0x4f,
-	0x05, 0x54, 0x89, 0x1d, 0x52, 0x32, 0x74, 0xb9, 0x59, 0x6f, 0x9e, 0x71, 0xc2, 0xb1, 0xc3, 0x8a,
-	0x34, 0x5a, 0x0d, 0x18, 0x52, 0x35, 0x03, 0xdc, 0xf5, 0x47, 0x74, 0xce, 0xd4, 0x34, 0xc1, 0xba,
-	0x49, 0x2a, 0x65, 0x11, 0x79, 0xbe, 0x0a, 0xe3, 0x73, 0x06, 0xd1, 0x29, 0x57, 0x3e, 0x5f, 0x3c,
-	0x37, 0xeb, 0x93, 0xd4, 0x22, 0xf5, 0x15, 0x94, 0x65, 0x31, 0xf3, 0x2f, 0xd3, 0xb6, 0x18, 0x21,
-	0xe0, 0x6c, 0x8b, 0x91, 0x92, 0x6e, 0x03, 0x87, 0xa9, 0x44, 0x67, 0x61, 0x86, 0x16, 0x07, 0x31,
-	0x41, 0xc8, 0x8b, 0x95, 0x1c, 0x1f, 0x35, 0x81, 0xbc, 0x3e, 0xf6, 0xf0, 0xc2, 0xba, 0x2b, 0xe2,
-	0x5b, 0xba, 0x5c, 0x83, 0xe4, 0x03, 0x7d, 0x28, 0x18, 0x32, 0x12, 0x2f, 0xed, 0x1b, 0x24, 0x8e,
-	0x7c, 0xb9, 0x0e, 0xca, 0x67, 0xce, 0xc0, 0x31, 0x25, 0x2a, 0xae, 0x70, 0x92, 0xf6, 0xf5, 0xd5,
-	0x5a, 0xac, 0xf8, 0x79, 0x26, 0x79, 0x2c, 0x7d, 0x9e, 0x4a, 0x76, 0x4b, 0x9f, 0xa7, 0x26, 0xc4,
-	0x37, 0xb0, 0x03, 0x19, 0x21, 0xb0, 0x51, 0xe4, 0xd5, 0x78, 0x27, 0x65, 0x53, 0x9b, 0xfb, 0x5d,
-	0xc1, 0x2e, 0xcb, 0x75, 0x2c, 0xa6, 0xe0, 0x24, 0xfd, 0x09, 0xd1, 0xb5, 0xb8, 0xc7, 0x57, 0xc8,
-	0xa6, 0xe2, 0x1e, 0x6b, 0x82, 0x40, 0x7f, 0x49, 0x10, 0xd7, 0x86, 0x70, 0xef, 0x6f, 0x90, 0x53,
-	0xee, 0x04, 0x3c, 0x13, 0xa4, 0xa6, 0xdb, 0x84, 0x9c, 0xdb, 0x21, 0x71, 0x47, 0x85, 0x2b, 0x44,
-	0xda, 0x51, 0xf5, 0xc2, 0x91, 0x76, 0x54, 0x77, 0xf3, 0x2c, 0xfc, 0x3c, 0x83, 0x9f, 0x67, 0xf7,
-	0xf3, 0x74, 0x7e, 0xdf, 0x77, 0x16, 0xff, 0xe3, 0xbe, 0xfe, 0x17, 0x00, 0x00, 0xff, 0xff, 0x65,
-	0x5a, 0x37, 0xa5, 0x0b, 0x0b, 0x00, 0x00,
+	// 413 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x7c, 0x54, 0xd1, 0x4e, 0xc2, 0x30,
+	0x14, 0x15, 0x31, 0x08, 0xd7, 0x18, 0x4c, 0x51, 0x40, 0x12, 0x51, 0xd1, 0x37, 0x13, 0x62, 0x66,
+	0xe2, 0x9b, 0x51, 0xd4, 0xb8, 0x97, 0x61, 0x8c, 0xa0, 0x31, 0xf1, 0x09, 0xa5, 0x21, 0x8b, 0xb8,
+	0x62, 0x5b, 0x4c, 0xfc, 0x37, 0x7f, 0xc1, 0x7f, 0xb2, 0x5b, 0x69, 0x59, 0xb7, 0x6e, 0x09, 0x0f,
+	0xdc, 0x73, 0xce, 0x3d, 0xa7, 0xf7, 0x2e, 0x2d, 0x54, 0xa7, 0x0e, 0xc3, 0xf4, 0xdb, 0x7f, 0xc7,
+	0xdd, 0x19, 0x25, 0x9c, 0xa0, 0x8a, 0x06, 0x5a, 0xe5, 0xa9, 0x23, 0x41, 0xe7, 0xaf, 0x0c, 0xab,
+	0x9e, 0x83, 0x2e, 0x00, 0x7a, 0xe3, 0xb1, 0xf8, 0x51, 0xcc, 0x18, 0xda, 0xe9, 0x0a, 0x7e, 0x59,
+	0x3f, 0xe2, 0xaf, 0x39, 0x66, 0xbc, 0x55, 0x4f, 0xc2, 0x6c, 0x46, 0x02, 0x86, 0x3b, 0x2b, 0xe8,
+	0x0e, 0x36, 0x6f, 0xf1, 0x14, 0x73, 0xac, 0x1c, 0x9a, 0xa1, 0xd4, 0x80, 0x94, 0xc9, 0xae, 0x85,
+	0xd1, 0x3e, 0x2f, 0x50, 0x33, 0xa8, 0xeb, 0x9f, 0x07, 0x42, 0x39, 0x6a, 0xa7, 0x7a, 0x24, 0xa1,
+	0x3c, 0xf7, 0x33, 0x79, 0xed, 0xfc, 0x04, 0x28, 0x21, 0xe8, 0xf7, 0x6e, 0xd0, 0x9e, 0xa5, 0x51,
+	0xe0, 0xca, 0xb7, 0x9d, 0x45, 0xe7, 0x1c, 0xf8, 0xd9, 0xeb, 0xdd, 0x5b, 0x0f, 0x1c, 0x12, 0x79,
+	0x07, 0x96, 0xbc, 0x76, 0x7e, 0x85, 0xed, 0x84, 0x60, 0x48, 0xe7, 0xc1, 0x07, 0xb2, 0xb5, 0x46,
+	0x8c, 0xf2, 0x3e, 0xc8, 0x16, 0x68, 0xf3, 0x11, 0xd4, 0xd3, 0x63, 0x45, 0xab, 0x3e, 0xb4, 0x8f,
+	0x1c, 0xdf, 0x76, 0x27, 0x4f, 0xa2, 0x23, 0xc6, 0xd0, 0xb0, 0x0c, 0x18, 0x65, 0x74, 0x32, 0xa6,
+	0x8f, 0x87, 0x1c, 0xe5, 0x6a, 0x74, 0xca, 0x04, 0x9a, 0x16, 0x91, 0xdc, 0x54, 0x96, 0x85, 0xb1,
+	0xad, 0xe3, 0x7c, 0x91, 0x0e, 0x12, 0x17, 0xc4, 0xc5, 0xdc, 0xb8, 0x20, 0xcb, 0xda, 0xb8, 0x20,
+	0x71, 0x58, 0xb7, 0x9f, 0xc3, 0x7a, 0x9f, 0x04, 0x3e, 0x27, 0x14, 0xa1, 0x50, 0xb4, 0x28, 0x54,
+	0x63, 0xcd, 0xc0, 0x54, 0xd7, 0x69, 0x01, 0x5d, 0xc1, 0xc6, 0x40, 0xf8, 0x4d, 0xf0, 0xd0, 0xff,
+	0xc4, 0x14, 0x45, 0x01, 0x31, 0x40, 0xf5, 0x37, 0x52, 0xb8, 0x4e, 0x16, 0x0e, 0x6e, 0xd2, 0xc1,
+	0xcd, 0x70, 0x70, 0xad, 0x0e, 0x27, 0xb0, 0xe6, 0xf9, 0x8c, 0xa3, 0x6a, 0x28, 0x09, 0xff, 0xa9,
+	0x9e, 0xad, 0x25, 0xa0, 0xc4, 0xce, 0x6f, 0x01, 0x2a, 0x9e, 0x33, 0xe0, 0x23, 0xee, 0x93, 0x40,
+	0x8c, 0x5d, 0x14, 0xbb, 0x90, 0xeb, 0x5a, 0x60, 0xa2, 0x36, 0xd6, 0x15, 0x87, 0x75, 0xe4, 0x25,
+	0x94, 0xe4, 0x37, 0x91, 0x0f, 0xc9, 0x42, 0x23, 0x21, 0xe3, 0x21, 0x49, 0x30, 0xb1, 0x7d, 0x17,
+	0xc5, 0x30, 0x46, 0xb0, 0xa8, 0x6d, 0xc1, 0x11, 0xac, 0xfa, 0xde, 0x4a, 0xd1, 0xab, 0x78, 0xf6,
+	0x1f, 0x00, 0x00, 0xff, 0xff, 0xd5, 0xa6, 0xc5, 0x07, 0x3d, 0x05, 0x00, 0x00,
 }

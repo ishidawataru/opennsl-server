@@ -16,8 +16,11 @@
 package main
 
 import (
+	"net"
+	"strconv"
+
 	log "github.com/Sirupsen/logrus"
-	//	"github.com/ishidawataru/opennsl-server/client/proto/l2"
+	"github.com/ishidawataru/opennsl-server/client/proto/l2"
 	"github.com/ishidawataru/opennsl-server/client/proto/l2service"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
@@ -26,7 +29,7 @@ import (
 var l2Client l2service.L2Client
 
 func NewL2Cmd() *cobra.Command {
-	l2 := &cobra.Command{
+	l2Cmd := &cobra.Command{
 		Use: "l2",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			conn, err := connGrpc()
@@ -37,16 +40,108 @@ func NewL2Cmd() *cobra.Command {
 		},
 	}
 
-	init := &cobra.Command{
-		Use: "init",
+	list := &cobra.Command{
+		Use: "list",
 		Run: func(cmd *cobra.Command, args []string) {
-			_, err := l2Client.Init(context.Background(), &l2service.InitRequest{})
+			res, err := l2Client.List(context.Background(), &l2.ListRequest{})
+			if err != nil {
+				log.Fatal(err)
+			}
+			for _, info := range res.List {
+				log.Info("response:", info)
+			}
+		},
+	}
+
+	add := &cobra.Command{
+		Use: "add",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 2 {
+				log.Fatal("l2 add <mac> <port> [<vid>]")
+			}
+			vid := 1
+			mac, err := net.ParseMAC(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			port, err := strconv.Atoi(args[1])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) > 2 {
+				vid, err = strconv.Atoi(args[2])
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			_, err = l2Client.AddAddress(context.Background(), &l2.AddAddressRequest{
+				Address: &l2.Address{
+					Flags: (l2.L2Flag_FLAG_L3LOOKUP | l2.L2Flag_FLAG_STATIC),
+					Mac:   []byte(mac),
+					Vid:   uint32(vid),
+					Port:  int64(port),
+				},
+			})
 			if err != nil {
 				log.Fatal(err)
 			}
 		},
 	}
 
-	l2.AddCommand(init)
-	return l2
+	delete := &cobra.Command{
+		Use: "delete",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("l2 delete <mac> [<vid>]")
+			}
+			vid := 1
+			mac, err := net.ParseMAC(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) > 1 {
+				vid, err = strconv.Atoi(args[1])
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			_, err = l2Client.DeleteAddress(context.Background(), &l2.DeleteAddressRequest{
+				Mac: []byte(mac),
+				Vid: uint32(vid),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+		},
+	}
+
+	get := &cobra.Command{
+		Use: "get",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("l2 get <mac> [<vid>]")
+			}
+			vid := 1
+			mac, err := net.ParseMAC(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) > 1 {
+				vid, err = strconv.Atoi(args[1])
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+			_, err = l2Client.GetAddress(context.Background(), &l2.GetAddressRequest{
+				Mac: []byte(mac),
+				Vid: uint32(vid),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+		},
+	}
+
+	l2Cmd.AddCommand(list, add, delete, get)
+	return l2Cmd
 }
