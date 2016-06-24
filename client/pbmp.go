@@ -66,7 +66,7 @@ func (p PBMP) FilpPort(port int) {
 func (p PBMP) String() string {
 	ss := make([]string, 0, len(p))
 	for _, b := range p {
-		ss = append(ss, fmt.Sprintf("%b", b))
+		ss = append(ss, fmt.Sprintf("%032b", b))
 	}
 	return strings.Join(ss, "")
 }

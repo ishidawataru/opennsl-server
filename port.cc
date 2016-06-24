@@ -87,6 +87,15 @@ grpc::Status PortServiceImpl::GetConfig(grpc::ServerContext* context, const port
     for (int i = 0; i < _SHR_PBMP_WORD_MAX; i++) {
         res->mutable_config()->add_hg(config.hg.pbits[i]);
     }
+    for (int i = 0; i < _SHR_PBMP_WORD_MAX; i++) {
+        res->mutable_config()->add_port(config.port.pbits[i]);
+    }
+    for (int i = 0; i < _SHR_PBMP_WORD_MAX; i++) {
+        res->mutable_config()->add_cpu(config.cpu.pbits[i]);
+    }
+    for (int i = 0; i < _SHR_PBMP_WORD_MAX; i++) {
+        res->mutable_config()->add_all(config.all.pbits[i]);
+    }
     return grpc::Status::OK;
 };
 

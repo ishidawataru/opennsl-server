@@ -30,16 +30,28 @@ var portClient portservice.PortClient
 
 func FormatPortConfig(c *port.PortConfig) string {
 	s := bytes.NewBuffer(make([]byte, 0, 64))
-	s.WriteString("Fe: ")
+	s.WriteString("      ")
+	for i := 0; i < PBMP_WORD_MAX; i++ {
+		s.WriteString("v               v               ")
+	}
+	s.WriteString("\nFe:   ")
 	s.WriteString(PBMP(c.Fe).String())
-	s.WriteString("\nGe: ")
+	s.WriteString("\nGe:   ")
 	s.WriteString(PBMP(c.Ge).String())
-	s.WriteString("\nXe: ")
+	s.WriteString("\nXe:   ")
 	s.WriteString(PBMP(c.Xe).String())
-	s.WriteString("\nCe: ")
+	s.WriteString("\nCe:   ")
 	s.WriteString(PBMP(c.Ce).String())
-	s.WriteString("\nE: ")
+	s.WriteString("\nE:    ")
 	s.WriteString(PBMP(c.E).String())
+	s.WriteString("\nHg:   ")
+	s.WriteString(PBMP(c.Hg).String())
+	s.WriteString("\nPort: ")
+	s.WriteString(PBMP(c.Port).String())
+	s.WriteString("\nCPU:  ")
+	s.WriteString(PBMP(c.Cpu).String())
+	s.WriteString("\nAll:  ")
+	s.WriteString(PBMP(c.All).String())
 	return s.String()
 }
 
@@ -85,7 +97,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("reponse:", FormatPortConfig(res.Config))
+			log.Info("reponse:\n", FormatPortConfig(res.Config))
 		},
 	}
 
