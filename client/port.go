@@ -181,6 +181,40 @@ func NewPortCmd() *cobra.Command {
 		},
 	}
 
-	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled)
+	ability := &cobra.Command{
+		Use: "ability",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port ability <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortAdvertGet(context.Background(), &port.PortAdvertGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info(res)
+		},
+	}
+
+	//	advertSet := &cobra.Command {
+	//	    Use: "set"
+	//	    Run: func(cmd *cobra.Command, args []string) {
+	//			if len(args) < 2 {
+	//				log.Fatal("usage: port advert set <port> <value>")
+	//			}
+	//			i, err := strconv.Atoi(args[0])
+	//			if err != nil {
+	//				log.Fatal(err)
+	//			}
+	//
+	//	    },
+	//	}
+
+	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled, ability)
 	return portCmd
 }

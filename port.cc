@@ -192,10 +192,10 @@ grpc::Status PortServiceImpl::PortAbilityAdvertSet(grpc::ServerContext* context,
 
 grpc::Status PortServiceImpl::PortAbilityAdvertGet(grpc::ServerContext* context, const port::PortAbilityAdvertGetRequest* req, port::PortAbilityAdvertGetResponse* res){
     opennsl_port_ability_t ability;
-    auto ret = opennsl_port_ability_advert_set(req->unit(), req->port(), &ability);
+    auto ret = opennsl_port_ability_advert_get(req->unit(), req->port(), &ability);
     if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
-        err << "opennsl_port_ability_advert_set() failed " << opennsl_errmsg(ret);
+        err << "opennsl_port_ability_advert_get() failed " << opennsl_errmsg(ret);
         return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     set_protobuf_ability(res->mutable_ability(), ability);
