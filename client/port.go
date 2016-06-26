@@ -388,6 +388,24 @@ func (l Loopback) String() string {
 	return strings.Join(ss, "|")
 }
 
+type Flag uint64
+
+const (
+	AUTONEG Flag = 1 << 0
+	COMBO   Flag = 1 << 1
+)
+
+func (f Flag) String() string {
+	ss := make([]string, 0, 2)
+	if AUTONEG&f > 0 {
+		ss = append(ss, "AUTONEG")
+	}
+	if COMBO&f > 0 {
+		ss = append(ss, "COMBO")
+	}
+	return strings.Join(ss, "|")
+}
+
 type FECType uint64
 
 const (
@@ -440,7 +458,7 @@ func FormatPortAbility(c *port.Ability) string {
 	}
 	if c.Flags > 0 {
 		s.WriteString("flags: ")
-		s.WriteString(Ability(c.Flags).String())
+		s.WriteString(Flag(c.Flags).String())
 		s.WriteString("\n")
 	}
 	if c.Eee > 0 {
@@ -455,7 +473,7 @@ func FormatPortAbility(c *port.Ability) string {
 	}
 	if c.Fec > 0 {
 		s.WriteString("fec: ")
-		s.WriteString(Ability(c.Fec).String())
+		s.WriteString(FECType(c.Fec).String())
 		s.WriteString("\n")
 	}
 	return s.String()
