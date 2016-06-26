@@ -142,6 +142,61 @@ func (a Ability) String() string {
 	return strings.Join(ss, "|")
 }
 
+func FormatPortAbility(c *port.Ability) string {
+	s := bytes.NewBuffer(make([]byte, 0, 64))
+	if c.SpeedHalfDuplex > 0 {
+		s.WriteString("speed half duplex: ")
+		s.WriteString(Ability(c.SpeedHalfDuplex).String())
+		s.WriteString("\n")
+	}
+	if c.SpeedFullDuplex > 0 {
+		s.WriteString("speed full duplex: ")
+		s.WriteString(Ability(c.SpeedFullDuplex).String())
+		s.WriteString("\n")
+	}
+	if c.Pause > 0 {
+		s.WriteString("pause: ")
+		s.WriteString(Ability(c.Pause).String())
+		s.WriteString("\n")
+	}
+	if c.Interface > 0 {
+		s.WriteString("interface: ")
+		s.WriteString(Ability(c.Interface).String())
+		s.WriteString("\n")
+	}
+	if c.Medium > 0 {
+		s.WriteString("medium: ")
+		s.WriteString(Ability(c.Medium).String())
+		s.WriteString("\n")
+	}
+	if c.Loopback > 0 {
+		s.WriteString("loopback: ")
+		s.WriteString(Ability(c.Loopback).String())
+		s.WriteString("\n")
+	}
+	if c.Flags > 0 {
+		s.WriteString("flags: ")
+		s.WriteString(Ability(c.Flags).String())
+		s.WriteString("\n")
+	}
+	if c.Eee > 0 {
+		s.WriteString("eee: ")
+		s.WriteString(Ability(c.Eee).String())
+		s.WriteString("\n")
+	}
+	if c.Fcmap > 0 {
+		s.WriteString("fcmap: ")
+		s.WriteString(Ability(c.Fcmap).String())
+		s.WriteString("\n")
+	}
+	if c.Fec > 0 {
+		s.WriteString("fec: ")
+		s.WriteString(Ability(c.Fec).String())
+		s.WriteString("\n")
+	}
+	return s.String()
+}
+
 func FormatPortConfig(c *port.PortConfig) string {
 	s := bytes.NewBuffer(make([]byte, 0, 64))
 	s.WriteString("      ")
@@ -353,7 +408,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("ability: ", res)
+			log.Info("ability: ", FormatPortAbility(res.Ability))
 		},
 	}
 
@@ -373,7 +428,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("ability advert: ", res)
+			log.Info("ability advert: ", FormatPortAbility(res.Ability))
 		},
 	}
 
@@ -393,7 +448,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("ability remote: ", res)
+			log.Info("ability remote: ", FormatPortAbility(res.Ability))
 		},
 	}
 
@@ -413,7 +468,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("ability local: ", res)
+			log.Info("ability local: ", FormatPortAbility(res.Ability))
 		},
 	}
 

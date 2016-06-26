@@ -40,7 +40,7 @@ service Port {
 
     rpc PortAbilityRemoteGet(port.PortAbilityRemoteGetRequest) returns (port.PortAbilityRemoteGetResponse) {}
 
-    rpc PortAbilityGet(port.PortAbilityGetRequest) returns (port.PortAbilityRemoteGetResponse) {}
+    rpc PortAbilityGet(port.PortAbilityGetRequest) returns (port.PortAbilityGetResponse) {}
 
     rpc PortAbilityLocalGet(port.PortAbilityLocalGetRequest) returns (port.PortAbilityLocalGetResponse) {}
 
