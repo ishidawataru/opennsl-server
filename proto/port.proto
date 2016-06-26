@@ -52,6 +52,90 @@ package port;
 //    MODE_COMBO = 31;
 //}
 //
+
+//enum InterfaceType {
+//    IF_TYPE_NOCXN = 0;
+//    IF_TYPE_NULL = 1;
+//    IF_TYPE_MII = 2;
+//    IF_TYPE_GMII = 3;
+//    IF_TYPE_SGMII = 4;
+//    IF_TYPE_TBI = 5;
+//    IF_TYPE_XGMII = 6;
+//    IF_TYPE_RGMII = 7;
+//    IF_TYPE_RvMII = 8;
+//    IF_TYPE_SFI = 9;
+//    IF_TYPE_XFI = 10;
+//    IF_TYPE_KR = 11;
+//    IF_TYPE_KR4 = 12;
+//    IF_TYPE_CR = 13;
+//    IF_TYPE_CR4 = 14;
+//    IF_TYPE_XLAUI = 15;
+//    IF_TYPE_SR = 16;
+//    IF_TYPE_RXAUI = 17;
+//    IF_TYPE_XAUI = 18;
+//    IF_TYPE_SPAUI = 19;
+//    IF_TYPE_QSGMII = 20;
+//    IF_TYPE_ILKN = 21;
+//    IF_TYPE_RCY = 22;
+//    IF_TYPE_FAT_PIPE = 23;
+//    IF_TYPE_CGMII = 24;
+//    IF_TYPE_CAUI = 25;
+//    IF_TYPE_LR = 26;
+//    IF_TYPE_LR4 = 27;
+//    IF_TYPE_SR4 = 28;
+//    IF_TYPE_KX = 29;
+//    IF_TYPE_ZR = 30;
+//    IF_TYPE_SR10 = 31;
+//    IF_TYPE_OTL = 32;
+//    IF_TYPE_CPU = 33;
+//    IF_TYPE_OLP = 34;
+//    IF_TYPE_OAMP = 35;
+//    IF_TYPE_ERP = 36;
+//    IF_TYPE_TM_INTERNAL_PKT = 37;
+//    IF_TYPE_SR2 = 38;
+//    IF_TYPE_KR2 = 39;
+//    IF_TYPE_CR2 = 40;
+//    IF_TYPE_XFI2 = 41;
+//    IF_TYPE_XLAUI2 = 42;
+//    IF_TYPE_CR10 = 43;
+//    IF_TYPE_KR10 = 44;
+//    IF_TYPE_LR10 = 45;
+//    IF_TYPE_ER = 46;
+//    IF_TYPE_ER2 = 47;
+//    IF_TYPE_ER4 = 48;
+//    IF_TYPE_CX = 49;
+//    IF_TYPE_CX2 = 50;
+//    IF_TYPE_CX4 = 51;
+//    IF_TYPE_CAUI_C2C = 52;
+//    IF_TYPE_CAUI_C2M = 53;
+//    IF_TYPE_VSR = 54;
+//    IF_TYPE_LR2 = 55;
+//    IF_TYPE_LRM = 56;
+//    IF_TYPE_XLPPI = 57;
+//    IF_TYPE_COUNT = 58; /* last, please */
+//}
+
+//enum MDIXMode {
+//    MDIX_MODE_AUTO = 0;
+//    MDIX_MODE_FORCE_AUTO = 1;
+//    MDIX_MODE_NORMAL = 2;
+//    MDIX_MODE_XOVER = 3;
+//    MDIX_MODE_COUNT = 4;
+//}
+//
+//enum MDIXStatus {
+//    MDIX_STATUS_NORMAL = 0;
+//    MDIX_STATUS_XOVER = 1;
+//    MDIX_STATUS_COUNT = 2;
+//}
+//
+//enum Medium {
+//    MEDIUM_NONE = 0;
+//    MEDIUM_COPPER = 1;
+//    MEDIUM_FIBER = 2;
+//    MEDIUM_COUNT = 3;
+//}
+
 message Ability {
     uint64 speed_half_duplex = 1;
     uint64 speed_full_duplex = 2;

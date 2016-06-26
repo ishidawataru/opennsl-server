@@ -142,36 +142,300 @@ func (a Ability) String() string {
 	return strings.Join(ss, "|")
 }
 
+type Speed uint64
+
+const (
+	SPEED_10MB     Speed = 1 << 0
+	SPEED_EXTENDED Speed = 1 << 1
+	SPEED_27GB     Speed = 1 << 2
+	SPEED_50GB     Speed = 1 << 3
+	SPEED_53GB     Speed = 1 << 4
+	SPEED_100MB    Speed = 1 << 5
+	SPEED_1000MB   Speed = 1 << 6
+	SPEED_2500MB   Speed = 1 << 7
+	SPEED_3000MB   Speed = 1 << 8
+	SPEED_5000MB   Speed = 1 << 9
+	SPEED_6000MB   Speed = 1 << 10
+	SPEED_10GB     Speed = 1 << 11
+	SPEED_11GB     Speed = 1 << 12
+	SPEED_12GB     Speed = 1 << 13
+	SPEED_12P5GB   Speed = 1 << 14
+	SPEED_13GB     Speed = 1 << 15
+	SPEED_15GB     Speed = 1 << 16
+	SPEED_16GB     Speed = 1 << 17
+	SPEED_20GB     Speed = 1 << 18
+	SPEED_21GB     Speed = 1 << 19
+	SPEED_23GB     Speed = 1 << 20
+	SPEED_24GB     Speed = 1 << 21
+	SPEED_25GB     Speed = 1 << 22
+	SPEED_30GB     Speed = 1 << 23
+	SPEED_40GB     Speed = 1 << 24
+	SPEED_42GB     Speed = 1 << 25
+	SPEED_100GB    Speed = 1 << 26
+	SPEED_120GB    Speed = 1 << 27
+	SPEED_127GB    Speed = 1 << 28
+	SPEED_106GB    Speed = 1 << 29
+	SPEED_48GB     Speed = 1 << 30
+	SPEED_32GB     Speed = 1 << 31
+)
+
+func (a Speed) String() string {
+	ss := make([]string, 0, 8)
+	if SPEED_10MB&a > 0 {
+		ss = append(ss, "10MB")
+	}
+	if SPEED_EXTENDED&a > 0 {
+		ss = append(ss, "EXTENDED")
+	}
+	if SPEED_27GB&a > 0 {
+		ss = append(ss, "27GB")
+	}
+	if SPEED_50GB&a > 0 {
+		ss = append(ss, "50GB")
+	}
+	if SPEED_53GB&a > 0 {
+		ss = append(ss, "53GB")
+	}
+	if SPEED_100MB&a > 0 {
+		ss = append(ss, "100MB")
+	}
+	if SPEED_1000MB&a > 0 {
+		ss = append(ss, "1000MB")
+	}
+	if SPEED_2500MB&a > 0 {
+		ss = append(ss, "2500MB")
+	}
+	if SPEED_3000MB&a > 0 {
+		ss = append(ss, "3000MB")
+	}
+	if SPEED_5000MB&a > 0 {
+		ss = append(ss, "5000MB")
+	}
+	if SPEED_6000MB&a > 0 {
+		ss = append(ss, "6000MB")
+	}
+	if SPEED_10GB&a > 0 {
+		ss = append(ss, "10GB")
+	}
+	if SPEED_11GB&a > 0 {
+		ss = append(ss, "11GB")
+	}
+	if SPEED_12GB&a > 0 {
+		ss = append(ss, "12GB")
+	}
+	if SPEED_12P5GB&a > 0 {
+		ss = append(ss, "12P5GB")
+	}
+	if SPEED_13GB&a > 0 {
+		ss = append(ss, "13GB")
+	}
+	if SPEED_15GB&a > 0 {
+		ss = append(ss, "15GB")
+	}
+	if SPEED_16GB&a > 0 {
+		ss = append(ss, "16GB")
+	}
+	if SPEED_20GB&a > 0 {
+		ss = append(ss, "20GB")
+	}
+	if SPEED_21GB&a > 0 {
+		ss = append(ss, "21GB")
+	}
+	if SPEED_23GB&a > 0 {
+		ss = append(ss, "23GB")
+	}
+	if SPEED_24GB&a > 0 {
+		ss = append(ss, "24GB")
+	}
+	if SPEED_25GB&a > 0 {
+		ss = append(ss, "25GB")
+	}
+	if SPEED_30GB&a > 0 {
+		ss = append(ss, "30GB")
+	}
+	if SPEED_40GB&a > 0 {
+		ss = append(ss, "40GB")
+	}
+	if SPEED_42GB&a > 0 {
+		ss = append(ss, "42GB")
+	}
+	if SPEED_100GB&a > 0 {
+		ss = append(ss, "100GB")
+	}
+	if SPEED_120GB&a > 0 {
+		ss = append(ss, "120GB")
+	}
+	if SPEED_127GB&a > 0 {
+		ss = append(ss, "127GB")
+	}
+	if SPEED_106GB&a > 0 {
+		ss = append(ss, "106GB")
+	}
+	if SPEED_48GB&a > 0 {
+		ss = append(ss, "48GB")
+	}
+	if SPEED_32GB&a > 0 {
+		ss = append(ss, "32GB")
+	}
+	return strings.Join(ss, "|")
+}
+
+type Pause uint64
+
+const (
+	PAUSE_TX    Pause = 1 << 0
+	PAUSE_RX    Pause = 1 << 1
+	PAUSE_ASYMM Pause = 1 << 2
+)
+
+func (p Pause) String() string {
+	ss := make([]string, 0, 3)
+	if PAUSE_TX&p > 0 {
+		ss = append(ss, "TX")
+	}
+	if PAUSE_RX&p > 0 {
+		ss = append(ss, "RX")
+	}
+	if PAUSE_ASYMM&p > 0 {
+		ss = append(ss, "ASYMM")
+	}
+	return strings.Join(ss, "|")
+}
+
+type InterfaceType uint64
+
+const (
+	INTF_TBI    InterfaceType = 1 << 0 /* TBI mode supported */
+	INTF_MII    InterfaceType = 1 << 1 /* MII mode supported */
+	INTF_GMII   InterfaceType = 1 << 2 /* GMII mode supported */
+	INTF_RGMII  InterfaceType = 1 << 3 /* RGMII mode supported */
+	INTF_SGMII  InterfaceType = 1 << 4 /* SGMII mode supported */
+	INTF_XGMII  InterfaceType = 1 << 5 /* XGMII mode supported */
+	INTF_QSGMII InterfaceType = 1 << 6 /* QSGMII mode supported */
+	INTF_CGMII  InterfaceType = 1 << 7 /* CGMII mode supported */
+)
+
+func (i InterfaceType) String() string {
+	ss := make([]string, 0, 2)
+	if INTF_TBI&i > 0 {
+		ss = append(ss, "TBI")
+	}
+	if INTF_MII&i > 0 {
+		ss = append(ss, "MII")
+	}
+	if INTF_GMII&i > 0 {
+		ss = append(ss, "GMII")
+	}
+	if INTF_RGMII&i > 0 {
+		ss = append(ss, "RGMII")
+	}
+	if INTF_SGMII&i > 0 {
+		ss = append(ss, "SGMII")
+	}
+	if INTF_XGMII&i > 0 {
+		ss = append(ss, "XGMII")
+	}
+	if INTF_QSGMII&i > 0 {
+		ss = append(ss, "QSGMII")
+	}
+	if INTF_CGMII&i > 0 {
+		ss = append(ss, "CGMII")
+	}
+	return strings.Join(ss, "|")
+}
+
+type Medium uint64
+
+const (
+	MEDIUM_COPPER Medium = 1 << 0
+	MEDIUM_FIBER  Medium = 1 << 1
+)
+
+func (m Medium) String() string {
+	ss := make([]string, 0, 1)
+	if MEDIUM_COPPER&m > 0 {
+		ss = append(ss, "COPPER")
+	}
+	if MEDIUM_FIBER&m > 0 {
+		ss = append(ss, "FIBER")
+	}
+	return strings.Join(ss, "|")
+}
+
+type Loopback uint64
+
+const (
+	LOOPBACK_NONE = 1 << 0
+	LOOPBACK_MAC  = 1 << 1
+	LOOPBACK_PHY  = 1 << 2
+	LOOPBACK_LINE = 1 << 3
+)
+
+func (l Loopback) String() string {
+	ss := make([]string, 0, 2)
+	if LOOPBACK_NONE&l > 0 {
+		ss = append(ss, "NONE")
+	}
+	if LOOPBACK_MAC&l > 0 {
+		ss = append(ss, "MAC")
+	}
+	if LOOPBACK_PHY&l > 0 {
+		ss = append(ss, "PHY")
+	}
+	if LOOPBACK_LINE&l > 0 {
+		ss = append(ss, "LINE")
+	}
+	return strings.Join(ss, "|")
+}
+
+type FECType uint64
+
+const (
+	FEC         FECType = 1 << 0
+	FEC_REQUEST FECType = 1 << 1
+)
+
+func (f FECType) String() string {
+	ss := make([]string, 0, 2)
+	if FEC&f > 0 {
+		ss = append(ss, "FEC")
+	}
+	if FEC_REQUEST&f > 0 {
+		ss = append(ss, "REQUEST")
+	}
+	return strings.Join(ss, "|")
+}
+
 func FormatPortAbility(c *port.Ability) string {
 	s := bytes.NewBuffer(make([]byte, 0, 64))
 	if c.SpeedHalfDuplex > 0 {
 		s.WriteString("speed half duplex: ")
-		s.WriteString(Ability(c.SpeedHalfDuplex).String())
+		s.WriteString(Speed(c.SpeedHalfDuplex).String())
 		s.WriteString("\n")
 	}
 	if c.SpeedFullDuplex > 0 {
 		s.WriteString("speed full duplex: ")
-		s.WriteString(Ability(c.SpeedFullDuplex).String())
+		s.WriteString(Speed(c.SpeedFullDuplex).String())
 		s.WriteString("\n")
 	}
 	if c.Pause > 0 {
 		s.WriteString("pause: ")
-		s.WriteString(Ability(c.Pause).String())
+		s.WriteString(Pause(c.Pause).String())
 		s.WriteString("\n")
 	}
 	if c.Interface > 0 {
 		s.WriteString("interface: ")
-		s.WriteString(Ability(c.Interface).String())
+		s.WriteString(InterfaceType(c.Interface).String())
 		s.WriteString("\n")
 	}
 	if c.Medium > 0 {
 		s.WriteString("medium: ")
-		s.WriteString(Ability(c.Medium).String())
+		s.WriteString(Medium(c.Medium).String())
 		s.WriteString("\n")
 	}
 	if c.Loopback > 0 {
 		s.WriteString("loopback: ")
-		s.WriteString(Ability(c.Loopback).String())
+		s.WriteString(Loopback(c.Loopback).String())
 		s.WriteString("\n")
 	}
 	if c.Flags > 0 {
@@ -408,7 +672,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("ability: ", FormatPortAbility(res.Ability))
+			log.Info("ability: ", Ability(res.Ability))
 		},
 	}
 
