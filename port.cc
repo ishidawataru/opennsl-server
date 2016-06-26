@@ -202,15 +202,51 @@ grpc::Status PortServiceImpl::PortAbilityAdvertGet(grpc::ServerContext* context,
     return grpc::Status::OK;
 }
 
+
 grpc::Status PortServiceImpl::PortAdvertRemoteGet(grpc::ServerContext* context, const port::PortAdvertRemoteGetRequest* req, port::PortAdvertRemoteGetResponse* res){
+    opennsl_port_abil_t ability;
+    auto ret = opennsl_port_advert_remote_get(req->unit(), req->port(), &ability);
+    if ( ret != OPENNSL_E_NONE) {
+        std::ostringstream err;
+        err << "opennsl_port_advert_remote_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    res->set_ability(ability);
     return grpc::Status::OK;
 }
+
 grpc::Status PortServiceImpl::PortAbilityRemoteGet(grpc::ServerContext* context, const port::PortAbilityRemoteGetRequest* req, port::PortAbilityRemoteGetResponse* res){
+    opennsl_port_ability_t ability;
+    auto ret = opennsl_port_ability_remote_get(req->unit(), req->port(), &ability);
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_ability_remote_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    set_protobuf_ability(res->mutable_ability(), ability);
     return grpc::Status::OK;
 }
+
 grpc::Status PortServiceImpl::PortAbilityGet(grpc::ServerContext* context, const port::PortAbilityGetRequest* req, port::PortAbilityGetResponse* res){
+    opennsl_port_abil_t ability;
+    auto ret = opennsl_port_ability_get(req->unit(), req->port(), &ability);
+    if ( ret != OPENNSL_E_NONE) {
+        std::ostringstream err;
+        err << "opennsl_port_ability_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    res->set_ability(ability);
     return grpc::Status::OK;
 }
+
 grpc::Status PortServiceImpl::PortAbilityLocalGet(grpc::ServerContext* context, const port::PortAbilityLocalGetRequest* req, port::PortAbilityLocalGetResponse* res){
+    opennsl_port_ability_t ability;
+    auto ret = opennsl_port_ability_local_get(req->unit(), req->port(), &ability);
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_ability_local_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    set_protobuf_ability(res->mutable_ability(), ability);
     return grpc::Status::OK;
 }

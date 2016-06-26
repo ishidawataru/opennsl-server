@@ -295,11 +295,11 @@ func NewPortCmd() *cobra.Command {
 		},
 	}
 
-	ability := &cobra.Command{
-		Use: "ability",
+	advert := &cobra.Command{
+		Use: "advert",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) < 1 {
-				log.Fatal("usage: port ability <port>")
+				log.Fatal("usage: port advert <port>")
 			}
 			i, err := strconv.Atoi(args[0])
 			if err != nil {
@@ -311,24 +311,113 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			log.Info("ability: ", Ability(res.Ability).String())
+			log.Info("advert: ", Ability(res.Ability).String())
 		},
 	}
 
-	//	advertSet := &cobra.Command {
-	//	    Use: "set"
-	//	    Run: func(cmd *cobra.Command, args []string) {
-	//			if len(args) < 2 {
-	//				log.Fatal("usage: port advert set <port> <value>")
-	//			}
-	//			i, err := strconv.Atoi(args[0])
-	//			if err != nil {
-	//				log.Fatal(err)
-	//			}
-	//
-	//	    },
-	//	}
+	advertRemote := &cobra.Command{
+		Use: "remote",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port advert remote <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortAdvertRemoteGet(context.Background(), &port.PortAdvertRemoteGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info("advert remote: ", Ability(res.Ability).String())
+		},
+	}
 
-	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled, ability)
+	advert.AddCommand(advertRemote)
+
+	ability := &cobra.Command{
+		Use: "ability",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port ability <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortAbilityGet(context.Background(), &port.PortAbilityGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info("ability: ", res)
+		},
+	}
+
+	abilityAdvert := &cobra.Command{
+		Use: "advert",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port ability advert <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortAbilityAdvertGet(context.Background(), &port.PortAbilityAdvertGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info("ability advert: ", res)
+		},
+	}
+
+	abilityRemote := &cobra.Command{
+		Use: "remote",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port ability remote <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortAbilityRemoteGet(context.Background(), &port.PortAbilityRemoteGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info("ability remote: ", res)
+		},
+	}
+
+	abilityLocal := &cobra.Command{
+		Use: "local",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port ability local <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortAbilityLocalGet(context.Background(), &port.PortAbilityLocalGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info("ability local: ", res)
+		},
+	}
+
+	ability.AddCommand(abilityAdvert, abilityRemote, abilityLocal)
+	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled, advert, ability)
 	return portCmd
 }
