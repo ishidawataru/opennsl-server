@@ -15,7 +15,9 @@ extern "C" {
 grpc::Status PortServiceImpl::Init(grpc::ServerContext* context, const port::InitRequest* req, port::InitResponse* res) {
     auto ret = opennsl_port_init(req->unit());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_port_init() failed");
+        std::ostringstream err;
+        err << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -23,7 +25,9 @@ grpc::Status PortServiceImpl::Init(grpc::ServerContext* context, const port::Ini
 grpc::Status PortServiceImpl::Clear(grpc::ServerContext* context, const port::ClearRequest* req, port::ClearResponse* res) {
     auto ret = opennsl_port_clear(req->unit());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_port_clear() failed");
+        std::ostringstream err;
+        err << "opennsl_port_clear() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -49,7 +53,9 @@ grpc::Status PortServiceImpl::Probe(grpc::ServerContext* context, const port::Pr
     opennsl_pbmp_t pbmp = get_port_config(req->pbmp());
     auto ret = opennsl_port_probe(req->unit(), pbmp, &okay_pbmp);
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_port_probe() failed");
+        std::ostringstream err;
+        err << "opennsl_port_probe() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     set_protobuf_port_config(res->mutable_pbmp(), okay_pbmp);
     return grpc::Status::OK;
@@ -60,7 +66,9 @@ grpc::Status PortServiceImpl::Detach(grpc::ServerContext* context, const port::D
     opennsl_pbmp_t pbmp = get_port_config(req->pbmp());
     auto ret = opennsl_port_detach(req->unit(), pbmp, &okay_pbmp);
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_port_probe() failed");
+        std::ostringstream err;
+        err << "opennsl_port_probe() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     set_protobuf_port_config(res->mutable_pbmp(), okay_pbmp);
     return grpc::Status::OK;
