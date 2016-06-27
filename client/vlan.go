@@ -154,6 +154,30 @@ func NewVlanCmd() *cobra.Command {
 		},
 	}
 
-	vlanCmd.AddCommand(createCmd, destroyCmd, listCmd, addCmd, removeCmd)
+	defaultCmd := &cobra.Command{
+		Use: "default",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) == 0 {
+				res, err := vlanClient.DefaultGet(context.Background(), &vlan.DefaultGetRequest{})
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("response:", res)
+			} else {
+				vid, err := strconv.Atoi(args[0])
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = vlanClient.DefaultSet(context.Background(), &vlan.DefaultSetRequest{
+					Vid: uint32(vid),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		},
+	}
+
+	vlanCmd.AddCommand(createCmd, destroyCmd, listCmd, addCmd, removeCmd, defaultCmd)
 	return vlanCmd
 }
