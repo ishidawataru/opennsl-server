@@ -951,7 +951,7 @@ func NewPortCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			if len(args) == 0 {
+			if len(args) == 1 {
 				for k, v := range port.ControlType_name {
 					if k == 0 {
 						continue
@@ -961,9 +961,10 @@ func NewPortCmd() *cobra.Command {
 						Type: port.ControlType(k),
 					})
 					if err != nil {
-						log.Fatal(err)
+						log.Warn(fmt.Sprintf("%s(%d): %s", v, k, err))
+					} else {
+						log.Info(fmt.Sprintf("%s(%d): %d", v, k, res.Value))
 					}
-					log.Info(fmt.Sprintf("%s(%d): %d", v, k, res.Value))
 				}
 			} else if len(args) == 3 {
 				typ, err := strconv.Atoi(args[1])
