@@ -76,7 +76,7 @@ service Port {
 //    rpc PortFrameMaxSet(port.PortFrameMaxSetRequest) returns (port.PortFrameMaxSetResponse) {}
 //    rpc PortFrameMaxGet(port.PortFrameMaxGetRequest) returns (port.PortFrameMaxGetResponse) {}
 //
-//    rpc PortPHYyModify(port.PortPHYModifyRequest) returns (port.PortPHYModifyResponse) {}
+//    rpc PortPHYModify(port.PortPHYModifyRequest) returns (port.PortPHYModifyResponse) {}
 //
 //    rpc PortSTPSet(port.PortSTPSetRequest) returns (port.PortSTPSetResponse) {}
 //    rpc PortSTPGet(port.PortSTPGetRequest) returns (port.PortSTPGetResponse) {}
@@ -84,9 +84,9 @@ service Port {
 //    rpc PortLearnSet(port.PortLearnSetRequest) returns (port.PortLearnSetResponse) {}
 //    rpc PortLearnGet(port.PortLearnGetRequest) returns (port.PortLearnGetResponse) {}
 //
-//    rpc PortLinkStatusGet(port.PortLinkStatusGetRequest) returns (port.PortLinkStatusGetResponse) {}
-//
-//    rpc PortLinkFailedClear(port.PortLinkFailedClearRequest) returns (port.PortLinkFailedClearResponse) {}
+    rpc PortLinkStatusGet(port.PortLinkStatusGetRequest) returns (port.PortLinkStatusGetResponse) {}
+
+    rpc PortLinkFailedClear(port.PortLinkFailedClearRequest) returns (port.PortLinkFailedClearResponse) {}
 //
 //    rpc PortVLANMemberSet(port.PortVLANMemberSetRequest) returns (port.PortVLANMemberSetResponse) {}
 //    rpc PortVLANMemberGet(port.PortVLANMemberGetRequest) returns (port.PortVLANMemberGetResponse) {}
@@ -114,13 +114,13 @@ service Port {
 //    rpc PortClassSet(port.PortClassSetRequest) returns (port.PortClassSetResponse) {}
 //    rpc PortClassGet(port.PortClassGetRequest) returns (port.PortClassGetResponse) {}
 //
-//    rpc PortControlSet(port.PortControlSetRequest) returns (port.PortControlSetResponse) {}
-//    rpc PortControlGet(port.PortControlGetRequest) returns (port.PortControlGetResponse) {}
-//
+    rpc PortControlSet(port.PortControlSetRequest) returns (port.PortControlSetResponse) {}
+    rpc PortControlGet(port.PortControlGetRequest) returns (port.PortControlGetResponse) {}
+
 //    rpc PortSubsidiaryPortsGet(port.PortSubsidiaryPortsGetRequest) returns (port.PortSubsidiaryPortsGetResponse) {}
 //
-//    rpc PortGportGet(port.PortGportGetRequest) returns (port.PortGportGetResponse) {}
-//    rpc PortLocalGet(port.PortLocalGetRequest) returns (port.PortLocalGetResponse) {}
+    rpc PortGportGet(port.PortGportGetRequest) returns (port.PortGportGetResponse) {}
+    rpc PortLocalGet(port.PortLocalGetRequest) returns (port.PortLocalGetResponse) {}
 //
 //    rpc PortStatEnableSet(port.PortStatEnableSetRequest) returns (port.PortStatEnableSetResponse) {}
 }

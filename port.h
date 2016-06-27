@@ -37,4 +37,12 @@ class PortServiceImpl final : public portservice::Port::Service {
         grpc::Status PortSpeedGet(::grpc::ServerContext* context, const ::port::PortSpeedGetRequest* req, ::port::PortSpeedGetResponse* res);
         grpc::Status PortInterfaceSet(::grpc::ServerContext* context, const ::port::PortInterfaceSetRequest* req, ::port::PortInterfaceSetResponse* res);
         grpc::Status PortInterfaceGet(::grpc::ServerContext* context, const ::port::PortInterfaceGetRequest* req, ::port::PortInterfaceGetResponse* res);
+
+        grpc::Status PortLinkStatusGet(::grpc::ServerContext* context, const ::port::PortLinkStatusGetRequest* req, ::port::PortLinkStatusGetResponse* res);
+        grpc::Status PortLinkFailedClear(::grpc::ServerContext* context, const ::port::PortLinkFailedClearRequest* req, ::port::PortLinkFailedClearResponse* res);
+        grpc::Status PortControlSet(::grpc::ServerContext* context, const ::port::PortControlSetRequest* req, ::port::PortControlSetResponse* res);
+        grpc::Status PortControlGet(::grpc::ServerContext* context, const ::port::PortControlGetRequest* req, ::port::PortControlGetResponse* res);
+        grpc::Status PortGportGet(::grpc::ServerContext* context, const ::port::PortGportGetRequest* req, ::port::PortGportGetResponse* res);
+        grpc::Status PortLocalGet(::grpc::ServerContext* context, const ::port::PortLocalGetRequest* req, ::port::PortLocalGetResponse* res);
+         
 };

@@ -358,3 +358,73 @@ grpc::Status PortServiceImpl::PortInterfaceGet(grpc::ServerContext* context, con
     res->set_type(static_cast<port::InterfaceType>(type));
     return grpc::Status::OK;
 }
+
+grpc::Status PortLinkStatusGet(::grpc::ServerContext* context, const ::port::PortLinkStatusGetRequest* req, ::port::PortLinkStatusGetResponse* res){
+    int status;
+    auto ret = opennsl_port_link_status_get(req->unit(), req->port(), &status);
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_link_status_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    if ( status > 0 ) {
+        res->set_up(true);
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status PortLinkFailedClear(::grpc::ServerContext* context, const ::port::PortLinkFailedClearRequest* req, ::port::PortLinkFailedClearResponse* res){
+    auto ret = opennsl_port_link_failed_clear(req->unit(), req->port());
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_link_failed_clear() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status PortControlSet(::grpc::ServerContext* context, const ::port::PortControlSetRequest* req, ::port::PortControlSetResponse* res){
+    auto ret = opennsl_port_control_set(req->unit(), req->port(), static_cast<opennsl_port_control_t>(req->type()), req->value());
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_control_set() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    return grpc::Status::OK;
+}
+
+grpc::Status PortControlGet(::grpc::ServerContext* context, const ::port::PortControlGetRequest* req, ::port::PortControlGetResponse* res){
+    int value;
+    auto ret = opennsl_port_control_get(req->unit(), req->port(), static_cast<opennsl_port_control_t>(req->type()), &value);
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_control_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    res->set_value(value);
+    return grpc::Status::OK;
+}
+
+grpc::Status PortGportGet(::grpc::ServerContext* context, const ::port::PortGportGetRequest* req, ::port::PortGportGetResponse* res){
+    opennsl_gport_t gport;
+    auto ret = opennsl_port_gport_get(req->unit(), req->port(), &gport);
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_gport_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    res->set_gport(gport);
+    return grpc::Status::OK;
+}
+
+grpc::Status PortLocalGet(::grpc::ServerContext* context, const ::port::PortLocalGetRequest* req, ::port::PortLocalGetResponse* res){
+    opennsl_port_t port;
+    auto ret = opennsl_port_local_get(req->unit(), req->gport(), &port);
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_port_local_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    res->set_port(port);
+    return grpc::Status::OK;
+}

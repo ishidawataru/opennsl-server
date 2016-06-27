@@ -441,3 +441,78 @@ message PortInterfaceGetRequest {
 message PortInterfaceGetResponse {
     InterfaceType type = 1;
 }
+
+message PortLinkStatusGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortLinkStatusGetResponse {
+    bool up = 1;
+}
+
+message PortLinkFailedClearRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortLinkFailedClearResponse {
+}
+
+enum ControlType {
+    CONTROL_TYPE_UNKNOWN = 0;
+    CONTROL_TYPE_IP4 = 8;
+    CONTROL_TYPE_IP6 = 9;
+    CONTROL_TYPE_TRUST_INCOMING_VLAN = 22;
+    CONTROL_TYPE_DO_NOT_CHECK_VLAN = 23;
+    CONTROL_TYPE_EGREE_VLAN_PRI_USES_PKT_PRI = 43;
+    CONTROL_TYPE_CONTROL_LANES = 55;
+    CONTROL_TYPE_PFC_RECEIVE = 59;
+    CONTROL_TYPE_PFC_TRANSMIT = 60;
+    CONTROL_TYPE_PFC_CLASSES = 61;
+    CONTROL_TYPE_PFC_PASS_FRAMES = 62;
+    CONTROL_TYPE_L2_MOVE = 70;
+    CONTROL_TYPE_STAT_OVERSIZE = 92;
+    CONTROL_TYPE_VXLAN_ENABLE = 187;
+    CONTROL_TYPE_VXLAN_TUNNEL_BASED_VNID = 188;
+    CONTROL_TYPE_VXLAN_DEFAULT_TUNNEL_ENABLE = 189;
+    CONTROL_TYPE_SAMPLE_INGRESS_DEST = 304;
+}
+
+message PortControlSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    ControlType type = 3;
+    int64 value = 4;
+}
+
+message PortControlSetResponse {
+}
+
+message PortControlGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    ControlType type = 3;
+}
+
+message PortControlGetResponse {
+    int64 value = 1;
+}
+
+message PortGportGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortGportGetResponse {
+    int64 gport = 1;
+}
+
+message PortLocalGetRequest {
+    int64 unit = 1;
+    int64 gport = 2;
+}
+
+message PortLocalGetResponse {
+    int64 port = 1;
+}

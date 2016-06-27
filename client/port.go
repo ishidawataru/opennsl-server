@@ -16,6 +16,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -901,7 +902,130 @@ func NewPortCmd() *cobra.Command {
 		},
 	}
 
+	status := &cobra.Command{
+		Use: "status",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port status <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortLinkStatusGet(context.Background(), &port.PortLinkStatusGetRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Info(res)
+		},
+	}
+
+	failedClear := &cobra.Command{
+		Use: "failed-clear",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port failed-clear <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			_, err = portClient.PortLinkFailedClear(context.Background(), &port.PortLinkFailedClearRequest{
+				Port: int64(i),
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+		},
+	}
+
+	control := &cobra.Command{
+		Use: "control",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port control <port> [<type> <value>]")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) == 0 {
+				for k, v := range port.ControlType_name {
+					if k == 0 {
+						continue
+					}
+					res, err := portClient.PortControlGet(context.Background(), &port.PortControlGetRequest{
+						Port: int64(i),
+						Type: port.ControlType(k),
+					})
+					if err != nil {
+						log.Fatal(err)
+					}
+					log.Info(fmt.Sprintf("%s(%d): %d", v, k, res.Value))
+				}
+			} else if len(args) == 3 {
+				typ, err := strconv.Atoi(args[1])
+				if err != nil {
+					log.Fatal(err)
+				}
+				value, err := strconv.Atoi(args[2])
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = portClient.PortControlSet(context.Background(), &port.PortControlSetRequest{
+					Port:  int64(i),
+					Type:  port.ControlType(typ),
+					Value: int64(value),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				log.Fatal("usage: port control <port> [<type> <value>]")
+			}
+		},
+	}
+
+	gport := &cobra.Command{
+		Use: "gport",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port gport <port>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortGportGet(context.Background(), &port.PortGportGetRequest{
+				Port: int64(i),
+			})
+			log.Info("response:", res)
+		},
+	}
+
+	local := &cobra.Command{
+		Use: "local",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port gport local <gport>")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := portClient.PortLocalGet(context.Background(), &port.PortLocalGetRequest{
+				Gport: int64(i),
+			})
+			log.Info("response:", res)
+		},
+	}
+
 	ability.AddCommand(abilityAdvert, abilityRemote, abilityLocal)
-	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled, advert, ability, linkscan, autoneg, speed, intf)
+	gport.AddCommand(local)
+	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable,
+		disable, enabled, advert, ability, linkscan, autoneg, speed,
+		intf, status, failedClear, control, gport)
 	return portCmd
 }
