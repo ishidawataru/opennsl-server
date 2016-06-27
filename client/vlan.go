@@ -82,11 +82,64 @@ func NewVlanCmd() *cobra.Command {
 		},
 	}
 
-	//	addCmd := &cobra.Command{
-	//		Use: "add",
-	//		Run: func(cmd *cobra.Command, args []string) {
-	//		},
-	//	}
+	addCmd := &cobra.Command{
+		Use: "add",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 2 {
+				log.Fatal("usage: vlan add <vid> <port> [ untagged | tagged ]")
+			}
+			vid, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			port, err := strconv.Atoi(args[1])
+			if err != nil {
+				log.Fatal(err)
+			}
+			pbmp := NewPBMP()
+			pbmp.AddPort(port)
+			if len(args) > 2 && args[2] == "untagged" {
+				_, err = vlanClient.PortAdd(context.Background(), &vlan.PortAddRequest{
+					Vid:    uint32(vid),
+					UtPbmp: pbmp,
+				})
+			} else {
+				_, err = vlanClient.PortAdd(context.Background(), &vlan.PortAddRequest{
+					Vid:  uint32(vid),
+					Pbmp: pbmp,
+				})
+			}
+			if err != nil {
+				log.Fatal(err)
+			}
+		},
+	}
+
+	removeCmd := &cobra.Command{
+		Use: "remove",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 2 {
+				log.Fatal("usage: vlan remove <vid> <port>")
+			}
+			vid, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			port, err := strconv.Atoi(args[1])
+			if err != nil {
+				log.Fatal(err)
+			}
+			pbmp := NewPBMP()
+			pbmp.AddPort(port)
+			_, err = vlanClient.PortRemove(context.Background(), &vlan.PortRemoveRequest{
+				Vid:  uint32(vid),
+				Pbmp: pbmp,
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+		},
+	}
 
 	listCmd := &cobra.Command{
 		Use: "list",
@@ -101,6 +154,6 @@ func NewVlanCmd() *cobra.Command {
 		},
 	}
 
-	vlanCmd.AddCommand(createCmd, destroyCmd, listCmd)
+	vlanCmd.AddCommand(createCmd, destroyCmd, listCmd, addCmd, removeCmd)
 	return vlanCmd
 }

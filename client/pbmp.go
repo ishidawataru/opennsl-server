@@ -30,6 +30,10 @@ var PBMP_WORD_MAX = ((PBMP_WIDTH + PBMP_WORD_WIDTH - 1) / PBMP_WORD_WIDTH)
 
 type PBMP []uint32
 
+func NewPBMP() PBMP {
+	return PBMP(make([]uint32, PBMP_WORD_MAX))
+}
+
 func (p PBMP) wordEntry(port int) uint32 {
 	return uint32(port / PBMP_WORD_WIDTH)
 }
