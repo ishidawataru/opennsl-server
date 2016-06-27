@@ -53,67 +53,67 @@ package port;
 //}
 //
 
-//enum InterfaceType {
-//    IF_TYPE_NOCXN = 0;
-//    IF_TYPE_NULL = 1;
-//    IF_TYPE_MII = 2;
-//    IF_TYPE_GMII = 3;
-//    IF_TYPE_SGMII = 4;
-//    IF_TYPE_TBI = 5;
-//    IF_TYPE_XGMII = 6;
-//    IF_TYPE_RGMII = 7;
-//    IF_TYPE_RvMII = 8;
-//    IF_TYPE_SFI = 9;
-//    IF_TYPE_XFI = 10;
-//    IF_TYPE_KR = 11;
-//    IF_TYPE_KR4 = 12;
-//    IF_TYPE_CR = 13;
-//    IF_TYPE_CR4 = 14;
-//    IF_TYPE_XLAUI = 15;
-//    IF_TYPE_SR = 16;
-//    IF_TYPE_RXAUI = 17;
-//    IF_TYPE_XAUI = 18;
-//    IF_TYPE_SPAUI = 19;
-//    IF_TYPE_QSGMII = 20;
-//    IF_TYPE_ILKN = 21;
-//    IF_TYPE_RCY = 22;
-//    IF_TYPE_FAT_PIPE = 23;
-//    IF_TYPE_CGMII = 24;
-//    IF_TYPE_CAUI = 25;
-//    IF_TYPE_LR = 26;
-//    IF_TYPE_LR4 = 27;
-//    IF_TYPE_SR4 = 28;
-//    IF_TYPE_KX = 29;
-//    IF_TYPE_ZR = 30;
-//    IF_TYPE_SR10 = 31;
-//    IF_TYPE_OTL = 32;
-//    IF_TYPE_CPU = 33;
-//    IF_TYPE_OLP = 34;
-//    IF_TYPE_OAMP = 35;
-//    IF_TYPE_ERP = 36;
-//    IF_TYPE_TM_INTERNAL_PKT = 37;
-//    IF_TYPE_SR2 = 38;
-//    IF_TYPE_KR2 = 39;
-//    IF_TYPE_CR2 = 40;
-//    IF_TYPE_XFI2 = 41;
-//    IF_TYPE_XLAUI2 = 42;
-//    IF_TYPE_CR10 = 43;
-//    IF_TYPE_KR10 = 44;
-//    IF_TYPE_LR10 = 45;
-//    IF_TYPE_ER = 46;
-//    IF_TYPE_ER2 = 47;
-//    IF_TYPE_ER4 = 48;
-//    IF_TYPE_CX = 49;
-//    IF_TYPE_CX2 = 50;
-//    IF_TYPE_CX4 = 51;
-//    IF_TYPE_CAUI_C2C = 52;
-//    IF_TYPE_CAUI_C2M = 53;
-//    IF_TYPE_VSR = 54;
-//    IF_TYPE_LR2 = 55;
-//    IF_TYPE_LRM = 56;
-//    IF_TYPE_XLPPI = 57;
-//    IF_TYPE_COUNT = 58; /* last, please */
-//}
+enum InterfaceType {
+    IF_TYPE_NOCXN = 0;
+    IF_TYPE_NULL = 1;
+    IF_TYPE_MII = 2;
+    IF_TYPE_GMII = 3;
+    IF_TYPE_SGMII = 4;
+    IF_TYPE_TBI = 5;
+    IF_TYPE_XGMII = 6;
+    IF_TYPE_RGMII = 7;
+    IF_TYPE_RvMII = 8;
+    IF_TYPE_SFI = 9;
+    IF_TYPE_XFI = 10;
+    IF_TYPE_KR = 11;
+    IF_TYPE_KR4 = 12;
+    IF_TYPE_CR = 13;
+    IF_TYPE_CR4 = 14;
+    IF_TYPE_XLAUI = 15;
+    IF_TYPE_SR = 16;
+    IF_TYPE_RXAUI = 17;
+    IF_TYPE_XAUI = 18;
+    IF_TYPE_SPAUI = 19;
+    IF_TYPE_QSGMII = 20;
+    IF_TYPE_ILKN = 21;
+    IF_TYPE_RCY = 22;
+    IF_TYPE_FAT_PIPE = 23;
+    IF_TYPE_CGMII = 24;
+    IF_TYPE_CAUI = 25;
+    IF_TYPE_LR = 26;
+    IF_TYPE_LR4 = 27;
+    IF_TYPE_SR4 = 28;
+    IF_TYPE_KX = 29;
+    IF_TYPE_ZR = 30;
+    IF_TYPE_SR10 = 31;
+    IF_TYPE_OTL = 32;
+    IF_TYPE_CPU = 33;
+    IF_TYPE_OLP = 34;
+    IF_TYPE_OAMP = 35;
+    IF_TYPE_ERP = 36;
+    IF_TYPE_TM_INTERNAL_PKT = 37;
+    IF_TYPE_SR2 = 38;
+    IF_TYPE_KR2 = 39;
+    IF_TYPE_CR2 = 40;
+    IF_TYPE_XFI2 = 41;
+    IF_TYPE_XLAUI2 = 42;
+    IF_TYPE_CR10 = 43;
+    IF_TYPE_KR10 = 44;
+    IF_TYPE_LR10 = 45;
+    IF_TYPE_ER = 46;
+    IF_TYPE_ER2 = 47;
+    IF_TYPE_ER4 = 48;
+    IF_TYPE_CX = 49;
+    IF_TYPE_CX2 = 50;
+    IF_TYPE_CX4 = 51;
+    IF_TYPE_CAUI_C2C = 52;
+    IF_TYPE_CAUI_C2M = 53;
+    IF_TYPE_VSR = 54;
+    IF_TYPE_LR2 = 55;
+    IF_TYPE_LRM = 56;
+    IF_TYPE_XLPPI = 57;
+    IF_TYPE_COUNT = 58; /* last, please */
+}
 
 //enum MDIXMode {
 //    MDIX_MODE_AUTO = 0;
@@ -359,4 +359,85 @@ message PortAbilityLocalGetRequest {
 
 message PortAbilityLocalGetResponse {
     Ability ability = 1;
+}
+
+message PortLinkscanSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    int64 linkscan = 3;
+}
+
+message PortLinkscanSetResponse {
+}
+
+message PortLinkscanGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortLinkscanGetResponse {
+    int64 linkscan = 1;
+}
+
+message PortAutonegSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    bool enable = 3;
+}
+
+message PortAutonegSetResponse {
+}
+
+message PortAutonegGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortAutonegGetResponse {
+    bool enabled = 1;
+}
+
+message PortSpeedMAXRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortSpeedMAXResponse {
+    int64 speed = 1;
+}
+
+message PortSpeedSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    int64 speed = 3;
+}
+
+message PortSpeedSetResponse {
+}
+
+message PortSpeedGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortSpeedGetResponse {
+    int64 speed = 1;
+}
+
+message PortInterfaceSetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+    InterfaceType type = 3;
+}
+
+message PortInterfaceSetResponse {
+}
+
+message PortInterfaceGetRequest {
+    int64 unit = 1;
+    int64 port = 2;
+}
+
+message PortInterfaceGetResponse {
+    InterfaceType type = 1;
 }

@@ -27,4 +27,14 @@ class PortServiceImpl final : public portservice::Port::Service {
         grpc::Status PortAbilityRemoteGet(grpc::ServerContext* context, const port::PortAbilityRemoteGetRequest* req, port::PortAbilityRemoteGetResponse* res);
         grpc::Status PortAbilityGet(grpc::ServerContext* context, const port::PortAbilityGetRequest* req, port::PortAbilityGetResponse* res);
         grpc::Status PortAbilityLocalGet(grpc::ServerContext* context, const port::PortAbilityLocalGetRequest* req, port::PortAbilityLocalGetResponse* res);
+
+        grpc::Status PortLinkscanSet(::grpc::ServerContext* context, const ::port::PortLinkscanSetRequest* req, ::port::PortLinkscanSetResponse* res);
+        grpc::Status PortLinkscanGet(::grpc::ServerContext* context, const ::port::PortLinkscanGetRequest* req, ::port::PortLinkscanGetResponse* res);
+        grpc::Status PortAutonegSet(::grpc::ServerContext* context, const ::port::PortAutonegSetRequest* req, ::port::PortAutonegSetResponse* res);
+        grpc::Status PortAutonegGet(::grpc::ServerContext* context, const ::port::PortAutonegGetRequest* req, ::port::PortAutonegGetResponse* res);
+        grpc::Status PortSpeedMAX(::grpc::ServerContext* context, const ::port::PortSpeedMAXRequest* req, ::port::PortSpeedMAXResponse* res);
+        grpc::Status PortSpeedSet(::grpc::ServerContext* context, const ::port::PortSpeedSetRequest* req, ::port::PortSpeedSetResponse* res);
+        grpc::Status PortSpeedGet(::grpc::ServerContext* context, const ::port::PortSpeedGetRequest* req, ::port::PortSpeedGetResponse* res);
+        grpc::Status PortInterfaceSet(::grpc::ServerContext* context, const ::port::PortInterfaceSetRequest* req, ::port::PortInterfaceSetResponse* res);
+        grpc::Status PortInterfaceGet(::grpc::ServerContext* context, const ::port::PortInterfaceGetRequest* req, ::port::PortInterfaceGetResponse* res);
 };

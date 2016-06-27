@@ -60,6 +60,23 @@ type PortClient interface {
 	PortAbilityRemoteGet(ctx context.Context, in *port.PortAbilityRemoteGetRequest, opts ...grpc.CallOption) (*port.PortAbilityRemoteGetResponse, error)
 	PortAbilityGet(ctx context.Context, in *port.PortAbilityGetRequest, opts ...grpc.CallOption) (*port.PortAbilityGetResponse, error)
 	PortAbilityLocalGet(ctx context.Context, in *port.PortAbilityLocalGetRequest, opts ...grpc.CallOption) (*port.PortAbilityLocalGetResponse, error)
+	//    rpc PortUntaggedVLANSet(port.PortUntaggedVLANSetRequest) returns (port.PortUntaggedVLANSetResponse) {}
+	//    rpc PortUntaggedVLANGet(port.PortUntaggedVLANGetRequest) returns (port.PortUntaggedVLANGetResponse) {}
+	//    rpc PortUntaggedPrioritySet(port.PortUntaggedPrioritySetRequest) returns (port.PortUntaggedPrioritySetResponse) {}
+	//    rpc PortUntaggedPriorityGet(port.PortUntaggedPriorityGetRequest) returns (port.PortUntaggedPriorityGetResponse) {}
+	//    rpc PortDSCPMapModeSet(port.PortDSCPMapModeSetRequest) returns (port.PortDSCPMapModeSetResponse) {}
+	//    rpc PortDSCPMapModeGet(port.PortDSCPMapModeGetRequest) returns (port.PortDSCPMapModeGetResponse) {}
+	//    rpc PortDSCPMapSet(port.PortDSCPMapSetRequest) returns (port.PortDSCPMapSetResponse) {}
+	//    rpc PortDSCPMapGet(port.PortDSCPMapGetRequest) returns (port.PortDSCPMapGetResponse) {}
+	PortLinkscanSet(ctx context.Context, in *port.PortLinkscanSetRequest, opts ...grpc.CallOption) (*port.PortLinkscanSetResponse, error)
+	PortLinkscanGet(ctx context.Context, in *port.PortLinkscanGetRequest, opts ...grpc.CallOption) (*port.PortLinkscanGetResponse, error)
+	PortAutonegSet(ctx context.Context, in *port.PortAutonegSetRequest, opts ...grpc.CallOption) (*port.PortAutonegSetResponse, error)
+	PortAutonegGet(ctx context.Context, in *port.PortAutonegGetRequest, opts ...grpc.CallOption) (*port.PortAutonegGetResponse, error)
+	PortSpeedMAX(ctx context.Context, in *port.PortSpeedMAXRequest, opts ...grpc.CallOption) (*port.PortSpeedMAXResponse, error)
+	PortSpeedSet(ctx context.Context, in *port.PortSpeedSetRequest, opts ...grpc.CallOption) (*port.PortSpeedSetResponse, error)
+	PortSpeedGet(ctx context.Context, in *port.PortSpeedGetRequest, opts ...grpc.CallOption) (*port.PortSpeedGetResponse, error)
+	PortInterfaceSet(ctx context.Context, in *port.PortInterfaceSetRequest, opts ...grpc.CallOption) (*port.PortInterfaceSetResponse, error)
+	PortInterfaceGet(ctx context.Context, in *port.PortInterfaceGetRequest, opts ...grpc.CallOption) (*port.PortInterfaceGetResponse, error)
 }
 
 type portClient struct {
@@ -214,6 +231,87 @@ func (c *portClient) PortAbilityLocalGet(ctx context.Context, in *port.PortAbili
 	return out, nil
 }
 
+func (c *portClient) PortLinkscanSet(ctx context.Context, in *port.PortLinkscanSetRequest, opts ...grpc.CallOption) (*port.PortLinkscanSetResponse, error) {
+	out := new(port.PortLinkscanSetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortLinkscanSet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortLinkscanGet(ctx context.Context, in *port.PortLinkscanGetRequest, opts ...grpc.CallOption) (*port.PortLinkscanGetResponse, error) {
+	out := new(port.PortLinkscanGetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortLinkscanGet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortAutonegSet(ctx context.Context, in *port.PortAutonegSetRequest, opts ...grpc.CallOption) (*port.PortAutonegSetResponse, error) {
+	out := new(port.PortAutonegSetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortAutonegSet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortAutonegGet(ctx context.Context, in *port.PortAutonegGetRequest, opts ...grpc.CallOption) (*port.PortAutonegGetResponse, error) {
+	out := new(port.PortAutonegGetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortAutonegGet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortSpeedMAX(ctx context.Context, in *port.PortSpeedMAXRequest, opts ...grpc.CallOption) (*port.PortSpeedMAXResponse, error) {
+	out := new(port.PortSpeedMAXResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortSpeedMAX", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortSpeedSet(ctx context.Context, in *port.PortSpeedSetRequest, opts ...grpc.CallOption) (*port.PortSpeedSetResponse, error) {
+	out := new(port.PortSpeedSetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortSpeedSet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortSpeedGet(ctx context.Context, in *port.PortSpeedGetRequest, opts ...grpc.CallOption) (*port.PortSpeedGetResponse, error) {
+	out := new(port.PortSpeedGetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortSpeedGet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortInterfaceSet(ctx context.Context, in *port.PortInterfaceSetRequest, opts ...grpc.CallOption) (*port.PortInterfaceSetResponse, error) {
+	out := new(port.PortInterfaceSetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortInterfaceSet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *portClient) PortInterfaceGet(ctx context.Context, in *port.PortInterfaceGetRequest, opts ...grpc.CallOption) (*port.PortInterfaceGetResponse, error) {
+	out := new(port.PortInterfaceGetResponse)
+	err := grpc.Invoke(ctx, "/portservice.Port/PortInterfaceGet", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Port service
 
 type PortServer interface {
@@ -233,6 +331,23 @@ type PortServer interface {
 	PortAbilityRemoteGet(context.Context, *port.PortAbilityRemoteGetRequest) (*port.PortAbilityRemoteGetResponse, error)
 	PortAbilityGet(context.Context, *port.PortAbilityGetRequest) (*port.PortAbilityGetResponse, error)
 	PortAbilityLocalGet(context.Context, *port.PortAbilityLocalGetRequest) (*port.PortAbilityLocalGetResponse, error)
+	//    rpc PortUntaggedVLANSet(port.PortUntaggedVLANSetRequest) returns (port.PortUntaggedVLANSetResponse) {}
+	//    rpc PortUntaggedVLANGet(port.PortUntaggedVLANGetRequest) returns (port.PortUntaggedVLANGetResponse) {}
+	//    rpc PortUntaggedPrioritySet(port.PortUntaggedPrioritySetRequest) returns (port.PortUntaggedPrioritySetResponse) {}
+	//    rpc PortUntaggedPriorityGet(port.PortUntaggedPriorityGetRequest) returns (port.PortUntaggedPriorityGetResponse) {}
+	//    rpc PortDSCPMapModeSet(port.PortDSCPMapModeSetRequest) returns (port.PortDSCPMapModeSetResponse) {}
+	//    rpc PortDSCPMapModeGet(port.PortDSCPMapModeGetRequest) returns (port.PortDSCPMapModeGetResponse) {}
+	//    rpc PortDSCPMapSet(port.PortDSCPMapSetRequest) returns (port.PortDSCPMapSetResponse) {}
+	//    rpc PortDSCPMapGet(port.PortDSCPMapGetRequest) returns (port.PortDSCPMapGetResponse) {}
+	PortLinkscanSet(context.Context, *port.PortLinkscanSetRequest) (*port.PortLinkscanSetResponse, error)
+	PortLinkscanGet(context.Context, *port.PortLinkscanGetRequest) (*port.PortLinkscanGetResponse, error)
+	PortAutonegSet(context.Context, *port.PortAutonegSetRequest) (*port.PortAutonegSetResponse, error)
+	PortAutonegGet(context.Context, *port.PortAutonegGetRequest) (*port.PortAutonegGetResponse, error)
+	PortSpeedMAX(context.Context, *port.PortSpeedMAXRequest) (*port.PortSpeedMAXResponse, error)
+	PortSpeedSet(context.Context, *port.PortSpeedSetRequest) (*port.PortSpeedSetResponse, error)
+	PortSpeedGet(context.Context, *port.PortSpeedGetRequest) (*port.PortSpeedGetResponse, error)
+	PortInterfaceSet(context.Context, *port.PortInterfaceSetRequest) (*port.PortInterfaceSetResponse, error)
+	PortInterfaceGet(context.Context, *port.PortInterfaceGetRequest) (*port.PortInterfaceGetResponse, error)
 }
 
 func RegisterPortServer(s *grpc.Server, srv PortServer) {
@@ -527,6 +642,168 @@ func _Port_PortAbilityLocalGet_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Port_PortLinkscanSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortLinkscanSetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortLinkscanSet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortLinkscanSet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortLinkscanSet(ctx, req.(*port.PortLinkscanSetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortLinkscanGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortLinkscanGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortLinkscanGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortLinkscanGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortLinkscanGet(ctx, req.(*port.PortLinkscanGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortAutonegSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortAutonegSetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortAutonegSet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortAutonegSet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortAutonegSet(ctx, req.(*port.PortAutonegSetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortAutonegGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortAutonegGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortAutonegGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortAutonegGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortAutonegGet(ctx, req.(*port.PortAutonegGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortSpeedMAX_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortSpeedMAXRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortSpeedMAX(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortSpeedMAX",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortSpeedMAX(ctx, req.(*port.PortSpeedMAXRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortSpeedSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortSpeedSetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortSpeedSet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortSpeedSet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortSpeedSet(ctx, req.(*port.PortSpeedSetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortSpeedGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortSpeedGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortSpeedGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortSpeedGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortSpeedGet(ctx, req.(*port.PortSpeedGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortInterfaceSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortInterfaceSetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortInterfaceSet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortInterfaceSet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortInterfaceSet(ctx, req.(*port.PortInterfaceSetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Port_PortInterfaceGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(port.PortInterfaceGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortServer).PortInterfaceGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/portservice.Port/PortInterfaceGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortServer).PortInterfaceGet(ctx, req.(*port.PortInterfaceGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Port_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "portservice.Port",
 	HandlerType: (*PortServer)(nil),
@@ -595,6 +872,42 @@ var _Port_serviceDesc = grpc.ServiceDesc{
 			MethodName: "PortAbilityLocalGet",
 			Handler:    _Port_PortAbilityLocalGet_Handler,
 		},
+		{
+			MethodName: "PortLinkscanSet",
+			Handler:    _Port_PortLinkscanSet_Handler,
+		},
+		{
+			MethodName: "PortLinkscanGet",
+			Handler:    _Port_PortLinkscanGet_Handler,
+		},
+		{
+			MethodName: "PortAutonegSet",
+			Handler:    _Port_PortAutonegSet_Handler,
+		},
+		{
+			MethodName: "PortAutonegGet",
+			Handler:    _Port_PortAutonegGet_Handler,
+		},
+		{
+			MethodName: "PortSpeedMAX",
+			Handler:    _Port_PortSpeedMAX_Handler,
+		},
+		{
+			MethodName: "PortSpeedSet",
+			Handler:    _Port_PortSpeedSet_Handler,
+		},
+		{
+			MethodName: "PortSpeedGet",
+			Handler:    _Port_PortSpeedGet_Handler,
+		},
+		{
+			MethodName: "PortInterfaceSet",
+			Handler:    _Port_PortInterfaceSet_Handler,
+		},
+		{
+			MethodName: "PortInterfaceGet",
+			Handler:    _Port_PortInterfaceGet_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: fileDescriptor0,
@@ -603,28 +916,36 @@ var _Port_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("portservice.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 362 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x84, 0x94, 0x5d, 0x4b, 0xf3, 0x30,
-	0x14, 0xc7, 0x9f, 0x8b, 0x3d, 0x83, 0x9d, 0xa1, 0xb0, 0x6c, 0xf8, 0xb2, 0x79, 0xe1, 0xf6, 0x01,
-	0x26, 0x4c, 0xbc, 0x15, 0x64, 0x93, 0xa0, 0xa8, 0x8c, 0x79, 0x2b, 0x48, 0x3b, 0x8f, 0x5a, 0xe8,
-	0x9a, 0x9a, 0xc6, 0x81, 0x5f, 0xcd, 0x4f, 0xe7, 0x9a, 0x36, 0x69, 0x9a, 0xc6, 0x78, 0xb7, 0xf3,
-	0x7f, 0xf9, 0xe5, 0x24, 0x83, 0x42, 0x2f, 0x65, 0x5c, 0x64, 0xc8, 0xb7, 0xd1, 0x1a, 0xa7, 0x29,
-	0x67, 0x82, 0x91, 0xae, 0x21, 0x0d, 0x21, 0x1f, 0x0a, 0x63, 0xf6, 0xdd, 0x81, 0xd6, 0x72, 0x37,
-	0x92, 0x33, 0x68, 0xdd, 0x24, 0x91, 0x20, 0xbd, 0xa9, 0x74, 0xf3, 0xdf, 0x2b, 0xfc, 0xf8, 0xc4,
-	0x4c, 0x0c, 0x89, 0x29, 0x65, 0x29, 0x4b, 0x32, 0x9c, 0xfc, 0x23, 0x33, 0xf8, 0x3f, 0x8f, 0x31,
-	0xe0, 0xa4, 0xb4, 0xe5, 0xa0, 0x2a, 0xfd, 0x9a, 0x66, 0x76, 0x96, 0x9c, 0x85, 0xa8, 0x3a, 0x72,
-	0xb0, 0x3a, 0xa5, 0xa6, 0x3b, 0x17, 0xd0, 0x5e, 0xa0, 0x08, 0xd6, 0xef, 0xa4, 0x0c, 0x14, 0x93,
-	0x6a, 0x0d, 0xea, 0xa2, 0xae, 0x5d, 0x42, 0x87, 0xa2, 0x98, 0xb3, 0xe4, 0x35, 0x7a, 0x23, 0x07,
-	0x45, 0x48, 0x0b, 0xaa, 0x7c, 0xd8, 0xd0, 0x75, 0x7f, 0x01, 0xdd, 0x9d, 0x9c, 0x3f, 0xcd, 0x43,
-	0xb0, 0x41, 0x72, 0xa4, 0x93, 0x4a, 0x52, 0x8c, 0x63, 0x87, 0xa3, 0x29, 0xb7, 0xb0, 0x97, 0xab,
-	0xd7, 0x49, 0x10, 0xc6, 0xf8, 0x88, 0x82, 0x0c, 0xcb, 0x4b, 0x9a, 0xa2, 0x22, 0x8d, 0x9c, 0x9e,
-	0x9b, 0x45, 0x5d, 0x2c, 0xea, 0x61, 0x51, 0x17, 0xeb, 0xea, 0x65, 0x8b, 0x5c, 0x58, 0x7b, 0x69,
-	0xd1, 0xc1, 0x32, 0x3c, 0x37, 0x8b, 0xba, 0x58, 0xd4, 0xc3, 0xaa, 0xef, 0xf5, 0x0c, 0x03, 0x69,
-	0x85, 0x51, 0x1c, 0x89, 0xaf, 0x6a, 0xbd, 0xb1, 0x51, 0xb3, 0x3c, 0x45, 0x9e, 0xf8, 0x22, 0xde,
-	0x03, 0xa8, 0xe7, 0x00, 0xfa, 0xf7, 0x01, 0xf5, 0x1b, 0x3c, 0x41, 0xbf, 0xba, 0xdc, 0x0a, 0x37,
-	0x4c, 0xc8, 0xff, 0xea, 0xd4, 0xbe, 0xb7, 0xb6, 0x14, 0x7e, 0xec, 0x49, 0xfc, 0xb2, 0x7e, 0x85,
-	0x6f, 0xae, 0xdf, 0xe0, 0x4f, 0x7c, 0x11, 0x7d, 0xc0, 0x3d, 0xec, 0x1b, 0x89, 0x1c, 0x3d, 0x6a,
-	0xf4, 0x0c, 0xe8, 0x89, 0xdb, 0x6c, 0xbc, 0x46, 0xe1, 0xdd, 0xb1, 0x75, 0x10, 0xdb, 0xaf, 0x51,
-	0xb7, 0x5c, 0xaf, 0x61, 0x27, 0x14, 0x3d, 0x6c, 0xcb, 0x6f, 0xd8, 0xf9, 0x4f, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0xef, 0x24, 0x41, 0x22, 0xf1, 0x04, 0x00, 0x00,
+	// 486 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x84, 0x95, 0xd1, 0x4f, 0xd5, 0x30,
+	0x14, 0xc6, 0x7d, 0x40, 0x12, 0x8b, 0x8a, 0x14, 0xa2, 0x32, 0xd4, 0xc8, 0xfd, 0x03, 0x30, 0xc1,
+	0xf8, 0x6a, 0x42, 0xc0, 0x9c, 0x60, 0xc0, 0xdc, 0x70, 0x5f, 0x7c, 0x30, 0x31, 0xdb, 0x38, 0xe0,
+	0xe2, 0x68, 0xe7, 0x56, 0x48, 0x7c, 0xf4, 0x3f, 0x97, 0x6e, 0x6b, 0xd7, 0x76, 0xa7, 0xe5, 0xed,
+	0xf6, 0xfb, 0xce, 0xf7, 0xeb, 0x39, 0xa7, 0x37, 0xf7, 0xb2, 0xad, 0x46, 0xb6, 0xaa, 0xc3, 0xf6,
+	0xae, 0x2a, 0xf1, 0xa0, 0x69, 0xa5, 0x92, 0x7c, 0xc3, 0x91, 0x32, 0xa6, 0x0f, 0x83, 0x71, 0xf8,
+	0x6f, 0x93, 0xad, 0x2d, 0xef, 0x8f, 0xfc, 0x03, 0x5b, 0x3b, 0x15, 0x95, 0xe2, 0x5b, 0x07, 0xbd,
+	0xab, 0x3f, 0x5f, 0xe0, 0x9f, 0x5b, 0xec, 0x54, 0xc6, 0x5d, 0xa9, 0x6b, 0xa4, 0xe8, 0x70, 0xf1,
+	0x88, 0x1f, 0xb2, 0xc7, 0xc7, 0x35, 0xe6, 0x2d, 0x1f, 0xed, 0xfe, 0x60, 0x22, 0xdb, 0x9e, 0xe6,
+	0x66, 0x96, 0xad, 0x2c, 0xd0, 0x64, 0xfa, 0x43, 0x90, 0x19, 0x35, 0x9b, 0xf9, 0xc4, 0xd6, 0x4f,
+	0x50, 0xe5, 0xe5, 0x2f, 0x3e, 0x16, 0x0c, 0x27, 0x93, 0xda, 0xf1, 0x45, 0x1b, 0xfb, 0xcc, 0x9e,
+	0x00, 0xaa, 0x63, 0x29, 0xae, 0xaa, 0x6b, 0xfe, 0x72, 0x28, 0xb2, 0x82, 0x09, 0xbf, 0x9a, 0xe9,
+	0x36, 0x7f, 0xc2, 0x36, 0xee, 0x65, 0xbd, 0x9a, 0x6f, 0xf9, 0x0d, 0xf2, 0xd7, 0xb6, 0xd2, 0x48,
+	0x86, 0xb1, 0x4b, 0x38, 0x96, 0xf2, 0x95, 0x3d, 0xd3, 0xea, 0x17, 0x91, 0x17, 0x35, 0xae, 0x50,
+	0xf1, 0x6c, 0x1c, 0xd2, 0x15, 0x0d, 0x69, 0x8f, 0xf4, 0x68, 0x16, 0x50, 0x2c, 0x48, 0xb0, 0x80,
+	0x62, 0x1d, 0x5d, 0xde, 0x61, 0xab, 0x82, 0xbe, 0xac, 0x48, 0xb0, 0x1c, 0x8f, 0x66, 0x01, 0xc5,
+	0x82, 0x04, 0xcb, 0xef, 0xeb, 0x27, 0xdb, 0xe9, 0xad, 0xa2, 0xaa, 0x2b, 0xf5, 0x77, 0x6a, 0x6f,
+	0xdf, 0x89, 0x05, 0x9e, 0x21, 0x2f, 0x52, 0x25, 0xc9, 0x0b, 0x20, 0x71, 0x01, 0x3c, 0x7c, 0x81,
+	0x3f, 0xc1, 0x0f, 0xb6, 0x3d, 0x0d, 0x77, 0x81, 0x37, 0x52, 0xf5, 0x6f, 0xf5, 0x3e, 0x9c, 0xdb,
+	0x5a, 0x06, 0xbf, 0x9f, 0xa8, 0x88, 0xb4, 0x3f, 0xe1, 0xe7, 0xed, 0xcf, 0xf8, 0x8b, 0x54, 0x89,
+	0xbd, 0xe0, 0x9c, 0x3d, 0x77, 0x2a, 0x34, 0x7a, 0x6f, 0x96, 0x73, 0xa0, 0x6f, 0x68, 0x73, 0xb6,
+	0x8d, 0xc1, 0x3b, 0x93, 0x65, 0x5e, 0x87, 0xdb, 0xf0, 0x2d, 0x6a, 0x1b, 0x61, 0x85, 0xa5, 0x2f,
+	0xd9, 0xa6, 0x2e, 0x38, 0xab, 0xc4, 0xef, 0xae, 0xcc, 0x85, 0xfe, 0xa2, 0x38, 0x0d, 0x39, 0xb2,
+	0xa1, 0xbe, 0x8d, 0xb8, 0x31, 0x22, 0xd0, 0x44, 0x48, 0x12, 0xe9, 0x85, 0xde, 0x2a, 0x29, 0xf0,
+	0x7a, 0x15, 0x2c, 0xd4, 0xaa, 0xd4, 0x42, 0x1d, 0x33, 0x82, 0x03, 0x12, 0x07, 0x29, 0x9c, 0xdf,
+	0x1d, 0xb0, 0xa7, 0xda, 0x5b, 0x35, 0x88, 0x97, 0xe7, 0x47, 0xdf, 0xf9, 0xee, 0x54, 0x6f, 0x34,
+	0x83, 0xca, 0x28, 0x8b, 0x04, 0xe9, 0x21, 0x43, 0x90, 0x33, 0x62, 0x46, 0x59, 0x24, 0x08, 0x08,
+	0x10, 0xc4, 0x41, 0xfe, 0x68, 0x2b, 0xf6, 0x42, 0x3b, 0xa7, 0x42, 0x61, 0x7b, 0x95, 0x97, 0xfd,
+	0xaf, 0xaf, 0xf3, 0x5a, 0xae, 0x6e, 0x80, 0xef, 0x62, 0x76, 0x14, 0x0a, 0x11, 0x28, 0xa4, 0xa1,
+	0x5e, 0xa7, 0xc5, 0x7a, 0xff, 0x57, 0xfc, 0xf1, 0x7f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x69, 0x8e,
+	0x73, 0x5b, 0xb8, 0x07, 0x00, 0x00,
 }

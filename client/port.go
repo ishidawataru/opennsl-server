@@ -754,7 +754,154 @@ func NewPortCmd() *cobra.Command {
 		},
 	}
 
+	linkscan := &cobra.Command{
+		Use: "linkscan",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port linkscan <port> [<interval>]")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) == 1 {
+				res, err := portClient.PortLinkscanGet(context.Background(), &port.PortLinkscanGetRequest{
+					Port: int64(i),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("res: ", res)
+			} else {
+				linkscan, err := strconv.Atoi(args[1])
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = portClient.PortLinkscanSet(context.Background(), &port.PortLinkscanSetRequest{
+					Port:     int64(i),
+					Linkscan: int64(linkscan),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		},
+	}
+
+	autoneg := &cobra.Command{
+		Use: "autoneg",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port autoneg <port> [ enable | disable ]")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) == 1 {
+				res, err := portClient.PortAutonegGet(context.Background(), &port.PortAutonegGetRequest{
+					Port: int64(i),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("res: ", res)
+			} else if args[1] == "enable" || args[1] == "disable" {
+				enable := true
+				if args[1] == "disable" {
+					enable = false
+				}
+				_, err = portClient.PortAutonegSet(context.Background(), &port.PortAutonegSetRequest{
+					Port:   int64(i),
+					Enable: enable,
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+				log.Fatal("usage: port autoneg <port> [ enable | disable ]")
+			}
+		},
+	}
+
+	speed := &cobra.Command{
+		Use: "speed",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port speed <port> [ max | <speed> ]")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) == 1 {
+				res, err := portClient.PortSpeedGet(context.Background(), &port.PortSpeedGetRequest{
+					Port: int64(i),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("res: ", res)
+			} else if args[1] == "max" {
+				res, err := portClient.PortSpeedMAX(context.Background(), &port.PortSpeedMAXRequest{
+					Port: int64(i),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("res: ", res)
+			} else {
+				speed, err := strconv.Atoi(args[1])
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = portClient.PortSpeedSet(context.Background(), &port.PortSpeedSetRequest{
+					Port:  int64(i),
+					Speed: int64(speed),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		},
+	}
+
+	intf := &cobra.Command{
+		Use: "interface",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 1 {
+				log.Fatal("usage: port interface <port> [<type>]")
+			}
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+			if len(args) == 1 {
+				res, err := portClient.PortInterfaceGet(context.Background(), &port.PortInterfaceGetRequest{
+					Port: int64(i),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("res: ", res)
+			} else {
+				typ, err := strconv.Atoi(args[1])
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = portClient.PortInterfaceSet(context.Background(), &port.PortInterfaceSetRequest{
+					Port: int64(i),
+					Type: port.InterfaceType(typ),
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+
+		},
+	}
+
 	ability.AddCommand(abilityAdvert, abilityRemote, abilityLocal)
-	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled, advert, ability)
+	portCmd.AddCommand(initCmd, clearCmd, getConfig, getPortName, enable, disable, enabled, advert, ability, linkscan, autoneg, speed, intf)
 	return portCmd
 }
