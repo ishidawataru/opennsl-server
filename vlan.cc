@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include <grpc++/server.h>
 
 #include "vlanservice.grpc.pb.h"
@@ -20,7 +22,9 @@ grpc::Status VLANServiceImpl::Create(::grpc::ServerContext* context, const ::vla
 grpc::Status VLANServiceImpl::Destroy(::grpc::ServerContext* context, const ::vlan::DestroyRequest* req, ::vlan::DestroyResponse* res){
     auto ret = opennsl_vlan_destroy(req->unit(), req->vid());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_destroy() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_destroy() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -28,7 +32,9 @@ grpc::Status VLANServiceImpl::Destroy(::grpc::ServerContext* context, const ::vl
 grpc::Status VLANServiceImpl::DestroyAll(::grpc::ServerContext* context, const ::vlan::DestroyAllRequest* req, ::vlan::DestroyAllResponse* res){
     auto ret = opennsl_vlan_destroy_all(req->unit());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_destroy_all() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_destroy_all() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -38,7 +44,9 @@ grpc::Status VLANServiceImpl::PortAdd(::grpc::ServerContext* context, const ::vl
     auto ubmp = get_port_config(req->ut_pbmp());
     auto ret = opennsl_vlan_port_add(req->unit(), req->vid(), pbmp, ubmp);
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_port_add() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_port_add() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -47,7 +55,9 @@ grpc::Status VLANServiceImpl::PortRemove(::grpc::ServerContext* context, const :
     auto pbmp = get_port_config(req->pbmp());
     auto ret = opennsl_vlan_port_remove(req->unit(), req->vid(), pbmp);
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_port_remove() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_port_remove() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -55,7 +65,9 @@ grpc::Status VLANServiceImpl::PortRemove(::grpc::ServerContext* context, const :
 grpc::Status VLANServiceImpl::GPortAdd(::grpc::ServerContext* context, const ::vlan::GPortAddRequest* req, ::vlan::GPortAddResponse* res){
     auto ret = opennsl_vlan_gport_add(req->unit(), req->vid(), req->port(), req->flags());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_gport_add() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_gport_add() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -63,7 +75,9 @@ grpc::Status VLANServiceImpl::GPortAdd(::grpc::ServerContext* context, const ::v
 grpc::Status VLANServiceImpl::GPortDelete(::grpc::ServerContext* context, const ::vlan::GPortDeleteRequest* req, ::vlan::GPortDeleteResponse* res){
     auto ret = opennsl_vlan_gport_delete(req->unit(), req->vid(), req->port());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_gport_delete() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_gport_delete() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -71,7 +85,9 @@ grpc::Status VLANServiceImpl::GPortDelete(::grpc::ServerContext* context, const 
 grpc::Status VLANServiceImpl::GPortDeleteAll(::grpc::ServerContext* context, const ::vlan::GPortDeleteAllRequest* req, ::vlan::GPortDeleteAllResponse* res){
     auto ret = opennsl_vlan_gport_delete_all(req->unit(), req->vid());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_gport_delete_all() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_gport_delete_all() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
@@ -81,7 +97,9 @@ grpc::Status VLANServiceImpl::List(::grpc::ServerContext* context, const ::vlan:
     int count;
     auto ret = opennsl_vlan_list(req->unit(), &p, &count);
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_list() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_list() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     for (auto i = 0 ; i < count; i++) {
         res->add_list();
@@ -101,7 +119,9 @@ grpc::Status VLANServiceImpl::DefaultGet(::grpc::ServerContext* context, const :
     opennsl_vlan_t vid;
     auto ret = opennsl_vlan_default_get(req->unit(), &vid);
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_default_get() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_default_get() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     res->set_vid(vid);
     return grpc::Status::OK;
@@ -110,7 +130,9 @@ grpc::Status VLANServiceImpl::DefaultGet(::grpc::ServerContext* context, const :
 grpc::Status VLANServiceImpl::DefaultSet(::grpc::ServerContext* context, const ::vlan::DefaultSetRequest* req, ::vlan::DefaultSetResponse* res){
     auto ret = opennsl_vlan_default_set(req->unit(), req->vid());
     if (ret != OPENNSL_E_NONE) {
-        return grpc::Status(grpc::UNAVAILABLE, "opennsl_vlan_default_set() failed");
+        std::ostringstream err;
+        err << "opennsl_vlan_default_set() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
     return grpc::Status::OK;
 }
