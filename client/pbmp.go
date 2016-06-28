@@ -43,7 +43,7 @@ func (p PBMP) wordBit(port int) uint32 {
 }
 
 func (p PBMP) IsMember(port int) bool {
-	return (p.wordEntry(port) & p.wordBit(port)) > 0
+	return (p[p.wordEntry(port)] & p.wordBit(port)) > 0
 }
 
 func (p PBMP) Clear() {
@@ -81,4 +81,14 @@ func (p PBMP) String() string {
 		ss = append(ss, reverse(fmt.Sprintf("%032b", b)))
 	}
 	return strings.Join(ss, "")
+}
+
+func (p PBMP) Ports() []int {
+	ports := make([]int, 0, PBMP_PORT_MAX/2)
+	for i := 0; i < PBMP_PORT_MAX; i++ {
+		if p.IsMember(i) {
+			ports = append(ports, i)
+		}
+	}
+	return ports
 }

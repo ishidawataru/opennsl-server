@@ -16,9 +16,13 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/ishidawataru/opennsl-server/client/proto/port"
+	"github.com/ishidawataru/opennsl-server/client/proto/portservice"
 	"github.com/ishidawataru/opennsl-server/client/proto/vlan"
 	"github.com/ishidawataru/opennsl-server/client/proto/vlanservice"
 	"github.com/spf13/cobra"
@@ -98,15 +102,17 @@ func NewVlanCmd() *cobra.Command {
 			}
 			pbmp := NewPBMP()
 			pbmp.AddPort(port)
-			if len(args) > 2 && args[2] == "untagged" {
+			if len(args) > 2 && args[2] == "tagged" {
 				_, err = vlanClient.PortAdd(context.Background(), &vlan.PortAddRequest{
 					Vid:    uint32(vid),
-					UtPbmp: pbmp,
+					Pbmp:   pbmp,
+					UtPbmp: NewPBMP(),
 				})
 			} else {
 				_, err = vlanClient.PortAdd(context.Background(), &vlan.PortAddRequest{
-					Vid:  uint32(vid),
-					Pbmp: pbmp,
+					Vid:    uint32(vid),
+					Pbmp:   pbmp,
+					UtPbmp: pbmp,
 				})
 			}
 			if err != nil {
@@ -148,8 +154,36 @@ func NewVlanCmd() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
+			conn, err := connGrpc()
+			if err != nil {
+				log.Fatal(err)
+			}
+			portClient := portservice.NewPortClient(conn)
 			for _, data := range res.List {
-				log.Info("response:", data)
+				ports := PBMP(data.Pbmp).Ports()
+				utports := PBMP(data.UtPbmp).Ports()
+				ss := make([]string, 0, len(ports))
+				for _, i := range ports {
+					res, err := portClient.GetPortName(context.Background(), &port.GetPortNameRequest{
+						Port: int64(i),
+					})
+					if err != nil {
+						log.Fatal(err)
+					}
+					untagged := false
+					for _, j := range utports {
+						if i == j {
+							untagged = true
+							break
+						}
+					}
+					name := res.Name
+					if untagged {
+						name = fmt.Sprintf("%s(untagged)", name)
+					}
+					ss = append(ss, name)
+				}
+				log.Infof("VID: %d, Ports: %s", data.Vid, strings.Join(ss, ", "))
 			}
 		},
 	}
