@@ -1,5 +1,6 @@
 #include <cstring>
 #include <sstream>
+#include <future>
 
 #include <grpc++/server.h>
 
@@ -82,5 +83,57 @@ grpc::Status L2ServiceImpl::List(grpc::ServerContext* context, const l2::ListReq
         err << "opennsl_l2_traverse() failed " << opennsl_errmsg(ret);
         return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
+    return grpc::Status::OK;
+}
+
+void L2ServiceImpl::handle_info(const l2_info& info) {
+    grpc::WriteOptions option;
+    l2::MonitorResponse res;
+    res.set_unit(info.unit);
+    set_protobuf_l2_address(res.mutable_address(), *info.l2addr);
+    res.set_operation(static_cast<l2::L2Operation>(info.operation));
+    std::vector<l2_request*> _reqs;
+    std::unique_lock<std::mutex> mlock(mutex_);
+    for ( auto req : reqs ) {
+        if ( req->writer->Write(res, option) ) {
+            _reqs.push_back(req);
+        } else {
+            req->q.push(true);
+        }
+    }
+    reqs = _reqs;
+}
+
+void L2ServiceImpl::loop() {
+    while (true) {
+        handle_info(info_q->pop());
+    }
+}
+
+void l2_addr_handler(int unit, opennsl_l2_addr_t *l2addr, int op, void *userdata) {
+    auto q = static_cast<Queue<l2_info>*>(userdata);
+    l2_info i{unit, l2addr, op};
+    q->push(i);
+}
+
+grpc::Status L2ServiceImpl::Monitor(grpc::ServerContext* context, const l2::MonitorRequest* req, grpc::ServerWriter< l2::MonitorResponse>* writer){
+    if ( !monitoring ) {
+        th = new std::thread(&L2ServiceImpl::loop, this);
+        auto ret = opennsl_l2_addr_register(req->unit(), l2_addr_handler, static_cast<void*>(info_q));
+        if ( ret != OPENNSL_E_NONE ) {
+            return grpc::Status(grpc::UNAVAILABLE, "opennsl_l2_addr_register() failed");
+        }
+        monitoring = true;
+    }
+    auto request = new l2_request();
+    request->writer = writer;
+
+    {
+        std::unique_lock<std::mutex> mlock(mutex_);
+        reqs.push_back(request);
+    } // unlock mutex
+
+    // wait
+    request->q.pop();
     return grpc::Status::OK;
 }

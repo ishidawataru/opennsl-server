@@ -16,6 +16,7 @@
 package main
 
 import (
+	"io"
 	"net"
 	"strconv"
 
@@ -142,6 +143,25 @@ func NewL2Cmd() *cobra.Command {
 		},
 	}
 
-	l2Cmd.AddCommand(list, add, delete, get)
+	monitor := &cobra.Command{
+		Use: "monitor",
+		Run: func(cmd *cobra.Command, args []string) {
+			stream, err := l2Client.Monitor(context.Background(), &l2.MonitorRequest{})
+			if err != nil {
+				log.Fatal(err)
+			}
+			for {
+				res, err := stream.Recv()
+				if err == io.EOF {
+					return
+				} else if err != nil {
+					log.Fatal(err)
+				}
+				log.Info("response:", res)
+			}
+		},
+	}
+
+	l2Cmd.AddCommand(list, add, delete, get, monitor)
 	return l2Cmd
 }
