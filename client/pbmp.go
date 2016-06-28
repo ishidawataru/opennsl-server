@@ -17,6 +17,8 @@ package main
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -91,4 +93,40 @@ func (p PBMP) Ports() []int {
 		}
 	}
 	return ports
+}
+
+func ParsePBMP(str string) (PBMP, error) {
+	exp := regexp.MustCompile("^\\d+")
+	pbmp := NewPBMP()
+	dash := false
+	fst := 0
+	for len(str) > 0 {
+		switch {
+		case str[0] == ',':
+			str = str[1:]
+		case str[0] == '-':
+			dash = true
+			str = str[1:]
+		default:
+			r := exp.FindStringIndex(str)
+			if len(r) == 0 {
+				return nil, fmt.Errorf("invalid format")
+			}
+			n, _ := strconv.Atoi(str[r[0]:r[1]])
+			if dash {
+				if fst >= n {
+					return nil, fmt.Errorf("invalid format")
+				}
+				for i := fst + 1; i <= n; i++ {
+					pbmp.AddPort(i)
+				}
+				dash = false
+			} else {
+				pbmp.AddPort(n)
+				fst = n
+			}
+			str = str[r[1]:]
+		}
+	}
+	return pbmp, nil
 }
