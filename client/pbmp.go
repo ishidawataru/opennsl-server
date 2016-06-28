@@ -67,10 +67,18 @@ func (p PBMP) FilpPort(port int) {
 	p[p.wordEntry(port)] ^= p.wordBit(port)
 }
 
+func reverse(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
 func (p PBMP) String() string {
 	ss := make([]string, 0, len(p))
 	for _, b := range p {
-		ss = append(ss, fmt.Sprintf("%032b", b))
+		ss = append(ss, reverse(fmt.Sprintf("%032b", b)))
 	}
 	return strings.Join(ss, "")
 }
