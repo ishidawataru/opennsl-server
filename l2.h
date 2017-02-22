@@ -4,7 +4,13 @@
 #include <grpc++/server.h>
 
 #include "l2service.grpc.pb.h"
+
+#ifndef __queue_h_
+#define __queue_h_
+
 #include "queue.h"
+
+#endif
 
 extern "C" {
 #include "opennsl/l2.h"

@@ -4,7 +4,13 @@
 #include <grpc++/server.h>
 
 #include "linkservice.grpc.pb.h"
+
+#ifndef __queue_h_
+#define __queue_h_
+
 #include "queue.h"
+
+#endif
 
 extern "C" {
 #include "opennsl/port.h"
