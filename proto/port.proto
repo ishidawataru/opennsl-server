@@ -145,7 +145,6 @@ message Ability {
     uint64 loopback = 6;
     uint64 flags = 7;
     uint64 eee = 8;
-    uint64 fcmap = 9;
 //    encap = 10;
     uint64 fec = 11;
 }

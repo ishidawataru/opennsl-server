@@ -169,7 +169,6 @@ opennsl_port_ability_t get_ability(const port::Ability& src) {
     dst.loopback = src.loopback();
     dst.flags = src.flags();
     dst.eee = src.eee();
-    dst.fcmap = src.fcmap();
     dst.fec = src.fec();
     return dst;
 }
@@ -183,7 +182,6 @@ void set_protobuf_ability(port::Ability* dst, const opennsl_port_ability_t& src)
     dst->set_loopback(src.loopback);
     dst->set_flags(src.flags);
     dst->set_eee(src.eee);
-    dst->set_fcmap(src.fcmap);
     dst->set_fec(src.fec);
 }
 

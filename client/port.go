@@ -467,11 +467,6 @@ func FormatPortAbility(c *port.Ability) string {
 		s.WriteString(Ability(c.Eee).String())
 		s.WriteString("\n")
 	}
-	if c.Fcmap > 0 {
-		s.WriteString("fcmap: ")
-		s.WriteString(Ability(c.Fcmap).String())
-		s.WriteString("\n")
-	}
 	if c.Fec > 0 {
 		s.WriteString("fec: ")
 		s.WriteString(FECType(c.Fec).String())
