@@ -1,9 +1,9 @@
 all: opennsl-server
 
 CXX = g++
-CPPFLAGS += -I/usr/local/include -I${HOME}/.linuxbrew/include -I${HOME}/.ghq/github.com/Broadcom-Switch/OpenNSL/include -I. -pthread
+CPPFLAGS += -I/usr/local/include -I. -pthread
 CXXFLAGS += -std=c++11
-LDFLAGS += -L/usr/local/lib -L${HOME}/.linuxbrew/lib -L. `pkg-config --libs grpc++` -lprotobuf -lpthread -ldl -lopennsl
+LDFLAGS += -L/usr/local/lib -L. `pkg-config --libs grpc++` -lprotobuf -lpthread -ldl -lopennsl
 PROTOC = protoc
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
 GRPC_CPP_PLUGIN_PATH ?= `which $(GRPC_CPP_PLUGIN)`
