@@ -20,8 +20,8 @@ package knetservice;
 import "knet.proto";
 
 service KNET {
-    rpc InitKNET(KNET.InitRequest) returns (KNET.InitResponse) {}
-    rpc AddKNET(KNET.AddRequest) returns (KNET.AddResponse) {}
-    rpc DeleteKNET(l2.DeleteAddressRequest) returns (KNET.DeleteResponse) {}
-    rpc ListKNET(KNET.ListRequest) returns (KNET.ListResponse) {}
+    rpc InitKNET(knet.InitRequest) returns (knet.InitResponse) {}
+    rpc AddKNET(knet.AddRequest) returns (knet.AddResponse) {}
+    rpc DeleteKNET(knet.DeleteAddressRequest) returns (knet.DeleteResponse) {}
+    rpc ListKNET(knet.ListRequest) returns (knet.ListResponse) {}
 }
