@@ -22,8 +22,8 @@ import (
 
 	"bytes"
 	log "github.com/Sirupsen/logrus"
-	"github.com/ishidawataru/opennsl-server/client/proto/port"
-	"github.com/ishidawataru/opennsl-server/client/proto/portservice"
+	"github.com/hydratim/opennsl-man/client/proto/port"
+	"github.com/hydratim/opennsl-man/client/proto/portservice"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

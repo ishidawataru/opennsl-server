@@ -20,8 +20,8 @@ import (
 	"strconv"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ishidawataru/opennsl-server/client/proto/link"
-	"github.com/ishidawataru/opennsl-server/client/proto/linkservice"
+	"github.com/hydratim/opennsl-man/client/proto/link"
+	"github.com/hydratim/opennsl-man/client/proto/linkservice"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

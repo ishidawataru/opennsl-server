@@ -21,10 +21,10 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ishidawataru/opennsl-server/client/proto/port"
-	"github.com/ishidawataru/opennsl-server/client/proto/portservice"
-	"github.com/ishidawataru/opennsl-server/client/proto/vlan"
-	"github.com/ishidawataru/opennsl-server/client/proto/vlanservice"
+	"github.com/hydratim/opennsl-man/client/proto/port"
+	"github.com/hydratim/opennsl-man/client/proto/portservice"
+	"github.com/hydratim/opennsl-man/client/proto/vlan"
+	"github.com/hydratim/opennsl-man/client/proto/vlanservice"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

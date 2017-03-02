@@ -19,8 +19,8 @@ import (
 	"strconv"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ishidawataru/opennsl-server/client/proto/stat"
-	"github.com/ishidawataru/opennsl-server/client/proto/statservice"
+	"github.com/hydratim/opennsl-man/client/proto/stat"
+	"github.com/hydratim/opennsl-man/client/proto/statservice"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

@@ -17,8 +17,8 @@ package main
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/ishidawataru/opennsl-server/client/proto/driver"
-	"github.com/ishidawataru/opennsl-server/client/proto/driverservice"
+	"github.com/hydratim/opennsl-man/client/proto/driver"
+	"github.com/hydratim/opennsl-man/client/proto/driverservice"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )

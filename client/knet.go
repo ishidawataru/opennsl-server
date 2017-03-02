@@ -21,8 +21,8 @@ import (
 	"strconv"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ishidawataru/opennsl-server/client/proto/knet"
-	"github.com/ishidawataru/opennsl-server/client/proto/knetservice"
+	"github.com/hydratim/opennsl-man/client/proto/knet"
+	"github.com/hydratim/opennsl-man/client/proto/knetservice"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
 )
@@ -44,7 +44,7 @@ func NewKNETCmd() *cobra.Command {
 	initCmd := &cobra.Command{
 		Use: "init",
 		Run: func(cmd *cobra.Command, args []string) {
-			_, err := knetClient.Init(context.Background(), &port.InitRequest{})
+			_, err := knetClient.Init(context.Background(), &knet.InitRequest{})
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -68,28 +68,16 @@ func NewKNETCmd() *cobra.Command {
 		Use: "add",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) < 2 {
-				log.Fatal("knet add <mac> <port> [<vid>]")
+				log.Fatal("knet add <name> <port>")
 			}
-			vid := 1
-			mac, err := net.ParseMAC(args[0])
-			if err != nil {
-				log.Fatal(err)
-			}
+			name := args[0]
 			port, err := strconv.Atoi(args[1])
 			if err != nil {
 				log.Fatal(err)
 			}
-			if len(args) > 2 {
-				vid, err = strconv.Atoi(args[2])
-				if err != nil {
-					log.Fatal(err)
-				}
-			}
-			_, err = knetClient.AddAddress(context.Background(), &knet.AddAddressRequest{
-				Address: &knet.Address{
-					Flags: (knet.KNETFlag_FLAG_L3LOOKUP | knet.KNETFlag_FLAG_STATIC),
-					Mac:   []byte(mac),
-					Vid:   uint32(vid),
+			_, err = knetClient.AddKNET(context.Background(), &knet.AddKNETRequest{
+				KNET: &knet.KNET{
+					Name:   []byte(name),
 					Port:  int64(port),
 				},
 			})
@@ -103,22 +91,19 @@ func NewKNETCmd() *cobra.Command {
 		Use: "delete",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) < 1 {
-				log.Fatal("knet delete <mac> [<vid>]")
+				log.Fatal("knet delete <id> <filter_id>")
 			}
-			vid := 1
-			mac, err := net.ParseMAC(args[0])
+			id, err := strconv.Atoi(args[0])
 			if err != nil {
 				log.Fatal(err)
 			}
-			if len(args) > 1 {
-				vid, err = strconv.Atoi(args[1])
-				if err != nil {
-					log.Fatal(err)
-				}
+			filter_id, err := strconv.Atoi(args[1])
+			if err != nil {
+				log.Fatal(err)
 			}
-			_, err = knetClient.DeleteAddress(context.Background(), &knet.DeleteAddressRequest{
-				Mac: []byte(mac),
-				Vid: uint32(vid),
+			_, err = knetClient.DeleteKNET(context.Background(), &knet.DeleteKNETRequest{
+				Id: int64(id),
+				Filter_id: int64(filter_id),
 			})
 			if err != nil {
 				log.Fatal(err)
