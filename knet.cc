@@ -23,7 +23,7 @@ opennsl_knet_netif_t get_netif (const knet::Interface& req) {
     return ret;
 }
 
-opennsl_knet_filter_t get_filter (const knet::Interface& req, const opennsl_knet_netif_t& netif) {
+opennsl_knet_filter_t get_filter (const opennsl_knet_netif_t& netif) {
     opennsl_knet_filter_t ret;
     opennsl_knet_filter_t_init(&ret);
     ret.type = OPENNSL_KNET_FILTER_T_RX_PKT;
@@ -53,18 +53,26 @@ grpc::Status KNETServiceImpl::AddKNET(grpc::ServerContext* context, const knet::
         err << "opennsl_knet_netif_create() failed " << opennsl_errmsg(ret);
         return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
-    auto filter = get_filter(req->netif(), netif);
+    auto filter = get_filter(&netif);
     auto ret = opennsl_knet_filter_create(req->unit(), &filter, &netif);
     if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
         err << "opennsl_knet_filter_create() failed " << opennsl_errmsg(ret);
         return grpc::Status(grpc::UNAVAILABLE, err.str());
     }
+    res->id = netif.id;
+    res->filter_id = filter.id;
     return grpc::Status::OK;
 }
 
 grpc::Status KNETServiceImpl::DeleteKNET(grpc::ServerContext* context, const knet::DeleteRequest* req, knet::DeleteResponse* res){
-    // task here
+    auto ret = opennsl_knet_netif_destroy(req->unit, req->id);
+    if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        err << "opennsl_knet_netif_destroy() failed " << opennsl_errmsg(ret);
+        return grpc::Status(grpc::UNAVAILABLE, err.str());
+    }
+    auto ret = opennsl_knet_filter_destroy(req->unit, req->filter_id);
     if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
         err << "opennsl_knet_netif_destroy() failed " << opennsl_errmsg(ret);
@@ -73,8 +81,16 @@ grpc::Status KNETServiceImpl::DeleteKNET(grpc::ServerContext* context, const kne
     return grpc::Status::OK;
 }
 
+int trav_fn(int unit, opennsl_knet_netif_t *info, void *user_data) {
+    knet::ListResponse* res = static_cast<knet::ListResponse* >(user_data);
+    auto size = res->list_size();
+    res->add_list();
+    set_protobuf_knet_netif(res->mutable_list(size), *info);
+    return 0;
+}
+
 grpc::Status KNETServiceImpl::ListKNET(grpc::ServerContext* context, const knet::ListRequest* req, knet::ListResponse* res){
-    // task here
+    auto ret = opennsl_knet_netif_traverse(req->unit, trav_fn, res)
     if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
         err << "opennsl_knet_netif_traverse() failed " << opennsl_errmsg(ret);

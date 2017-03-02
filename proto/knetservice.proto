@@ -15,19 +15,13 @@
 
 syntax = "proto3";
 
-package vlanservice;
+package knetservice;
 
-import "vlan.proto";
+import "knet.proto";
 
-service VLAN {
-    rpc Create(vlan.CreateRequest) returns (vlan.CreateResponse) {}
-    rpc Destroy(vlan.DestroyRequest) returns (vlan.DestroyResponse) {}
-    rpc DestroyAll(vlan.DestroyAllRequest) returns (vlan.DestroyAllResponse) {}
-    rpc PortAdd(vlan.PortAddRequest) returns (vlan.PortAddResponse) {}
-    rpc PortRemove(vlan.PortRemoveRequest) returns (vlan.PortRemoveRequest) {}
-    rpc List(vlan.ListRequest) returns (vlan.ListResponse) {}
-    rpc DefaultGet(vlan.DefaultGetRequest) returns (vlan.DefaultGetResponse) {}
-    rpc DefaultSet(vlan.DefaultSetRequest) returns (vlan.DefaultSetResponse) {}
-    rpc ControlSet(vlan.ControlSetRequest) returns (vlan.ControlSetResponse) {}
-    rpc ControlPortSet(vlan.ControlPortSetRequest) returns (vlan.ControlPortSetResponse) {}
+service KNET {
+    rpc InitKNET(KNET.InitRequest) returns (KNET.InitResponse) {}
+    rpc AddKNET(KNET.AddRequest) returns (KNET.AddResponse) {}
+    rpc DeleteKNET(l2.DeleteAddressRequest) returns (KNET.DeleteResponse) {}
+    rpc ListKNET(KNET.ListRequest) returns (KNET.ListResponse) {}
 }
