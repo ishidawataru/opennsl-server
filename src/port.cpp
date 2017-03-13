@@ -1,0 +1,71 @@
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <unordered_map>
+
+#include <s11n.net/shellish/shellish.hpp> // eshell framework
+#include <s11n.net/shellish/argv_parser.hpp>
+#include <s11n.net/shellish/arguments.hpp>
+#include <s11n.net/shellish/builtins.hpp>
+
+extern "C" {
+#include "opennsl/error.h"
+#include "opennsl/port.h"
+}
+
+bool MODE_PORT = false;
+
+int PortInit(const shellish::arguments & args) {
+    auto ret = opennsl_port_init(0);
+    if (ret != OPENNSL_E_NONE) {
+        std::ostringstream err;
+        shellish::ostream() << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        return 1;
+    }
+    return 0;
+}
+
+int PortExit (const shellish::arguments & args) { 
+    MODE_PORT = false;
+    shellish::ostream() << "Port Mode: Deactivated" << std::endl;
+    return 0; 
+}
+
+int PORT(const shellish::arguments & args) {
+    std::unordered_map<std::string, shellish::command_handler_func> commands = { {"init", PortInit}, {"exit", PortExit} };
+    if (MODE_PORT) {
+        auto search = commands.find(args[0]);
+        if (search != commands.end()) {
+            return search->second(args);
+        } else {
+            shellish::ostream() << "Command Error: \n User inputted: ";
+            for( size_t i = 0; i < args.argc(); i++ ) {
+                shellish::ostream() <<args[i] << " ";
+            }
+            shellish::ostream() << std::endl << std::endl << "Accepted commands are: " << std::endl;
+            for (auto i = commands.begin(); i != commands.end(); ++i) {
+                auto cur = i->first;
+                shellish::ostream() << cur << std::endl;
+            }
+            return 0;
+            }
+    } else {
+        if (args.argc() == 1){
+            MODE_PORT = true;
+            shellish::ostream() << "Port Mode: Activated" << std::endl;
+            return 0;
+        } else {
+            auto search = commands.find(args[1]);
+            if (search != commands.end()) {
+                return search->second(args);
+            } else {
+            shellish::ostream() << std::endl << std::endl << "Accepted commands are: " << std::endl;
+            for (auto i = commands.begin(); i != commands.end(); ++i) {
+                auto cur = i->first;
+                shellish::ostream() << commands[cur] << std::endl;
+            }
+            return 0;
+            }
+        }
+    }
+}
