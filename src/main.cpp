@@ -138,7 +138,7 @@ int configure_handler(const shellish::arguments & args) {
 }
 
 int exit_handler(const shellish::arguments & args) {
-	if (MODE_C &! (MODE_L2 || MODE_KNET || MODE_PORT)) {
+	if (MODE_C &! (MODE_L2 || MODE_KNET || MODE_PORT || MODE_DRIVER || MODE_VLAN)) {
 		MODE_C = false;
 		shellish::ostream() << "Configure Mode: Deactivated" << std::endl;
 		prompt = "osh > ";
@@ -173,6 +173,8 @@ int main( int argc, char ** argv ) {
 	shellish::map_commander( "l2", l2_handler);
 	shellish::map_commander( "port", port_handler);
 	shellish::map_commander( "knet", knet_handler);
+	shellish::map_commander( "vlan", vlan_handler);
+	shellish::map_commander( "driver", driver_handler);
     shellish::map_commander( "configure", configure_handler);
     shellish::map_commander( "conf",  configure_handler);
     shellish::input_loop( prompt );
