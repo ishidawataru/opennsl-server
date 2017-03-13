@@ -1,0 +1,138 @@
+#SerialTree 1
+/**
+; comment test
+# comment test
+*/
+theroot class=fake::FakeRoot {
+		foo one
+		bar two
+
+	xmlish this & \\that is < than the other thing, or \\maybe >?
+        othertype class=alts11n::AltSerializable
+        {
+		got_milk 1
+		sub class=alts11n::AltSub
+		{
+				prop val
+				subsub class=alts11n::AltSubSub
+				{
+						prop val
+						sub class=alts11n::AltSub
+						{
+						}
+				}
+		}
+        }
+
+
+/************************************************************************
+        These are commented out because numeric keys don't work with
+        standards-compliant XML Serializers.
+
+
+		int_to_str_map class=s11n::s11n_node {
+				0 eeeek!
+				1 awwwwk!
+				2 gggaaaaaawwwwk!
+				3 whhheeeee!
+		}
+
+		dbl_to_str_map class=s11n::s11n_node {
+				0.0 this is zero
+				1.0 this is one
+				2.0 this is two
+				3.0 this is three
+				4.5 this is four-point-five.
+		}
+
+		foo_child class=foo::FooClass {
+                                name Bob
+				fee fii
+				fo fum
+                                vector class=s11n::s11n_node {
+                                        1 4
+                                        2 7
+                                        3 849
+                                }
+		}
+
+************************************************************************/
+		foo_child class=foo::Baz
+		{
+                                name Bazzy
+				fee fii
+				fo fum
+		}
+		foo_child class=foo::BarClass
+		{
+                                name Barry
+				fee fii
+				fo fum
+		}
+
+		foo_child class=BarClass
+		{
+                                name Barry #2
+				fee fii
+				fo fum
+		}
+
+		foo_child class=foo::FooClass
+		{
+                                name The Foo
+				fee fii
+				fo fum
+		}
+
+		foo_child class=foo::WonderBra
+		{
+                                name FooClassInDisguise
+				fii fee
+				fum fo
+		}
+
+		foo_child class=BarClass {
+                                name meeza_child
+				meeza_child true
+				minibar class=woo::hoo::BarClass
+				{
+						myprop 17
+						myotherprop "this string here, seen?"
+				}
+				not_loadable class=ThisClassIsNotRegistered
+				{
+				}
+
+		}
+
+				root class=FooClass
+				{
+						foo one
+						bar two
+						endvar true
+				}
+
+
+				root_too class=BarClass
+				{
+						the_real_node 42.424242424242427848
+						quoted_string "this is a quoted string"
+						unquoted_string this is an unquoted string
+						unquoted_string2 this is an "unquoted" string
+						squoted_string 'this is a \
+								single-quoted \
+								string'
+
+						mstring this is a \
+								"multi-line" \
+								string
+
+						SOURCES foo \
+elib_globals.cpp \
+		CommandLiner.cpp
+
+						HEADERS Readline.h \
+				        		ShellProcess.h \
+					        	StringList.h
+				}
+}

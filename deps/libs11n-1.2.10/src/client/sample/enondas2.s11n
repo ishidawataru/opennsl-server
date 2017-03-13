@@ -1,0 +1,125 @@
+(s11n::parens)
+(*
+        Data for the Enondas character generator
+        $Revision: 1.1 $
+*)
+root=(enondas_state
+        (* attributes = string list *)
+        attributes=(list
+                s11n_node=(string (v STR))
+                s11n_node=(string (v DEX))
+                s11n_node=(string (v LK))
+                s11n_node=(string (v CON))
+                s11n_node=(string (v IQ))
+                s11n_node=(string (v CHR))
+                s11n_node=(string (v MA))
+        )
+
+        kindred=(list
+                s11n_node=(string (v twf))
+                s11n_node=(string (v goblin))
+                s11n_node=(string (v ogre))
+        )
+
+        kindred_modifiers=(map
+                pair=(pair
+                        first=(string (v twf))
+                        second=(map
+                                mod=(pair
+                                        first=(string (v STR))
+                                        second=(double (v 0.2))
+                                )
+                                mod=(pair
+                                        first=(string (v DEX))
+                                        second=(double (v 1.5))
+                                )
+                                mod=(pair
+                                        first=(string (v LK))
+                                        second=(double (v 1.5))
+                                )
+                                mod=(pair
+                                        first=(string (v CON))
+                                        second=(double (v 0.5))
+                                )
+                                mod=(pair
+                                        first=(string (v IQ))
+                                        second=(double (v 1.2))
+                                )
+                                mod=(pair
+                                        first=(string (v CHR))
+                                        second=(double (v 1.5))
+                                )
+                                mod=(pair
+                                        first=(string (v MA))
+                                        second=(double (v 2.0))
+                                )
+                        )
+                )
+                pair=(pair
+                        first=(string (v goblin))
+                        second=(map
+                                mod=(pair
+                                        first=(string (v STR))
+                                        second=(double (v 0.5))
+                                )
+                                mod=(pair
+                                        first=(string (v DEX))
+                                        second=(double (v 1.0))
+                                )
+                                mod=(pair
+                                        first=(string (v LK))
+                                        second=(double (v 1.0))
+                                )
+                                mod=(pair
+                                        first=(string (v CON))
+                                        second=(double (v 0.5))
+                                )
+                                mod=(pair
+                                        first=(string (v IQ))
+                                        second=(double (v 0.75))
+                                )
+                                mod=(pair
+                                        first=(string (v CHR))
+                                        second=(double (v 0.5))
+                                )
+                                mod=(pair
+                                        first=(string (v MA))
+                                        second=(double (v 1.0))
+                                )
+                        )
+                )
+                pair=(pair
+                        first=(string (v ogre))
+                        second=(map
+                                mod=(pair
+                                        first=(string (v STR))
+                                        second=(double (v 4.0))
+                                )
+                                mod=(pair
+                                        first=(string (v DEX))
+                                        second=(double (v 0.5))
+                                )
+                                mod=(pair
+                                        first=(string (v LK))
+                                        second=(double (v 0.5))
+                                )
+                                mod=(pair
+                                        first=(string (v CON))
+                                        second=(double (v 3.0))
+                                )
+                                mod=(pair
+                                        first=(string (v IQ))
+                                        second=(double (v 0.666))
+                                )
+                                mod=(pair
+                                        first=(string (v CHR))
+                                        second=(double (v 0.25))
+                                )
+                                mod=(pair
+                                        first=(string (v MA))
+                                        second=(double (v 0.5))
+                                )
+                        )
+                )
+        ) (* kindred_modifiers *)
+)

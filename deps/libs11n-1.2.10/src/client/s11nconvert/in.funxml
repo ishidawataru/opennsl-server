@@ -1,0 +1,790 @@
+<!DOCTYPE SerialTree>
+<GCom class="GComBasicBoard">
+	<angle>0</angle>
+	<bgcolor>#dcdcdc</bgcolor>
+	<bordercolor>#000000</bordercolor>
+	<covercolor>#7f7f7f</covercolor>
+	<covered>false</covered>
+	<dragcopy>true</dragcopy>
+	<draggable>true</draggable>
+	<dragpoint>438,96</dragpoint>
+	<drawself>false</drawself>
+	<droptarget>true</droptarget>
+	<name>gev_map</name>
+	<note></note>
+	<position>0,0</position>
+	<preferownsettings>false</preferownsettings>
+	<preferscroller>true</preferscroller>
+	<selected>false</selected>
+	<showborder>false</showborder>
+	<size>1197,1337</size>
+	<sizetopixmap>true</sizetopixmap>
+	<uipreference>prefermainwindow</uipreference>
+	<pixmaps class="GPixList">
+		<index>0</index>
+		<pixmap class="GQPixmap">
+			<name>V_MAP/OgrePlus/gev_map.bmp</name>
+		</pixmap>
+	</pixmaps>
+	<properties class="PropertyList">
+		<property class="KeyValuePair">
+			<comment></comment>
+			<key>window_size</key>
+			<value>1212,1364</value>
+		</property>
+		<property class="KeyValuePair">
+			<comment></comment>
+			<key>window_pos</key>
+			<value>-2,-21</value>
+		</property>
+		<property class="KeyValuePair">
+			<comment></comment>
+			<key>desktop_size</key>
+			<value>564,632</value>
+		</property>
+		<property class="KeyValuePair">
+			<comment></comment>
+			<key>desktop_pos</key>
+			<value>195,43</value>
+		</property>
+		<property class="KeyValuePair">
+			<comment></comment>
+			<key>paintMiniView.skipbackground</key>
+			<value>true</value>
+		</property>
+		<property class="KeyValuePair">
+			<comment></comment>
+			<key>paintMiniView.pixmap</key>
+			<value>false</value>
+		</property>
+	</properties>
+	<gcomchildren class="GComList">
+		<name>unnamed</name>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>44</name>
+			<note></note>
+			<position>431,309</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>35,35</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/44.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/45.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>44</name>
+			<note></note>
+			<position>382,329</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>35,35</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/44.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/45.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>44</name>
+			<note></note>
+			<position>179,344</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>35,35</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/44.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/45.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>4,32</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>Drone.neg</name>
+			<note></note>
+			<position>264,387</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>48,48</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side1/Drone.neg.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side2/Drone.neg.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffff7f</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>230</name>
+			<note></note>
+			<position>326,536</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>35,35</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogreplus_pieces/230.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogreplus_pieces/231.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>4,36</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>44</name>
+			<note></note>
+			<position>167,320</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>35,35</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/44.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogre_set_plus_pieces/45.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="NoteGCom">
+			<angle>0</angle>
+			<bgcolor>#ffff00</bgcolor>
+			<bordercolor>#ff0000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>22,6</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>NoteGCom</name>
+			<note></note>
+			<position>38,353</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<showtext>false</showtext>
+			<size>16,16</size>
+			<sizetopixmap>true</sizetopixmap>
+			<sizewithtext>208,166</sizewithtext>
+			<uipreference>prefertoolbar</uipreference>
+			<pixmaps class="GPixList">
+				<index>-1</index>
+			</pixmaps>
+			<properties class="PropertyList">
+				<property class="KeyValuePair">
+					<comment></comment>
+					<key>NoteGCom.wordwrap_column</key>
+					<value>0</value>
+				</property>
+			</properties>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="NoteGCom">
+			<angle>0</angle>
+			<bgcolor>#ff0000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>4,3</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>NoteGCom</name>
+			<note></note>
+			<position>31,467</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<showtext>false</showtext>
+			<size>16,16</size>
+			<sizetopixmap>true</sizetopixmap>
+			<sizewithtext>200,150</sizewithtext>
+			<uipreference>prefertoolbar</uipreference>
+			<pixmaps class="GPixList">
+				<index>-1</index>
+			</pixmaps>
+			<properties class="PropertyList">
+				<property class="KeyValuePair">
+					<comment></comment>
+					<key>NoteGCom.wordwrap_column</key>
+					<value>0</value>
+				</property>
+			</properties>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>-2,33</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>dragon_gold</name>
+			<note></note>
+			<position>275,328</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>32,32</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>CounterMoves/CounterDungeons/0.1/Monsters/.side1/dragon_gold.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>demon</name>
+			<note></note>
+			<position>330,304</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>32,32</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>CounterMoves/CounterDungeons/0.1/Monsters/.side1/demon.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>car8</name>
+			<note></note>
+			<position>132,182</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>32,32</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>Beetle/car8.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>Brown_Axeman</name>
+			<note></note>
+			<position>223,362</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>32,32</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>CompactCombat/0.1/Combatants/.side1/Brown_Axeman.gif</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>CompactCombat/0.1/Combatants/.side2/Brown_Axeman.gif</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>CompactCombat/0.1/Combatants/.side3/Brown_Axeman.gif</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>CompactCombat/0.1/Combatants/.side4/Brown_Axeman.gif</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="RustyDieGCom">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>90,6</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>1d6</name>
+			<note></note>
+			<position>114,38</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>94,59</size>
+			<sizetopixmap>false</sizetopixmap>
+			<uipreference>prefertoolbar</uipreference>
+			<pixmaps class="GPixList">
+				<index>-1</index>
+			</pixmaps>
+			<properties class="PropertyList">
+				<property class="KeyValuePair">
+					<comment></comment>
+					<key>die</key>
+					<value>1d6</value>
+				</property>
+			</properties>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>764,792</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>Drone.neg</name>
+			<note></note>
+			<position>732,764</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>48,48</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side1/Drone.neg.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side2/Drone.neg.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>car6</name>
+			<note></note>
+			<position>287,30</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>32,32</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>Beetle/car6.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="RustyDieGCom">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>1d6</name>
+			<note></note>
+			<position>17,37</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>94,59</size>
+			<sizetopixmap>false</sizetopixmap>
+			<uipreference>prefertoolbar</uipreference>
+			<pixmaps class="GPixList">
+				<index>-1</index>
+			</pixmaps>
+			<properties class="PropertyList">
+				<property class="KeyValuePair">
+					<comment></comment>
+					<key>die</key>
+					<value>1d6</value>
+				</property>
+				<property class="KeyValuePair">
+					<comment></comment>
+					<key>paintMiniView.skipbackground</key>
+					<value>false</value>
+				</property>
+				<property class="KeyValuePair">
+					<comment></comment>
+					<key>paintMiniView.pixmap</key>
+					<value>false</value>
+				</property>
+			</properties>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#ffffff</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>10,15</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>110</name>
+			<note></note>
+			<position>224,300</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>35,35</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogreplus_pieces/110.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>V_MAP/OgrePlus/ogreplus_pieces/111.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>Queen.neg</name>
+			<note></note>
+			<position>1014,476</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>48,48</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side1/Queen.neg.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side2/Queen.neg.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>car6</name>
+			<note></note>
+			<position>314,85</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>32,32</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>Beetle/car6.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="GComBasicPiece">
+			<angle>0</angle>
+			<bgcolor>#000000</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>0,0</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>Drone.neg</name>
+			<note></note>
+			<position>224,147</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<size>48,48</size>
+			<sizetopixmap>true</sizetopixmap>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>0</index>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side1/Drone.neg.png</name>
+				</pixmap>
+				<pixmap class="GQPixmap">
+					<name>Insectica/0.1.1/Insectica/side2/Drone.neg.png</name>
+				</pixmap>
+			</pixmaps>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+		<GCom class="NoteGCom">
+			<angle>0</angle>
+			<bgcolor>#dcdcdc</bgcolor>
+			<bordercolor>#000000</bordercolor>
+			<covercolor>#7f7f7f</covercolor>
+			<covered>false</covered>
+			<dragcopy>false</dragcopy>
+			<draggable>true</draggable>
+			<dragpoint>198,110</dragpoint>
+			<drawself>true</drawself>
+			<droptarget>false</droptarget>
+			<name>NoteGCom</name>
+			<note></note>
+			<position>32,334</position>
+			<preferownsettings>false</preferownsettings>
+			<preferscroller>false</preferscroller>
+			<selected>false</selected>
+			<showborder>true</showborder>
+			<showtext>false</showtext>
+			<size>16,16</size>
+			<sizetopixmap>true</sizetopixmap>
+			<sizewithtext>200,150</sizewithtext>
+			<uipreference>preferchild</uipreference>
+			<pixmaps class="GPixList">
+				<index>-1</index>
+			</pixmaps>
+			<properties class="PropertyList">
+				<property class="KeyValuePair">
+					<comment></comment>
+					<key>NoteGCom.wordwrap_column</key>
+					<value>0</value>
+				</property>
+			</properties>
+			<gcomchildren class="GComList">
+				<name>unnamed</name>
+			</gcomchildren>
+		</GCom>
+	</gcomchildren>
+</GCom>

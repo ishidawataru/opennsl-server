@@ -1,0 +1,19 @@
+<!DOCTYPE s11n::simplexml>
+<s11n_node s11n_class="map">
+        <pair s11n_class="pair">
+                <first s11n_class="coord" x="-12" y="-17" />
+                <second s11n_class="some_obj" name="Betty" role="The best friend&apos;s lovely wife." />
+        </pair>
+        <pair s11n_class="pair">
+                <first s11n_class="coord" x="-10" y="-13" />
+                <second s11n_class="some_obj" name="Wilma" role="The lovely wife." />
+        </pair>
+        <pair s11n_class="pair">
+                <first s11n_class="coord" x="1" y="4" />
+                <second s11n_class="some_obj" name="Fred" role="Husband of Wilma" />
+        </pair>
+        <pair s11n_class="pair">
+                <first s11n_class="coord" x="20" y="7" />
+                <second s11n_class="some_obj" name="Barney" role="Fred&apos;s best friend." />
+        </pair>
+</s11n_node>

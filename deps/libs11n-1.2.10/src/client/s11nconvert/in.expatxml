@@ -1,0 +1,24 @@
+<!DOCTYPE s11n::io::expat_serializer>
+<somenode class="NoClass">
+	<a>()\b</a>
+	<foo>bar</foo>
+	<empty />
+	<long>this is a long property</long>
+	<dino class="DinoClass" />
+	<fred class="FredClass">
+		<key>value</key>
+	</fred>
+	<wilma class="WilmaClass">
+		<the>lovely wife</the>
+	</wilma>
+	<betty class="BettyClass">
+		<value>the apple of Barney&apos;s eye</value>
+	</betty>
+	<deep class="Foo">
+		<deeper class="Foo">
+			<how_deep>really deep!</how_deep>
+			<and_deeper class="Ouch">
+			</and_deeper>
+		</deeper>
+	</deep>
+</somenode>

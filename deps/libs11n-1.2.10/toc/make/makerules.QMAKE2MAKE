@@ -1,0 +1,51 @@
+#!/bin/bash
+# Creates some makefile code for the $(QMAKE2MAKE) var.
+# Intended for use with QMAKE2MAKE.make
+
+make_pre="make." # prefix for generated makefiles
+qmake_suf=".qmake" # suffix for input qmake files.
+
+test -z "$1" && {
+    echo "usage: $0 qmakefile1 [qmakefile2 ...]"
+    echo "Pass the names of *${qmake_suf} files, without the ${qmake_suf} extension."
+    exit 1
+}
+
+cat <<EOF
+########################################################################
+# Automatically generated QMAKE2MAKE rules:
+# $0 $@
+EOF
+
+for q in $@; do
+    qmf="${make_pre}${q}"
+    qpro="${q}${qmake_suf}"
+    if test ! -e ${qpro}; then
+        echo "$0: The qmake file '${qpro}' does not exist. " \
+            "Create it or remove '${q}' from your QMAKE2MAKE variable." 1>&2
+        exit 2
+    fi
+    cat <<EOF
+${qmf}: ${qpro} $0
+	@cmd="\$(QMAKE) -o \$@ ${qpro}"; echo \$\$cmd; \$\$cmd
+qmake-${q}:
+	\${MAKE} -f ${qmf}
+EOF
+    for p in install uninstall first clean distclean staticlib mocables; do
+#        echo "${p}:"
+        qtgt="qmake-${q}-${p}"
+        echo "${qtgt}: ${qmf}"
+        echo -e "\t@echo \"Making target '${p}' in ${qmf}...\";"
+        echo -e "\t\${MAKE} -f ${qmf} ${p}"
+        if test "$p" = "distclean"; then
+            echo -e "\t-rm ${qmf}"
+        fi
+        echo "${p}: ${qtgt}"
+    done
+    echo "qmake-all: qmake-${q}"
+done
+
+cat <<EOF
+# End QMAKE2MAKE rules for: $@
+########################################################################
+EOF

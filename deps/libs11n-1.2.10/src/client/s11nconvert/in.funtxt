@@ -1,0 +1,3775 @@
+#SerialTree 1
+map class=fun::HexMap
+{
+  gameboxName G.E.V.
+  gameboxVers 0.1
+  asiz 529
+  area class=GEVHex
+  {
+    name 0101
+    id 0
+  }
+  area class=GEVHex
+  {
+    name 0102
+    id 1
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0103
+    id 2
+  }
+  area class=GEVHex
+  {
+    name 0104
+    id 3
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0105
+    id 4
+  }
+  area class=GEVHex
+  {
+    name 0106
+    id 5
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0107
+    id 6
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0108
+    id 7
+  }
+  area class=GEVHex
+  {
+    name 0109
+    id 8
+  }
+  area class=GEVHex
+  {
+    name 0110
+    id 9
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0111
+    id 10
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0112
+    id 11
+  }
+  area class=GEVHex
+  {
+    name 0113
+    id 12
+  }
+  area class=GEVHex
+  {
+    name 0114
+    id 13
+  }
+  area class=GEVHex
+  {
+    name 0115
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+    id 14
+  }
+  area class=GEVHex
+  {
+    name 0116
+    id 15
+  }
+  area class=GEVHex
+  {
+    name 0117
+    id 16
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0118
+    id 17
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0119
+    id 18
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0120
+    id 19
+  }
+  area class=GEVHex
+  {
+    name 0121
+    id 20
+  }
+  area class=GEVHex
+  {
+    name 0122
+    id 21
+  }
+  area class=GEVHex
+  {
+    name 0123
+    id 22
+  }
+  area class=GEVHex
+  {
+    name 0201
+    id 23
+  }
+  area class=GEVHex
+  {
+    name 0202
+    id 24
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0203
+    id 25
+  }
+  area class=GEVHex
+  {
+    name 0204
+    id 26
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 0205
+    id 27
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0206
+    id 28
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0207
+    id 29
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0208
+    id 30
+  }
+  area class=GEVHex
+  {
+    name 0209
+    id 31
+  }
+  area class=GEVHex
+  {
+    name 0210
+    id 32
+  }
+  area class=GEVHex
+  {
+    name 0211
+    id 33
+  }
+  area class=GEVHex
+  {
+    name 0212
+    id 34
+  }
+  area class=GEVHex
+  {
+    name 0213
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+    id 35
+  }
+  area class=GEVHex
+  {
+    name 0214
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 1
+    }
+    id 36
+  }
+  area class=GEVHex
+  {
+    name 0215
+    id 37
+  }
+  area class=GEVHex
+  {
+    name 0216
+    id 38
+  }
+  area class=GEVHex
+  {
+    name 0217
+    id 39
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0218
+    id 40
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0219
+    id 41
+  }
+  area class=GEVHex
+  {
+    name 0220
+    id 42
+  }
+  area class=GEVHex
+  {
+    name 0221
+    id 43
+  }
+  area class=GEVHex
+  {
+    name 0222
+    id 44
+  }
+  area class=GEVHex
+  {
+    name 0301
+    id 46
+  }
+  area class=GEVHex
+  {
+    name 0302
+    id 47
+  }
+  area class=GEVHex
+  {
+    name 0303
+    id 48
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0304
+    id 49
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 4
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0305
+    id 50
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0306
+    id 51
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0307
+    id 52
+  }
+  area class=GEVHex
+  {
+    name 0308
+    id 53
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0309
+    id 54
+  }
+  area class=GEVHex
+  {
+    name 0310
+    id 55
+  }
+  area class=GEVHex
+  {
+    name 0311
+    id 56
+  }
+  area class=GEVHex
+  {
+    name 0312
+    id 57
+  }
+  area class=GEVHex
+  {
+    name 0313
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+    id 58
+  }
+  area class=GEVHex
+  {
+    name 0314
+    id 59
+  }
+  area class=GEVHex
+  {
+    name 0315
+    id 60
+  }
+  area class=GEVHex
+  {
+    name 0316
+    id 61
+  }
+  area class=GEVHex
+  {
+    name 0317
+    id 62
+  }
+  area class=GEVHex
+  {
+    name 0318
+    id 63
+    terrain forest
+  }
+  area class=GEVHex
+  {
+    name 0319
+    id 64
+  }
+  area class=GEVHex
+  {
+    name 0320
+    id 65
+  }
+  area class=GEVHex
+  {
+    name 0321
+    id 66
+  }
+  area class=GEVHex
+  {
+    name 0322
+    id 67
+  }
+  area class=GEVHex
+  {
+    name 0323
+    id 68
+  }
+  area class=GEVHex
+  {
+    name 0401
+    id 69
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0402
+    id 70
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0403
+    id 71
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0404
+    id 72
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0405
+    id 73
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0406
+    id 74
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0407
+    id 75
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0408
+    id 76
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain bridge
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0409
+    id 77
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0410
+    id 78
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0411
+    id 79
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0412
+    id 80
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain bridge
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0413
+    id 81
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0414
+    id 82
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0415
+    id 83
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0416
+    id 84
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0417
+    id 85
+    terrain forest
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0418
+    id 86
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0419
+    id 87
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0420
+    id 88
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0421
+    id 89
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0422
+    id 90
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0501
+    id 92
+  }
+  area class=GEVHex
+  {
+    name 0502
+    id 93
+  }
+  area class=GEVHex
+  {
+    name 0503
+    id 94
+  }
+  area class=GEVHex
+  {
+    name 0504
+    id 95
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0505
+    id 96
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0506
+    id 97
+  }
+  area class=GEVHex
+  {
+    name 0507
+    id 98
+  }
+  area class=GEVHex
+  {
+    name 0508
+    id 99
+  }
+  area class=GEVHex
+  {
+    name 0509
+    id 100
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0510
+    id 101
+	terrain town
+  }
+  area class=GEVHex
+  {
+    name 0511
+    id 102
+  }
+  area class=GEVHex
+  {
+    name 0512
+    id 103
+  }
+  area class=GEVHex
+  {
+    name 0513
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+    id 104
+  }
+  area class=GEVHex
+  {
+    name 0514
+    id 105
+  }
+  area class=GEVHex
+  {
+    name 0515
+    id 106
+  }
+  area class=GEVHex
+  {
+    name 0516
+    id 107
+  }
+  area class=GEVHex
+  {
+    name 0517
+    terrain forest
+    id 108
+  }
+  area class=GEVHex
+  {
+    name 0518
+    terrain town
+    id 109
+  }
+  area class=GEVHex
+  {
+    name 0519
+    id 110
+  }
+  area class=GEVHex
+  {
+    name 0520
+    id 111
+  }
+  area class=GEVHex
+  {
+    name 0521
+    id 112
+  }
+  area class=GEVHex
+  {
+    name 0522
+    id 113
+  }
+  area class=GEVHex
+  {
+    name 0523
+    id 114
+  }
+  area class=GEVHex
+  {
+    name 0601
+    id 115
+  }
+  area class=GEVHex
+  {
+    name 0602
+    terrain forest
+    id 116
+  }
+  area class=GEVHex
+  {
+    name 0603
+    terrain forest
+    id 117
+  }
+  area class=GEVHex
+  {
+    name 0604
+    id 118
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0605
+    id 119
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0606
+    terrain forest
+    id 120
+  }
+  area class=GEVHex
+  {
+    name 0607
+    terrain forest
+    id 121
+  }
+  area class=GEVHex
+  {
+    name 0608
+    id 122
+  }
+  area class=GEVHex
+  {
+    name 0609
+    id 123
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 0610
+    id 124
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 5
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0611
+    id 125
+  }
+  area class=GEVHex
+  {
+    name 0612
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    id 126
+  }
+  area class=GEVHex
+  {
+    name 0613
+    id 127
+  }
+  area class=GEVHex
+  {
+    name 0614
+    id 128
+  }
+  area class=GEVHex
+  {
+    name 0615
+    id 129
+  }
+  area class=GEVHex
+  {
+    name 0616
+    terrain forest
+    id 130
+  }
+  area class=GEVHex
+  {
+    name 0617
+    terrain forest
+    id 131
+  }
+  area class=GEVHex
+  {
+    name 0618
+    id 132
+  }
+  area class=GEVHex
+  {
+    name 0619
+    id 133
+  }
+  area class=GEVHex
+  {
+    name 0620
+    terrain forest
+    id 134
+  }
+  area class=GEVHex
+  {
+    name 0621
+    id 135
+  }
+  area class=GEVHex
+  {
+    name 0622
+    id 136
+  }
+  area class=GEVHex
+  {
+    name 0701
+    id 138
+  }
+  area class=GEVHex
+  {
+    name 0702
+    terrain forest
+    id 139
+  }
+  area class=GEVHex
+  {
+    name 0703
+    id 140
+  }
+  area class=GEVHex
+  {
+    name 0704
+    terrain forest
+    id 141
+  }
+  area class=GEVHex
+  {
+    name 0705
+    terrain forest
+    id 142
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0706
+    id 143
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0707
+    terrain forest
+    id 144
+  }
+  area class=GEVHex
+  {
+    name 0708
+    id 145
+  }
+  area class=GEVHex
+  {
+    name 0709
+    id 146
+  }
+  area class=GEVHex
+  {
+    name 0710
+    id 147
+  }
+  area class=GEVHex
+  {
+    name 0711
+    id 148
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0712
+    id 149
+  }
+  area class=GEVHex
+  {
+    name 0713
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    id 150
+  }
+  area class=GEVHex
+  {
+    name 0714
+    id 151
+  }
+  area class=GEVHex
+  {
+    name 0715
+    id 152
+  }
+  area class=GEVHex
+  {
+    name 0716
+    id 153
+  }
+  area class=GEVHex
+  {
+    name 0717
+    id 154
+  }
+  area class=GEVHex
+  {
+    name 0718
+    id 155
+  }
+  area class=GEVHex
+  {
+    name 0719
+    id 156
+  }
+  area class=GEVHex
+  {
+    name 0720
+    id 157
+  }
+  area class=GEVHex
+  {
+    name 0721
+    terrain forest
+    id 158
+  }
+  area class=GEVHex
+  {
+    name 0722
+    id 159
+  }
+  area class=GEVHex
+  {
+    name 0723
+    id 160
+  }
+  area class=GEVHex
+  {
+    name 0801
+    id 161
+  }
+  area class=GEVHex
+  {
+    name 0802
+    id 162
+  }
+  area class=GEVHex
+  {
+    name 0803
+    terrain forest
+    id 163
+  }
+  area class=GEVHex
+  {
+    name 0804
+    terrain forest
+    id 164
+  }
+  area class=GEVHex
+  {
+    name 0805
+    id 165
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 0806
+    id 166
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 0807
+    terrain forest
+    id 167
+  }
+  area class=GEVHex
+  {
+    name 0808
+    terrain forest
+    id 168
+  }
+  area class=GEVHex
+  {
+    name 0809
+    id 169
+  }
+  area class=GEVHex
+  {
+    name 0810
+    id 170
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0811
+    id 171
+  }
+  area class=GEVHex
+  {
+    name 0812
+    id 172
+  }
+  area class=GEVHex
+  {
+    name 0813
+    id 173
+    terrain swamp
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0814
+    id 174
+  }
+  area class=GEVHex
+  {
+    name 0815
+    id 175
+  }
+  area class=GEVHex
+  {
+    name 0816
+    id 176
+  }
+  area class=GEVHex
+  {
+    name 0817
+    id 177
+  }
+  area class=GEVHex
+  {
+    name 0818
+    id 178
+  }
+  area class=GEVHex
+  {
+    name 0819
+    id 179
+  }
+  area class=GEVHex
+  {
+    name 0820
+    terrain forest
+    id 180
+  }
+  area class=GEVHex
+  {
+    name 0821
+    id 181
+  }
+  area class=GEVHex
+  {
+    name 0822
+    id 182
+  }
+  area class=GEVHex
+  {
+    name 0901
+    terrain forest
+    id 184
+  }
+  area class=GEVHex
+  {
+    name 0902
+    id 185
+  }
+  area class=GEVHex
+  {
+    name 0903
+    id 186
+  }
+  area class=GEVHex
+  {
+    name 0904
+    terrain forest
+    id 187
+  }
+  area class=GEVHex
+  {
+    name 0905
+    terrain forest
+    id 188
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 0906
+    terrain forest
+    id 189
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 4
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 0907
+    terrain forest
+    id 190
+  }
+  area class=GEVHex
+  {
+    name 0908
+    terrain forest
+    id 191
+  }
+  area class=GEVHex
+  {
+    name 0909
+    id 192
+  }
+  area class=GEVHex
+  {
+    name 0910
+    id 193
+  }
+  area class=GEVHex
+  {
+    name 0911
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    id 194
+  }
+  area class=GEVHex
+  {
+    name 0912
+    id 195
+  }
+  area class=GEVHex
+  {
+    name 0913
+    id 196
+    terrain swamp
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 0914
+    id 197
+  }
+  area class=GEVHex
+  {
+    name 0915
+    id 198
+  }
+  area class=GEVHex
+  {
+    name 0916
+    id 199
+  }
+  area class=GEVHex
+  {
+    name 0917
+    id 200
+  }
+  area class=GEVHex
+  {
+    name 0918
+    id 201
+  }
+  area class=GEVHex
+  {
+    name 0919
+    id 202
+  }
+  area class=GEVHex
+  {
+    name 0920
+    terrain forest
+    id 203
+  }
+  area class=GEVHex
+  {
+    name 0921
+    id 204
+  }
+  area class=GEVHex
+  {
+    name 0922
+    id 205
+  }
+  area class=GEVHex
+  {
+    name 0923
+    id 206
+  }
+  area class=GEVHex
+  {
+    name 1001
+    terrain forest
+    id 207
+  }
+  area class=GEVHex
+  {
+    name 1002
+    id 208
+  }
+  area class=GEVHex
+  {
+    name 1003
+    id 209
+  }
+  area class=GEVHex
+  {
+    name 1004
+    id 210
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1005
+    terrain forest
+    id 211
+  }
+  area class=GEVHex
+  {
+    name 1006
+    id 212
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1007
+    id 213
+  }
+  area class=GEVHex
+  {
+    name 1008
+    id 214
+  }
+  area class=GEVHex
+  {
+    name 1009
+    id 215
+  }
+  area class=GEVHex
+  {
+    name 1010
+    terrain forest
+    id 216
+  }
+  area class=GEVHex
+  {
+    name 1011
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    id 217
+  }
+  area class=GEVHex
+  {
+    name 1012
+    id 218
+  }
+  area class=GEVHex
+  {
+    name 1013
+    id 219
+    terrain swamp
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1014
+    id 220
+  }
+  area class=GEVHex
+  {
+    name 1015
+    id 221
+  }
+  area class=GEVHex
+  {
+    name 1016
+    id 222
+  }
+  area class=GEVHex
+  {
+    name 1017
+    id 223
+  }
+  area class=GEVHex
+  {
+    name 1018
+    id 224
+  }
+  area class=GEVHex
+  {
+    name 1019
+    id 225
+  }
+  area class=GEVHex
+  {
+    name 1020
+    id 226
+  }
+  area class=GEVHex
+  {
+    name 1021
+    id 227
+  }
+  area class=GEVHex
+  {
+    name 1022
+    id 228
+  }
+  area class=GEVHex
+  {
+    name 1101
+    terrain forest
+    id 230
+  }
+  area class=GEVHex
+  {
+    name 1102
+    terrain forest
+    id 231
+  }
+  area class=GEVHex
+  {
+    name 1103
+    id 232
+  }
+  area class=GEVHex
+  {
+    name 1104
+    id 233
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1105
+    terrain forest
+    id 234
+  }
+  area class=GEVHex
+  {
+    name 1106
+    terrain forest
+    id 235
+  }
+  area class=GEVHex
+  {
+    name 1107
+    id 236
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1108
+    terrain forest
+    id 237
+  }
+  area class=GEVHex
+  {
+    name 1109
+    terrain forest
+    id 238
+  }
+  area class=GEVHex
+  {
+    name 1110
+    id 239
+  }
+  area class=GEVHex
+  {
+    name 1111
+    terrain forest
+    id 240
+  }
+  area class=GEVHex
+  {
+    name 1112
+    id 241
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 1113
+    id 242
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 5
+    }
+  }
+  area class=GEVHex
+  {
+    name 1114
+    id 243
+    terrain swamp
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1115
+    id 244
+  }
+  area class=GEVHex
+  {
+    name 1116
+    id 245
+  }
+  area class=GEVHex
+  {
+    name 1117
+    id 246
+  }
+  area class=GEVHex
+  {
+    name 1118
+    id 247
+  }
+  area class=GEVHex
+  {
+    name 1119
+    id 248
+  }
+  area class=GEVHex
+  {
+    name 1120
+    id 249
+  }
+  area class=GEVHex
+  {
+    name 1121
+    id 250
+  }
+  area class=GEVHex
+  {
+    name 1122
+    id 251
+  }
+  area class=GEVHex
+  {
+    name 1123
+    id 252
+  }
+  area class=GEVHex
+  {
+    name 1201
+    terrain forest
+    id 253
+  }
+  area class=GEVHex
+  {
+    name 1202
+    id 254
+  }
+  area class=GEVHex
+  {
+    name 1203
+    id 255
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1204
+    id 256
+  }
+  area class=GEVHex
+  {
+    name 1205
+    terrain forest
+    id 257
+  }
+  area class=GEVHex
+  {
+    name 1206
+    id 258
+  }
+  area class=GEVHex
+  {
+    name 1207
+    terrain forest
+    id 259
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1208
+    terrain forest
+    id 260
+  }
+  area class=GEVHex
+  {
+    name 1209
+    terrain forest
+    id 261
+  }
+  area class=GEVHex
+  {
+    name 1210
+    id 262
+  }
+  area class=GEVHex
+  {
+    name 1211
+    id 263
+  }
+  area class=GEVHex
+  {
+    name 1212
+    id 264
+  }
+  area class=GEVHex
+  {
+    name 1213
+    id 265
+  }
+  area class=GEVHex
+  {
+    name 1214
+    id 266
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1215
+    id 267
+  }
+  area class=GEVHex
+  {
+    name 1216
+    id 268
+  }
+  area class=GEVHex
+  {
+    name 1217
+    id 269
+  }
+  area class=GEVHex
+  {
+    name 1218
+    terrain forest
+    id 270
+  }
+  area class=GEVHex
+  {
+    name 1219
+    id 271
+  }
+  area class=GEVHex
+  {
+    name 1220
+    id 272
+  }
+  area class=GEVHex
+  {
+    name 1221
+    id 273
+  }
+  area class=GEVHex
+  {
+    name 1222
+    id 274
+  }
+  area class=GEVHex
+  {
+    name 1301
+    id 276
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1302
+    id 277
+  }
+  area class=GEVHex
+  {
+    name 1303
+    id 278
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1304
+    id 279
+  }
+  area class=GEVHex
+  {
+    name 1305
+    id 280
+  }
+  area class=GEVHex
+  {
+    name 1306
+    id 281
+  }
+  area class=GEVHex
+  {
+    name 1307
+    terrain forest
+    id 282
+  }
+  area class=GEVHex
+  {
+    name 1308
+    id 283
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1309
+    id 284
+  }
+  area class=GEVHex
+  {
+    name 1310
+    terrain forest
+    id 285
+  }
+  area class=GEVHex
+  {
+    name 1311
+    id 286
+  }
+  area class=GEVHex
+  {
+    name 1312
+    terrain forest
+    id 287
+  }
+  area class=GEVHex
+  {
+    name 1313
+    id 288
+  }
+  area class=GEVHex
+  {
+    name 1314
+    id 289
+  }
+  area class=GEVHex
+  {
+    name 1315
+    id 290
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1316
+    id 291
+  }
+  area class=GEVHex
+  {
+    name 1317
+    id 292
+  }
+  area class=GEVHex
+  {
+    name 1318
+    terrain forest
+    id 293
+  }
+  area class=GEVHex
+  {
+    name 1319
+    terrain forest
+    id 294
+  }
+  area class=GEVHex
+  {
+    name 1320
+    id 295
+  }
+  area class=GEVHex
+  {
+    name 1321
+    id 296
+  }
+  area class=GEVHex
+  {
+    name 1322
+    id 297
+  }
+  area class=GEVHex
+  {
+    name 1323
+    id 298
+  }
+  area class=GEVHex
+  {
+    name 1401
+    id 299
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1402
+    id 300
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1403
+    id 301
+  }
+  area class=GEVHex
+  {
+    name 1404
+    id 302
+  }
+  area class=GEVHex
+  {
+    name 1405
+    id 303
+  }
+  area class=GEVHex
+  {
+    name 1406
+    terrain forest
+    id 304
+  }
+  area class=GEVHex
+  {
+    name 1407
+    id 305
+  }
+  area class=GEVHex
+  {
+    name 1408
+    id 306
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1409
+    id 307
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1410
+    id 308
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1411
+    id 309
+  }
+  area class=GEVHex
+  {
+    name 1412
+    id 310
+  }
+  area class=GEVHex
+  {
+    name 1413
+    id 311
+  }
+  area class=GEVHex
+  {
+    name 1414
+    id 312
+  }
+  area class=GEVHex
+  {
+    name 1415
+    id 313
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1416
+    id 314
+  }
+  area class=GEVHex
+  {
+    name 1417
+    terrain forest
+    id 315
+  }
+  area class=GEVHex
+  {
+    name 1418
+    terrain forest
+    id 316
+  }
+  area class=GEVHex
+  {
+    name 1419
+    id 317
+  }
+  area class=GEVHex
+  {
+    name 1420
+    id 318
+  }
+  area class=GEVHex
+  {
+    name 1421
+    id 319
+  }
+  area class=GEVHex
+  {
+    name 1422
+    id 320
+  }
+  area class=GEVHex
+  {
+    name 1501
+    terrain forest
+    id 322
+  }
+  area class=GEVHex
+  {
+    name 1502
+    id 323
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain bridge
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1503
+    id 324
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 5
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1504
+    terrain swamp
+    id 325
+  }
+  area class=GEVHex
+  {
+    name 1505
+    id 326
+  }
+  area class=GEVHex
+  {
+    name 1506
+    terrain forest
+    id 327
+  }
+  area class=GEVHex
+  {
+    name 1507
+    terrain forest
+    id 328
+  }
+  area class=GEVHex
+  {
+    name 1508
+    terrain town
+    id 329
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1509
+    id 330
+  }
+  area class=GEVHex
+  {
+    name 1510
+    id 331
+  }
+  area class=GEVHex
+  {
+    name 1511
+    id 332
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1512
+    id 333
+  }
+  area class=GEVHex
+  {
+    name 1513
+    id 334
+  }
+  area class=GEVHex
+  {
+    name 1514
+    terrain forest
+    id 335
+  }
+  area class=GEVHex
+  {
+    name 1515
+    id 336
+  }
+  area class=GEVHex
+  {
+    name 1516
+    id 337
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1517
+    id 338
+  }
+  area class=GEVHex
+  {
+    name 1518
+    id 339
+  }
+  area class=GEVHex
+  {
+    name 1519
+    terrain forest
+    id 340
+  }
+  area class=GEVHex
+  {
+    name 1520
+    id 341
+  }
+  area class=GEVHex
+  {
+    name 1521
+    id 342
+  }
+  area class=GEVHex
+  {
+    name 1522
+    terrain water
+    id 343
+  }
+  area class=GEVHex
+  {
+    name 1523
+    terrain water
+    id 344
+  }
+  area class=GEVHex
+  {
+    name 1601
+    terrain forest
+    id 345
+  }
+  area class=GEVHex
+  {
+    name 1602
+    id 346
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1603
+    id 347
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1604
+    terrain swamp
+    id 348
+  }
+  area class=GEVHex
+  {
+    name 1605
+    id 349
+  }
+  area class=GEVHex
+  {
+    name 1606
+    terrain forest
+    id 350
+  }
+  area class=GEVHex
+  {
+    name 1607
+    terrain forest
+    id 351
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 1608
+    terrain forest
+    id 352
+  }
+  area class=GEVHex
+  {
+    name 1609
+    id 353
+  }
+  area class=GEVHex
+  {
+    name 1610
+    id 354
+  }
+  area class=GEVHex
+  {
+    name 1611
+    id 355
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1612
+    id 356
+  }
+  area class=GEVHex
+  {
+    name 1613
+    terrain forest
+    id 357
+  }
+  area class=GEVHex
+  {
+    name 1614
+    id 358
+  }
+  area class=GEVHex
+  {
+    name 1615
+    id 359
+  }
+  area class=GEVHex
+  {
+    name 1616
+    id 360
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 1617
+    id 361
+    terrain water
+  }
+  area class=GEVHex
+  {
+    name 1618
+    id 362
+    terrain water
+  }
+  area class=GEVHex
+  {
+    name 1619
+    id 363
+  }
+  area class=GEVHex
+  {
+    name 1620
+    id 364
+  }
+  area class=GEVHex
+  {
+    name 1621
+    terrain water
+    id 365
+  }
+  area class=GEVHex
+  {
+    name 1622
+    id 366
+  }
+  area class=GEVHex
+  {
+    name 1701
+    terrain forest
+    id 368
+  }
+  area class=GEVHex
+  {
+    name 1702
+    terrain forest
+    id 369
+  }
+  area class=GEVHex
+  {
+    name 1703
+    id 370
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1704
+    id 371
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1705
+    terrain swamp
+    id 372
+  }
+  area class=GEVHex
+  {
+    name 1706
+    id 373
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1707
+    terrain forest
+    id 374
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 1708
+    terrain forest
+    id 375
+  }
+  area class=GEVHex
+  {
+    name 1709
+    terrain forest
+    id 376
+  }
+  area class=GEVHex
+  {
+    name 1710
+    id 377
+  }
+  area class=GEVHex
+  {
+    name 1711
+    id 378
+  }
+  area class=GEVHex
+  {
+    name 1712
+    id 379
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1713
+    id 380
+  }
+  area class=GEVHex
+  {
+    name 1714
+    id 381
+  }
+  area class=GEVHex
+  {
+    name 1715
+    id 382
+  }
+  area class=GEVHex
+  {
+    name 1716
+    id 383
+  }
+  area class=GEVHex
+  {
+    name 1717
+    id 384
+    terrain water
+  }
+  area class=GEVHex
+  {
+    name 1718
+    id 385
+    terrain town
+  }
+  area class=GEVHex
+  {
+    name 1719
+    id 386
+    terrain water
+  }
+  area class=GEVHex
+  {
+    name 1720
+    id 387
+    terrain water
+  }
+  area class=GEVHex
+  {
+    name 1721
+    id 388
+    terrain water
+  }
+  area class=GEVHex
+  {
+    name 1722
+    id 389
+  }
+  area class=GEVHex
+  {
+    name 1723
+    id 390
+  }
+  area class=GEVHex
+  {
+    name 1801
+    id 391
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1802
+    id 392
+  }
+  area class=GEVHex
+  {
+    name 1803
+    id 393
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1804
+    terrain swamp
+    id 394
+  }
+  area class=GEVHex
+  {
+    name 1805
+    id 395
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 1806
+    id 396
+  }
+  area class=GEVHex
+  {
+    name 1807
+    id 397
+  }
+  area class=GEVHex
+  {
+    name 1808
+    terrain forest
+    id 398
+  }
+  area class=GEVHex
+  {
+    name 1809
+    terrain forest
+    id 399
+  }
+  area class=GEVHex
+  {
+    name 1810
+    id 400
+  }
+  area class=GEVHex
+  {
+    name 1811
+    id 401
+  }
+  area class=GEVHex
+  {
+    name 1812
+    id 402
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1813
+    id 403
+  }
+  area class=GEVHex
+  {
+    name 1814
+    terrain water
+    id 404
+  }
+  area class=GEVHex
+  {
+    name 1815
+    terrain water
+    id 405
+  }
+  area class=GEVHex
+  {
+    name 1816
+    terrain water
+    id 406
+  }
+  area class=GEVHex
+  {
+    name 1817
+    id 407
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1818
+    id 408
+    terrain town
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1819
+    id 409
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1820
+    id 410
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1821
+    id 411
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1822
+    id 412
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 0
+      md2 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 1901
+    id 414
+  }
+  area class=GEVHex
+  {
+    name 1902
+    id 415
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+  }
+  area class=GEVHex
+  {
+    name 1903
+    id 416
+  }
+  area class=GEVHex
+  {
+    name 1904
+    id 417
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 5
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 1905
+    id 418
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 1906
+    id 419
+  }
+  area class=GEVHex
+  {
+    name 1907
+    id 420
+  }
+  area class=GEVHex
+  {
+    name 1908
+    terrain forest
+    id 421
+  }
+  area class=GEVHex
+  {
+    name 1909
+    terrain forest
+    id 422
+  }
+  area class=GEVHex
+  {
+    name 1910
+    terrain forest
+    id 423
+  }
+  area class=GEVHex
+  {
+    name 1911
+    id 424
+  }
+  area class=GEVHex
+  {
+    name 1912
+    id 425
+  }
+  area class=GEVHex
+  {
+    name 1913
+    id 426
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 1914
+    terrain water
+    id 427
+  }
+  area class=GEVHex
+  {
+    name 1915
+    terrain town
+    id 428
+  }
+  area class=GEVHex
+  {
+    name 1916
+    id 429
+  }
+  area class=GEVHex
+  {
+    name 1917
+    id 430
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 1918
+    id 431
+  }
+  area class=GEVHex
+  {
+    name 1919
+    id 432
+  }
+  area class=GEVHex
+  {
+    name 1920
+    id 433
+  }
+  area class=GEVHex
+  {
+    name 1921
+    id 434
+  }
+  area class=GEVHex
+  {
+    name 1922
+    id 435
+  }
+  area class=GEVHex
+  {
+    name 1923
+    id 436
+  }
+  area class=GEVHex
+  {
+    name 2001
+    id 437
+  }
+  area class=GEVHex
+  {
+    name 2002
+    terrain town
+    id 438
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+  }
+  area class=GEVHex
+  {
+    name 2003
+    id 439
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 2004
+    id 440
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain bridge
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 2005
+    id 441
+  }
+  area class=GEVHex
+  {
+    name 2006
+    id 442
+  }
+  area class=GEVHex
+  {
+    name 2007
+    id 443
+  }
+  area class=GEVHex
+  {
+    name 2008
+    terrain forest
+    id 444
+  }
+  area class=GEVHex
+  {
+    name 2009
+    terrain water
+    id 445
+  }
+  area class=GEVHex
+  {
+    name 2010
+    terrain water
+    id 446
+  }
+  area class=GEVHex
+  {
+    name 2011
+    terrain water
+    id 447
+  }
+  area class=GEVHex
+  {
+    name 2012
+    terrain water
+    id 448
+  }
+  area class=GEVHex
+  {
+    name 2013
+    id 449
+    terrain water
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain riverbridge
+      md1 5
+      md2 2
+    }
+  }
+  area class=GEVHex
+  {
+    name 2014
+    terrain town
+    id 450
+  }
+  area class=GEVHex
+  {
+    name 2015
+    terrain town
+    id 451
+  }
+  area class=GEVHex
+  {
+    name 2016
+    id 452
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 2017
+    id 453
+  }
+  area class=GEVHex
+  {
+    name 2018
+    id 454
+  }
+  area class=GEVHex
+  {
+    name 2019
+    id 455
+  }
+  area class=GEVHex
+  {
+    name 2020
+    id 456
+  }
+  area class=GEVHex
+  {
+    name 2021
+    id 457
+  }
+  area class=GEVHex
+  {
+    name 2022
+    id 458
+  }
+  area class=GEVHex
+  {
+    name 2101
+    id 460
+  }
+  area class=GEVHex
+  {
+    name 2102
+    terrain town
+    id 461
+  }
+  area class=GEVHex
+  {
+    name 2103
+    terrain town
+    id 462
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 2104
+    id 463
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 2105
+    id 464
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 3
+    }
+  }
+  area class=GEVHex
+  {
+    name 2106
+    terrain swamp
+    id 465
+  }
+  area class=GEVHex
+  {
+    name 2107
+    terrain swamp
+    id 466
+  }
+  area class=GEVHex
+  {
+    name 2108
+    terrain water
+    id 467
+  }
+  area class=GEVHex
+  {
+    name 2109
+    terrain water
+    id 468
+  }
+  area class=GEVHex
+  {
+    name 2110
+    terrain water
+    id 469
+  }
+  area class=GEVHex
+  {
+    name 2111
+    terrain water
+    id 470
+  }
+  area class=GEVHex
+  {
+    name 2112
+    terrain water
+    id 471
+  }
+  area class=GEVHex
+  {
+    name 2113
+    terrain town
+    id 472
+  }
+  area class=GEVHex
+  {
+    name 2114
+    terrain town
+    id 473
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+  }
+  area class=GEVHex
+  {
+    name 2115
+    terrain town
+    id 474
+  }
+  area class=GEVHex
+  {
+    name 2116
+    id 475
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 2117
+    id 476
+  }
+  area class=GEVHex
+  {
+    name 2118
+    id 477
+  }
+  area class=GEVHex
+  {
+    name 2119
+    id 478
+  }
+  area class=GEVHex
+  {
+    name 2120
+    id 479
+  }
+  area class=GEVHex
+  {
+    name 2121
+    id 480
+  }
+  area class=GEVHex
+  {
+    name 2122
+    id 481
+  }
+  area class=GEVHex
+  {
+    name 2123
+    id 482
+  }
+  area class=GEVHex
+  {
+    name 2201
+    id 483
+  }
+  area class=GEVHex
+  {
+    name 2202
+    terrain town
+    id 484
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 2203
+    terrain town
+    id 485
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 2204
+    id 486
+  }
+  area class=GEVHex
+  {
+    name 2205
+    terrain swamp
+    id 487
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain stream
+      md1 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 2206
+    terrain water
+    id 488
+  }
+  area class=GEVHex
+  {
+    name 2207
+    terrain water
+    id 489
+  }
+  area class=GEVHex
+  {
+    name 2208
+    terrain water
+    id 490
+  }
+  area class=GEVHex
+  {
+    name 2209
+    terrain water
+    id 491
+  }
+  area class=GEVHex
+  {
+    name 2210
+    terrain water
+    id 492
+  }
+  area class=GEVHex
+  {
+    name 2211
+    terrain water
+    id 493
+  }
+  area class=GEVHex
+  {
+    name 2212
+    terrain water
+    id 494
+  }
+  area class=GEVHex
+  {
+    name 2213
+    terrain water
+    id 495
+  }
+  area class=GEVHex
+  {
+    name 2214
+    terrain town
+    id 496
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+  }
+  area class=GEVHex
+  {
+    name 2215
+    id 497
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 1
+      md2 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 2216
+    id 498
+  }
+  area class=GEVHex
+  {
+    name 2217
+    id 499
+  }
+  area class=GEVHex
+  {
+    name 2218
+    id 500
+  }
+  area class=GEVHex
+  {
+    name 2219
+    id 501
+  }
+  area class=GEVHex
+  {
+    name 2220
+    id 502
+  }
+  area class=GEVHex
+  {
+    name 2221
+    id 503
+  }
+  area class=GEVHex
+  {
+    name 2222
+    id 504
+  }
+  area class=GEVHex
+  {
+    name 2301
+    id 506
+  }
+  area class=GEVHex
+  {
+    name 2302
+    id 507
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain railroad
+      md1 4
+      md2 1
+    }
+  }
+  area class=GEVHex
+  {
+    name 2303
+    id 508
+  }
+  area class=GEVHex
+  {
+    name 2304
+    id 509
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+  }
+  area class=GEVHex
+  {
+    name 2305
+    terrain swamp
+    id 510
+  }
+  area class=GEVHex
+  {
+    name 2306
+    terrain water
+    id 511
+  }
+  area class=GEVHex
+  {
+    name 2307
+    terrain water
+    id 512
+  }
+  area class=GEVHex
+  {
+    name 2308
+    terrain water
+    id 513
+  }
+  area class=GEVHex
+  {
+    name 2309
+    terrain water
+    id 514
+  }
+  area class=GEVHex
+  {
+    name 2310
+    terrain water
+    id 515
+  }
+  area class=GEVHex
+  {
+    name 2311
+    terrain water
+    id 516
+  }
+  area class=GEVHex
+  {
+    name 2312
+    terrain water
+    id 517
+  }
+  area class=GEVHex
+  {
+    name 2313
+    terrain water
+    id 518
+  }
+  area class=GEVHex
+  {
+    name 2314
+    terrain water
+    id 519
+  }
+  area class=GEVHex
+  {
+    name 2315
+    terrain town
+    id 520
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 2
+      md2 5
+    }
+    feature class=fun::MapAreaTerrainFeature
+    {
+      terrain road
+      md1 4
+    }
+  }
+  area class=GEVHex
+  {
+    name 2316
+    id 521
+  }
+  area class=GEVHex
+  {
+    name 2317
+    id 522
+  }
+  area class=GEVHex
+  {
+    name 2318
+    id 523
+  }
+  area class=GEVHex
+  {
+    name 2319
+    id 524
+  }
+  area class=GEVHex
+  {
+    name 2320
+    id 525
+  }
+  area class=GEVHex
+  {
+    name 2321
+    id 526
+  }
+  area class=GEVHex
+  {
+    name 2322
+    id 527
+  }
+  area class=GEVHex
+  {
+    name 2323
+    id 528
+  }
+  dir N
+  dir NE
+  dir SE
+  dir S
+  dir SW
+  dir NW
+  shape NorthSouthOddShortRect
+  xstyle class=fun::HexNumberStyle
+  {
+    first 01
+    ascending true
+    numeric true
+  }
+  ystyle class=fun::HexNumberStyle
+  {
+    first 01
+    ascending true
+    numeric true
+  }
+  nfmt $x$y
+  hexes 518
+  xsize 23
+  ysize 23
+}

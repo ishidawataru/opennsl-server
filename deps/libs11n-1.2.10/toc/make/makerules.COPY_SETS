@@ -1,0 +1,52 @@
+#!/bin/bash
+# creates makefile rules for use with COPY_SETS.make
+
+# usage: $0 filtername [filtername2 ...]
+# where filternameN is a filter defined in a client
+# Makefile's $(COPY_SETS) var.
+
+# This code, my friends, contains some mind-bending, completely
+# unmaintainable shell-within-make-within-shell stuff.
+
+test x = "x$1" && {
+        echo "usage: $0 filtername [filtername2 ...]"
+        exit 1
+}
+
+thisapp="\$(TOC_MAKESDIR)/makerules.COPY_SETS"
+filters_makefile="\$(TOC_MAKESDIR)/COPY_SETS.make"
+
+cat <<EOF
+############################## COPY_FILES rules:
+${thisapp}:# ; @-touch \$@
+${filters_makefile}:# ; @-touch \$@
+EOF
+
+error_prefix="${filters_makefile}:"
+
+for f in "$@"; do
+fprefix=${f}
+cat <<EOF
+############################## COPY_FILES: ${f}
+${f}_COPY_DEST ?= \$(COPY_SETS_DEST)
+ifeq (,\$(${f}_COPY_SOURCES))
+\$(error ${error_prefix} ${f}_COPY_SOURCES must be set to a list of input source files/dirs)
+endif
+
+ifeq (,\$(${f}_COPY_DEST))
+\$(error ${error_prefix} ${f}_COPY_DEST or COPY_SETS_DEST must be set to a destination directory.)
+endif
+
+# \$(${f}_COPY_DEST): FORCE
+
+copyset-${f}: FORCE
+    @test -d "\$@" || { echo "COPY_SETS ${f} creating dir \$@"; mkdir -p \$@ || {err=\$\$?; echo "MKDIR FAILED: \$@"; exit \$\$err;}};
+    @echo "COPY_SET ${f} ==> \$(${f}_COPY_DEST)"; cp -frp \$(${f}_COPY_SOURCES) "\$(${f}_COPY_DEST)"
+
+COPY_SETS: copyset-${f}
+# end COPY_SETS ${f}
+########################################################################
+EOF
+
+done
+

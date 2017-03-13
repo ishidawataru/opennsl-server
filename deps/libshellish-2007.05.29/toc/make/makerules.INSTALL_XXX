@@ -1,0 +1,33 @@
+#!/bin/sh
+# usage: $0 BINS=prefix-relative/destination/path SBINS=sbins LIBS=lib ...
+# creates install rules. The whole reason for this is to get around the
+# limitation that make 3.79 does not have $(eval), as 3.80 does.
+
+test -z "$1" && {
+    echo "usage: $0 SUBTARGET1=/dest [SUBTARGET2=/dest ...]"
+    exit 1
+}
+echo "# $0: automatically generated install rules:"
+for kvp in $@; do
+    tgt=${kvp%%=*}
+    dest='$(prefix)/'${kvp##*=}
+    INST="INSTALL_${tgt}"
+    cat <<EOF
+# rules for ${INST}:
+${INST}_DEST ?= $dest
+install-${tgt}: FORCE
+	@\$(call toc_make_install,\$(${INST}),\$(DESTDIR)\$(${INST}_DEST),\$(${INST}_INSTALL_FLAGS))
+install-${tgt}-update: FORCE
+	@\$(call toc_make_install_update,\$(${INST}),\$(DESTDIR)\$(${INST}_DEST),\$(${INST}_INSTALL_FLAGS))
+uninstall-${tgt}:
+	@\$(call toc_make_uninstall,\$(${INST}),\$(DESTDIR)\$(${INST}_DEST))
+install-${tgt}-symlink:
+	@\$(call toc_make_install_symlink,\$(${INST}),\$(DESTDIR)\$(${INST}_DEST))
+install: install-${tgt}
+uninstall: uninstall-${tgt}
+install-update: install-${tgt}-update
+install-symlink: install-${tgt}-symlink
+# end ${INST} rules
+
+EOF
+done

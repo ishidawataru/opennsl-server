@@ -1,0 +1,10 @@
+This is the README for the shellish source tree.
+
+shellish is a small C++ framework for writing shell-style applications.
+
+Requirements:
+
+        - libs11n
+
+
+

@@ -1,0 +1,41 @@
+#!/bin/sh
+# Creates makefile rules for use with RSYNC.make
+
+test 0 = ${#@} && {
+        echo "usage: $0 target1 [... targetN]"
+        exit 1
+}
+thisapp="\$(TOC_MAKESDIR)/makerules.RSYNC"
+filters_makefile="\$(TOC_MAKESDIR)/RSYNC.make"
+
+echo "############################## RSYNC rules:"
+
+echo "RSYNC_CHDIR ?= ."
+
+for t in "$@"; do
+    cat <<EOF
+
+${t}_RSYNC_DEST ?= \$(RSYNC_DEST)
+
+ifeq (,\$(${t}_RSYNC_DEST))
+    \$(error Neither RSYNC_DEST nor ${t}_RSYNC_DEST have been set!)
+endif
+
+ifeq (,\$(${t}_RSYNC_FILES))
+    \$(error ${t}_RSYNC_FILES must be set to a list of file/directory patterns!)
+endif
+
+${t}_RSYNC_CHDIR ?= \$(RSYNC_CHDIR)
+
+
+${t}_RSYNC_FLAGS ?= \$(RSYNC_FLAGS)
+.PHONY: rsync-${t} RSYNC-${t}
+rsync-${t}:
+	cd \$(${t}_RSYNC_CHDIR) || exit; \$(RSYNC_BIN) \$(${t}_RSYNC_FLAGS) \$(${t}_RSYNC_FILES) \$(${t}_RSYNC_DEST)
+RSYNC: rsync-${t}
+RSYNC-${t}: rsync-${t}
+rsync: rsync-${t}
+EOF
+done
+echo "############################## end RSYNC rules"
+

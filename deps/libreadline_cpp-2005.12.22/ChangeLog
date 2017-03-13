@@ -1,0 +1,46 @@
+This is the informal ChangeLog for libreadline_cpp.
+
+22 Dec 2005:
+
+- Added support for the "genuine" libedit, available from:
+    http://www.thrysoee.dk/editline/
+  Only tested with the 2.9 release.
+
+
+26 Feb 2005:
+
+- Some minor internal cleanups. For libeditline mode
+  added default binding of ^W to ed-delete-prev-word
+  (was delete to begin of line).
+
+- Fixed a bug in the init of editline mode: it wasn't
+  going through out customization.
+
+
+20 Dec 2004:
+
+- Minor tweak to accomodate a fix in libeditline.
+
+
+29 Nov 2004:
+
+- Accommodated changes in libeditline.
+
+
+27 Nov 2004:
+
+- Now optionally uses liblineedit over libreadline, if found.
+  This clears up licensing problems, as liblineedit is BSD,
+  not GNU.
+
+
+4 Sept 2004:
+
+- Ported Readline_s11n to use s11n::node_traits.
+
+
+7 June 2004:
+
+- Fixed bug in serialization of Readline: history list
+was only saving first token of each entry.
+

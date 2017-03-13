@@ -24,7 +24,8 @@ int command_list( const shellish::arguments & args) {
 		tasks += "knet \n";
 		tasks += "vlan \n";
 		tasks += "port \n";
-		tasks += "l2";
+		tasks += "l2 \n";
+		tasks += "driver \n";
 	} else if (MODE_L2) {
 		return L2(args);
 	} else if (MODE_KNET) {

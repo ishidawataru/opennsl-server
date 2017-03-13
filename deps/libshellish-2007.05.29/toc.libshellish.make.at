@@ -1,0 +1,20 @@
+#!/do/not/make
+#^^^ only to help emacs out.
+#
+# Expects AT LEAST the following configure tests to be run:
+#
+#     zlib, bzlib, libltdl, libs11n, flex, boost, readline, lyxport
+#
+# But this code doesn't care whether the tests pass or not.
+
+configure_with_lyxport = @configure_with_lyxport@
+
+INCLUDES += -I$(top_srcdir)/include $(SHELLISH_INTERNAL_INCLUDES)
+
+CLEAN_FILES += $(wildcard *.o *~)
+
+LIBSHELLISH_LDADD = $(LIBREADLINECPP_CLIENT_LDADD) $(LIBS11N_CLIENT_LDADD)
+
+INSTALL_PACKAGE_HEADERS_DEST = $(prefix)/include/s11n.net/shellish
+
+CXXFLAGS += -fPIC

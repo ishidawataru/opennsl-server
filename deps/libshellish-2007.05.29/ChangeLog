@@ -1,0 +1,297 @@
+This is the informal ChangeLog for libshellish:
+
+
+May 2007:
+
+- Removed some of the older unused experimental code (signals/slots
+support).
+
+
+August 2005:
+
+Renamed from eshell (a "historical" name) and refactored significantly
+to remove dependencies on several support libs, including
+s11n. shellish is now a standalone app with optional dependencies on
+libreadline_cpp and libld/liblt_dl. This means a few features went
+away, like sessions files, but it also means shellish is now far more
+portable and somewhat easier to get running. Session support sessions
+is now optional and requires libs11n 1.1.3+.
+
+
+
+Older eshell changelog...
+
+Feb 2005:
+
+ACHTUNG: lots of changes vis-a-vis auto-expansion of
+tilde-home and wildcards. Bound to be some bugs left
+over!
+
+- Removed wordexp(), which means no more wildcards. :(
+  i will replace it with glob() at some point. wordexp()
+  was simply too problematic for shellish because shellish
+  does much of it's own parsing, and wordexp() doesn't
+  want that. Made several related tokenizing/expansion
+  changes, not all of which are 100% backwards
+  compatible.
+
+- Removed the internal, undocumented session() support.
+  load/save_session() still exist, but clients may not
+  add/fetch data to/from it. Added second, optional
+  arg to save_session(), to keep the env() data out of the
+  serialized data (which isn't appropriate in many cases).
+
+- Added shellish::shellish_version() and built-in command
+  shellish-info, which spits out some basic info about your
+  copy of shellish.
+
+- Environment var $? is no longer set to 0 on empty input
+  lines.
+
+- Added new prompt_for_input(), which is intended to be
+  used by command handlers to fetch input. It calls
+  the new builtin command:
+    shellish-prompt-for-input PROMPT
+  to get input from the user. This means that clients may
+  remap shellish-prompt-for-input to their own handlers to get
+  input using whatever front-end they like.
+
+- Reimplemented input_loop() to use prompt_for_input(),
+  which means it is now ignorant of the user input
+  implementation.
+
+- Modified emenu command to use shellish-prompt-for-input,
+  so it now works with arbitrary input mechanisms (and
+  outputs to shellish::ostream()). This has been shown to
+  work in a curses-based interface.
+
+- dispatch() now recognizes comment lines if they start
+  with a '#' (with no leading spaces), and silently ignores
+  them (returning 0).
+
+- Changed s11n serialization of aliases. It is now more
+  verbose but allows non-alphanumeric aliases (which
+  previously would fail to deserialize under some file
+  formats, like XML dialects).
+
+- Spaces are now trimmed from all arguments, which fixes the
+  problem with sourcing script files with leading spaces.
+
+- dispatch(istream) now properly skips comment- and empty
+  lines. Line count is retained.
+
+- Added arguments::empty(), which is more efficient than
+  checking (arguments::size()==0).
+
+- Not a change, but a note: i recently implemented an ncurses
+  app which uses shellish to dispatch it's commands internally.
+  It uses shellish::ostream() to redirect the "stdout" to a
+  curses panel, which means the i/o redir also works with all
+  built-in shellish commands without screwing up the screen mode.
+  i.e., shellish isn't just for shell apps anymore :).
+
+
+
+22 Jan 2005:
+
+- Added builtin function 'rl-info', to show the name of the
+  underlying readline/input implementation.
+
+- Renamed 'bg' builtin to 'bgthread', to avoid confusion with
+  the 'bg' command from standard shells (which works differently).
+
+
+27 Nov 2004:
+- Accomodated changes in libreadline_cpp. Can now work using libeditline,
+  meaning readline-like support without the GPL :).
+
+
+25 Sept 2004:
+
+- Major API change: removed the ostream argument from the whole command
+  handler interface. It only got in the way. If you want to use a
+  centralized stream, use shellish::ostream(). This change makes shellish
+  more suitable for plugging in to GUI-based applications, which don't
+  often deal with streams.
+
+- Rewired the dispatching framework internally, to make way for some
+  eventual additions, like context-specific command handler mappings.
+
+- Added shellish::dispatcher class and related functions for plugging
+  them in to the framework.
+
+- Fixed an abort when typing 'pipe' with no arguments.
+
+- Removed shellish::after_first_token(). Never did like it, and it
+  wasn't terribly safe (could segfault).
+
+- Fixed non-expansion of vars smaller than 3 chars, like "$?".
+  Requires an updated libs11n_acme (2004.09.25 or higher).
+
+- Added 'bg' builtin command, to launch a task in a background thread.
+  It only works if configure finds pthreads on your system.
+  Use carefully: once launched a thread cannot be recovered.
+
+
+2 Sept 2004:
+
+- Minor internal cleanups.
+
+- Changed arguments::list_type back to a std::list (from std::vector)
+  because the vector causes a segfault in arguments' copy ctor in
+  some cases. Dunno why.
+
+
+
+23 Aug 2004:
+
+- 'dlload' handler now uses exceptions so it can get more information
+   from the classloader when a dlload fails. It catches the exceptions,
+   so this does not directly affect client code, but clients who wish
+   to completely disable them should pass "--cl-no-throw" to their
+   shellish client to completely disable them. Shouldn't be necessary,
+   unless they also use cllite, in which case they will want to do that
+   because shellish normally enables cllite::use_exceptions(), which
+   will affect clients using that library.
+
+
+
+22 Aug 2004:
+
+- Changed args_list<lext::lex_t> BACK to args_list<string>. It
+  was too problematic.
+
+- Removed dependency on lext::lex_t.
+
+
+17 August 2004:
+
+- Added dependency on lext::lex_t (available from s11n.net).
+
+- Changed args_list<string> to args_list<lext::lex_t>.
+
+
+
+16 August 2004:
+
+- Changed shellish::args_list from a std::list to a std::vector.
+
+- Added copy ctor/op to eshe::arguments.
+
+
+30 July 2003:
+
+- Fixed alias expansion, which was apparently broken since the 1 July
+  release.
+
+- Added built-in command 'dlload', which can open arbitrary DLLs. This
+  can be used to dynamically load, e.g., shellish command handlers sets.
+
+- Added client binary named shellish. When passed the command-line option
+  -dl DLLNAME[:DLNAME2[:DLNAMEn]] it will pre-load the given DLL(s).
+  This allows a single client application to be the front end for
+  arbitrary shellish client DLLs. i know that doesn't sound all that
+  exciting, but it does in fact make my own development life a bit
+  simpler. :)
+
+- Moved most built-in commands into their own library, loaded
+  automatically on shellish initialization.
+
+
+
+2 July 2004:
+
+- Added built-in command 'repeat', which repeats another command X times, like so:
+    repeat 4 mycommand myarg myotherarg
+
+- Changed the order of 2nd/3rd args to process_menu().
+
+
+1 July 2004:
+
+- Added arguments::expand() function, allowing...
+
+- shellish::dispatch() now calls args.expand() on it's arguments, so each
+  token gets fully expanded via shellish::expand(). This allows, e.g.,
+  the following construct to work as expected for arbitrary commands:
+    mycommand "$(ls /tmp)" $HOME/*.foo
+  (Note the required quotes around "$(...)".)
+
+
+30 June 2004:
+
+- Added shellish::ui::simple_progress.
+
+- process_menu now passes on extra args to the dispatcher, so you can
+  pass args to a menu entry by adding them after the menu item number.
+
+
+29 June 2004:
+
+- Added basic "menu" support.
+
+- Added built-in "emenu" command, to load and run commonly-used commands via
+  a basic menu interface.
+
+
+26 June 2004:
+
+- Added shellish::app_home().
+
+
+21 June 2004:
+
+- Minor documentation corrections.
+
+
+12 June 2004:
+
+- Corrected some docs in shellish::shell_process.
+
+- Fixed: $? was not set if no command handler was found. It is now
+  set to shellish::ErrorCommandNotMapped.
+
+	
+10 June 2004:
+
+- Added rudimentary help support. See shellish::map_help() and the new
+optional 3rd arg to shellish::map_commander().
+
+
+
+8 June 2004:
+
+- Added shellish::expand(), after learning about wordexp() in the GNU C
+lib. This adds a LOT of variable expansion operations: all of those
+available in, e.g., the bash shell! :) BUT... they only work on
+environment vars which are inherited from the main shell - ::wordexp()
+apparently does not recognize vars set via ::setenv(), and thus
+those set shellish's set command are not properly expanded :(.
+Also $(command expansion) is always erroring out, even though the same
+expansions compiled in a dummy app do work. :(
+
+	
+- Added src/test.cpp and 'test' target to src/Makefile
+
+
+7 June 2004:
+
+- Added --shellish-debug support to shellish::init().
+
+- Added shellish::arguments::tostring() to get remaining (non-shift()ed)
+args as a string.
+
+- Added shellish::arguments::operator[int] to get the Nth argument from
+a list. This can save some effort of making a copy of (const
+arguments) in command handler functions, which is normally the
+approach needed to shift() arguments.
+
+- Fixed tokenizing of multiple commands per line: second and
+subsequent command weren't going through alias/env expansion.
+
+
+
+Late May, 2004:
+
+- shellish pulled out of my "project closet" and moved into the s11n.net
+toolbox tree.

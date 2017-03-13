@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+# tries to parse out a value of a var from a Makefile
+# it does no var expansion, nor file inclusion, nor
+# anything fancy. One potential use is pulling out
+# vars from qmake-generated makefiles so they can
+# be used in more maintainable ways in other places.
+
+$var = $ARGV[0];
+die "Usage: $0 VARNAME [makefile]" unless $var;
+
+$mf = $ARGV[1] || "Makefile";
+die "Cannot find $mf!" unless -f $mf;
+
+
+open( INFILE, "<$mf" ) or die "Cannot open $mf!";
+while( INFILE && ($line !~ m|^$var|) ) {
+        $line = <INFILE>;
+        if( eof INFILE ) { $line = 0; last; }
+}
+if( ! $line ) { exit 127; }
+$theval = $line;
+$theval =~ s|^.*=\s*||;
+#print ">>>theval=$theval\n";
+while( $theval =~ m|\\$| ) {
+        $theval =~ s|\\||g;
+        #print ">>>theval=$theval\n";
+        #print "val=$thevalue";
+        $line = <INFILE>;
+        chomp( $line );
+        $theval .= $line;
+        last unless $line =~ m|\\$|;
+}
+$theval =~ s| \\\s*| |mg;
+$theval =~ s/\s+/ /mg;
+$theval =~ s/^\s+//mg;
+$theval =~ s/\s+$//mg;
+
+close( INFILE );
+
+exit 1 if ! $theval;
+print $theval."\n";
+
+

@@ -1,0 +1,106 @@
+#!/do/not/bash
+# creates makefile rules for use with FILE_FILTERS.make
+
+# usage: $0 filtername [filtername2 ...]
+# where filternameN is a filter defined in a client
+# Makefile's $(FILE_FILTERS) var.
+
+# This code, my friends, contains some mind-bending, completely
+# unmaintainable shell-within-make-within-shell stuff.
+
+test -z "$@" && {
+        echo "usage: $0 filtername [filtername2 ...]"
+        exit 1
+}
+
+thisapp="\$(TOC_MAKESDIR)/makerules.FILE_FILTERS"
+filters_makefile="\$(TOC_MAKESDIR)/FILE_FILTERS.make"
+
+cat <<EOF
+############################## FILTER_FILES rules:
+${thisapp}: ; @touch \$@
+${filters_makefile}: ; @touch \$@
+FILE_FILTERS_TMPFILE = .toc.FILE_FILTERS.tmp
+EOF
+
+error_prefix="${filters_makefile}:"
+
+for f in $@; do
+fprefix=FILTER_${f}
+cat <<EOF
+############################## FILTER_FILES: ${f}
+${f}_FILTER_DEPS += Makefile ${thisapp} ${filters_makefile}
+${f}_FILTER_BIN ?= \$(FILE_FILTERS_BIN)
+
+ifeq (,\$(${f}_FILTER_NAMESED))
+\$(error ${error_prefix} ${f}_FILTER_NAMESED must be set to a sed expression. e.g. s/^prefix//)
+endif
+ifeq (,\$(${f}_FILTER_SOURCES))
+\$(error ${error_prefix} ${f}_FILTER_SOURCES must be set to a list of input source files)
+endif
+ifeq (,\$(${f}_FILTER_BIN))
+\$(error ${error_prefix} ${f}_FILTER_BIN must be set to filter application. e.g. perl or sed)
+endif
+ifeq (,\$(${f}_FILTER_RULES))
+\$(error ${error_prefix} ${f}_FILTER_RULES must be a set of rules passable to ${f}_FILTER_BIN. e.g. for perl: -e 's|\btoken\b|replacement|g')
+endif
+
+${fprefix}_FILE_FILTERS_MAKE = .toc.FILE_FILTERS.${f}.make
+${fprefix}_CLEAN_FILES += \$(${fprefix}_FILE_FILTERS_MAKE)
+
+\$(${fprefix}_FILE_FILTERS_MAKE): \$(FILE_FILTERS_MAKEFILE)
+ifeq (1,\$(MAKING_CLEAN))
+	@echo "\$(MAKECMDGOALS): skipping ${f}_FILTER_SOURCES rules generation."
+else
+	@echo "Generating ${f}_FILTER_SOURCES rules."; \\
+	for i in \$(${f}_FILTER_SOURCES); do \\
+		tgt="\$\$(echo \$\${i} | sed -e '\$(${f}_FILTER_NAMESED)')"; \\
+                test "\$\$tgt" = "\$\${i}" -o -z "\$\$tgt" && { \\
+			echo "${f}_FILTER_SOURCES: name translation for the output file failed: sed rule [\$(${f}_FILTER_NAMESED)] for [\$\${i}] --> [\$\${tgt}]"  1>&2; \\
+			exit 1; \\
+		}; \\
+		echo "${fprefix}_CLEAN_FILES += \$\${tgt}"; \\
+		echo "\$\${tgt}_INPUT = \$\${i}"; \\
+		echo "${fprefix}_OUTPUT_RULES += \$\${tgt}"; \\
+		echo "\$\${tgt}: \$\${i} \$(${f}_FILTER_DEPS)"; \\
+	done > \$@
+endif
+-include \$(${fprefix}_FILE_FILTERS_MAKE)
+# This suddenly strikes me as odd: writing shell code to generate makefile code which will end
+# generating makefile code which we then re-import into make.
+# Thus all the confusion regarding the \ and $ characters.
+
+\$(${fprefix}_OUTPUT_RULES): %:\$(%_INPUT)#<--- i can't believe this works!
+	@echo -n "FILE_FILTERS '${f}': "; \\
+		\$(${f}_FILTER_BIN) \$(${f}_FILTER_RULES) < \$(\$(*)_INPUT) > \$(FILE_FILTERS_TMPFILE); \\
+		cmp -s \$(FILE_FILTERS_TMPFILE) \$@ && rm \$(FILE_FILTERS_TMPFILE); \\
+		test -f \$(FILE_FILTERS_TMPFILE) \\
+			&& { mv \$(FILE_FILTERS_TMPFILE) \$@; echo "[updated] \$@"; } \\
+			|| { echo "[up to date] \$@"; };
+# Note: the above target will always run if some non-input-file
+# dependency is newer. That happens, for example, as i edit this shell
+# script ;). Since i am a big advocate of "better rebuild than wonder
+# if we're building the newest code", we're limited to two choices:
+#
+# a) touch $@, engendering immediate always-rebuild behaviour
+#    on files which depend on our output files.
+# b) do nothing, and *potentially* get always-rebuild behaviour.
+#
+# Since only build tree maintainers should actually trigger this case,
+# i've decided on taking route (b). Clients who actually see this
+# happen can fix it with a 'make clean' or simply removing the
+# filtered files in question and allowing them to be recreated.
+
+${f}: \$(${fprefix}_OUTPUT_RULES)
+# if it turns out that ${f}: produces multiple-rule conflicts, we can
+# fall back to:
+filter-${f}: \$(${fprefix}_OUTPUT_RULES)
+
+CLEAN_FILES += \$(${fprefix}_CLEAN_FILES)
+
+FILE_FILTERS: filter-${f}
+
+EOF
+
+done
+

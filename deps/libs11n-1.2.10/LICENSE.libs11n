@@ -1,0 +1,56 @@
+========================================================================
+This is the license for the s11n library, effective 3 October 2003.
+========================================================================
+
+For purposes of this license, 's11n' refers to all C/C++ source code
+files which reside in the following subdirectories of this
+distribution:
+
+  lib/standalone
+  lib/cl
+  lib/toolbox
+  lib/s11n
+  lib/s11n/parsers
+  lib/node
+  lib/node/lex
+  lib/lite
+  client/s11nconverter
+  client/s11nlibconfig
+  client/sample
+
+The majority of the code was written by Stephan Glenn Beal
+<stephan@s11n.net>, and is released into the Public Domain by it's
+author.
+
+All build-related files are Public Domain.
+
+Some source code falls under other licenses such as LGPL or BSD, as
+described in their source files. To the best of my understanding, s11n
+falls under Section 5 of the LGPL, and need not be released under that
+license. (More specifically, it contains no LGPL code, but uses features
+provided by a couple of LGPL'd classes.)
+
+The list of files which are known to be exceptions to the Public
+Domain license:
+
+LGPL:
+        lib/toolbox/bzstream.{h,cpp}
+        lib/toolbox/gzstream.{h,cpp}
+
+BSD:
+        include/FlexLexer.h
+
+MIT:
+        lib/expat (may or may not be in your s11n distribution)
+
+Unspecified:
+        toc/bin/mkdeps.c
+
+These are all released under fairly non-restritive licenses.
+
+There *may* be other such files: please see the individual source
+files if in doubt.
+
+========================================================================
+This ends the license for the s11n library.
+========================================================================
