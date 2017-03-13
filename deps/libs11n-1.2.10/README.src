@@ -1,0 +1,26 @@
+This readme explains the different source distributions of libs11n.
+
+If your source tree has scripts called 'configure' and 'configure.libs11n',
+then you have the "full" build tree. If your distribution has only a couple of
+README files and 'src' and 'include' subdirectories, then you have the
+"generated" build tree.
+
+The full tree is the standard distribution method. It builds on most systems
+hosting GNU versions of common system tools and gcc. It relies on tools like
+flex for generating parts of the source tree, and uses tools like sed and perl
+to filter some files at configure- or build-time.
+
+The generated tree is intended for platforms with simpler build
+needs. It includes pre-generated copies of all generated files, has
+the headers in their proper place, and is otherwise straightforward
+to build. The intention of this distribution is to ease the creation
+of libs11n packages for a wider range of platforms, like Solaris,
+Windows, and BSD.
+
+Some of s11n's features can be enabled or disabled by editing the
+*_config.hpp files. Some of these changes also require changing the
+Makefile (or build process). For example, if
+s11n_config.hpp:s11n_CONFIG_ENABLE_PLUGINS is defined to 0, the files
+defined in src/Makefile:SOURCES_PLUGIN are not needed at all.
+
+

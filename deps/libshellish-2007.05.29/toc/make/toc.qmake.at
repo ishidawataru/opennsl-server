@@ -1,0 +1,45 @@
+# toc.qmake.at: template makefile for toc.qmake, part of the
+# toc build process. This is filtered at the end of the configure
+# process. toc.qmake may be included by your qmake files.
+#
+# many of the $$vars seen here come from toc.@PACKAGE_NAME@.make,
+# and all @TOKENS@ are replaced at configure-time.
+
+top_srcdir = @TOP_SRCDIR@
+
+include( $$top_srcdir/toc.@PACKAGE_NAME@.configure.make )
+
+
+
+QTDIR = @QTDIR@
+QTBINDIR = @QTBINDIR@
+QTINCDIR = @QTINCDIR@
+QTLIBDIR = @QTLIBDIR@
+#  -lqt (or -lqt-mt?) if we have Qt, nothing if we don't.
+LQT = @LQT@
+UIC = @UIC@
+MOC = @MOC@
+QMAKE = @QMAKE@
+
+
+############################ most of this comes from the gnu_cpp_tools toc test:
+CC = @CC@
+INCLUDES += @INCLUDES@
+#  C preprocessor flags, used in compiling C & C++ files.
+CPPFLAGS += @CPPFLAGS@
+CPPFLAGS += $$INCLUDES -DHAVE_CONFIG_H=1
+#  Optimization flags (-g or -On) used in compiling C & C++ files.
+OPT = @OPT@
+#  Warning flags (-Wall, -Werror, -woff, etc.) used in compiling C & C++ files.
+WARN = @WARN@
+#  C flags, used in compiling C files.  Includes $$OPT and $$WARN.
+QMAKE_CFLAGS += @CFLAGS@
+QMAKE_CFLAGS += $$OPT $$WARN
+#  C++ flags, used in compiling C++ files.  Includes $$OPT and $$WARN.
+QMAKE_CXXFLAGS += @CXXFLAGS@
+QMAKE_CXXFLAGS += $$OPT $$WARN
+#  ld flags, used in linking binaries.
+QMAKE_LFLAGS += @LDFLAGS@
+###########################
+
+include( $$top_srcdir/toc.@PACKAGE_NAME@.qmake )

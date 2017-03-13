@@ -1,0 +1,13 @@
+#!/bin/bash
+# ^^^^ toc needs a Genuine Bash, not some cheap work-alike!!!
+
+. ./find_toc.sh || exit
+
+export PACKAGE_NAME=libs11n
+export PACKAGE_VERSION=1.2.10
+export PACKAGE_VERSION_HEX="0x010210"
+# toconfigure will call configure.${PACKAGE_NAME}, so package-specific
+# processing should be done there.
+. ${TOC_HOME}/sbin/toconfigure "$@"
+# post-configure processing can be done in postconfig.${PACKAGE_NAME}
+

@@ -1,0 +1,49 @@
+#!/bin/sh
+# Creates makefile rules for use with TARBALL.make
+
+test 0 = ${#@} && {
+        echo "usage: $0 target1 [... targetN]"
+        exit 1
+}
+thisapp="\$(TOC_MAKESDIR)/makerules.TARBALL"
+filters_makefile="\$(TOC_MAKESDIR)/TARBALL.make"
+
+echo "############################## TARBALL rules:"
+
+echo "TARBALL_CHDIR ?= ."
+echo "TARBALL_FLAGS ?= " # intentionally empty
+
+for t in "$@"; do
+    cat <<EOF
+
+ifeq (,\$(${t}_TARBALL))
+    \$(error ${t}_TARBALL must be set to an output file name!)
+endif
+
+CLEAN_FILES += \$(${t}_TARBALL)
+
+ifeq (,\$(${t}_TARBALL_FILES))
+    \$(error ${t}_TARBALL_FILES must be set to a list of file/directory patterns!)
+endif
+
+${t}_TARBALL_CHDIR ?= \$(TARBALL_CHDIR)
+
+${t}_TARBALL_FLAGS ?= \$(TARBALL_FLAGS)
+
+.PHONY: TARBALL-${t}
+TARBALL-${t}:
+	cd \$(${t}_TARBALL_CHDIR) || exit; \$(TAR_BIN) cf \$(${t}_TARBALL) \$(${t}_TARBALL_FLAGS) \$(${t}_TARBALL_FILES)
+TARBALL: TARBALL-${t}
+EOF
+done
+cat <<EOF
+TARBALL: TARBALL-post
+TARBALL-post:
+# Run the TARBALL target to run all tarballs.
+# Implement a TARBALL-post target to run post-TARBALL rules.
+# To implement pre-TARBALL rules add these BEFORE including
+# TARBALL.make:
+# TARBALL-%: myrule
+# TARBALL: myrule
+############################## end TARBALL rules
+EOF

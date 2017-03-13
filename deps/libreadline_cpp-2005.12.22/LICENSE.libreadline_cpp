@@ -1,0 +1,10 @@
+This is the LICENSE file for libreadline++.
+
+The license this source is released under depends on whether or not is
+is linked with GNU libreadline. If so, then this library is released
+under the GNU GPL. If it is configured using --without-libreadline,
+that support is disabled and it is released into the Public Domain.
+
+For purposes of the GPL, this library is Copyright (c) 2002-2004
+stephan beal (stephan@s11n.net).
+

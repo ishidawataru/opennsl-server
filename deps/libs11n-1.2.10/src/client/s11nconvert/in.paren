@@ -1,0 +1,16 @@
+(s11n::parens)
+(* 
+        comment block
+        fred=(FredClass (key value))
+*)
+; one-line comment
+# one-line comment
+somenode=(NoClass
+        (a \(\)\\b) (* <--- testing the backslashing *) (foo bar) (long this is a long property)
+        this_is_empty=() # comment comment 
+        fred=(FredClass (key value)) # comment
+        wilma=(WilmaClass (the lovely wife))
+        betty=(BettyClass (value the apple of Barney's eye))
+        deep=(Foo deeper=(Foo (how_deep really deep!) and_deeper=(Ouch))
+
+) # comment

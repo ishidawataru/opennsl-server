@@ -1,0 +1,2745 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 1
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\headheight 2cm
+\headsep 1cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language swedish
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+libshellish - a C++ library for writing shell-like console applications
+\layout Author
+
+stephan@s11n.net
+\layout Abstract
+
+This document describes libshellish, a C++ library for aiding in the creation
+ of command-line and shell-style applications.
+ It does not provide 100% coverage, but explains to the reader how to use
+ the variour major features.
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
+\layout Section
+
+Introduction
+\layout Standard
+
+
+\color blue
+CVS info: $Id: shellish.lyx,v 1.21 2005/02/20 23:29:48 sgbeal Exp $
+\layout Standard
+
+
+\color red
+ACHTUNG: This document is far from complete!
+\layout Standard
+
+
+\color red
+ACHTUNG #2: Versions 2004.09.25 and later have significant interface differences
+ from earlier versions.
+\layout Standard
+
+
+\color red
+ACHTUNG #3: Versions released during or after February 2005 no longer support
+ wildcard expansion.
+\layout Standard
+
+This document gives an overview of libshellish, a C++ library for aiding in
+ the creation of shell-like console applications.
+ What does that mean? It means that it is used to write applications which
+ have an interface similar to that of a typical Unix shell.
+\layout Standard
+
+shellish is available from the s11n web site:
+\layout Quote
+
+
+\family typewriter 
+http://s11n.net/shellish/
+\layout Subsection
+
+License
+\layout Standard
+
+The libshellish code is released into the Public Domain.
+ It may, of course, fall under other licenses if it is linked with code
+ from, e.g., the GNU GPL.
+ For example, libreadline_cpp optionally links against GNU's libreadline,
+ and if that support is included with shellish the resulting binary falls
+ under the GNU GPL.
+\layout Subsection
+
+Requirements
+\layout Standard
+
+shellish requires:
+\layout Itemize
+
+libs11n, including all prerequisites of that library.
+\layout Itemize
+
+Can optionally use libreadline_cpp, which is highly recommended, as it adds
+ full command line editing support.
+ This library is 
+\emph on 
+probably
+\emph default 
+ available for download from where you got shellish.
+\layout Itemize
+
+A relatively recent C++ compiler (only tested on gcc 3.2+).
+\layout Itemize
+
+The build tree requires a system running GNU versions of common system tools.
+ e.g., it will not build on a stock Solaris system.
+\layout Itemize
+
+A Unix-like system.
+ It will not build on Windows systems because of it's internal usage of
+ Unix-style signal handling.
+\layout Standard
+
+It is safe to say that if your box can build libs11n then it can build shellish
+ as well.
+\layout Subsection
+
+Main Features
+\layout Itemize
+
+Provides an interface for getting input from the keyboard.
+ If libreadline_cpp is linked in and supports GNU readline then full command
+ editing and command history are supported, otherwise it uses plain old
+ 
+\family typewriter 
+std::cin
+\family default 
+.
+\layout Itemize
+
+Allows clients to plug in their own command handlers, by mapping single-token
+ strings (i.e., command names) to so-called command handler functions.
+ These can be loaded via DLLs or statically linked in with an application.
+\layout Itemize
+
+Comes with a number of useful, shell-like commands (cd, pwd, sleep, which,
+ alias, set/unset, etc.).
+\layout Itemize
+
+Supports command aliasing, either coded in client code or given on the command
+ line.
+\layout Itemize
+
+Provides app-wide access to command-line arguments passed in to main().
+\layout Itemize
+
+Command handler interface is modelled off of traditional C-style argc/argv
+ usage and common shell conventions, so it is easy to understand.
+\layout Itemize
+
+Provides full history/alias/environment persistance via session files.
+\layout Itemize
+
+Useful not only with console apps, but also with GUI applications which
+ accept (or create) string-form commands which need to be dispatched to
+ arbitrary handlers.
+\layout Itemize
+
+Easy to work with and to integrate into new projects.
+\layout Subsection
+
+Main caveats/bugs
+\layout Itemize
+
+Requires several non-mainstream external libraries, namely libs11n.
+\layout Itemize
+
+Does not inherently support advanced constructs as loops, conditionals,
+ or scopes.
+ The framework is inherently line-oriented, which complicates the inclusion
+ of such constructs.
+\layout Itemize
+
+Some built-in commands inadvertently act differently depending on whether
+ they are activated via 
+\begin_inset Quotes sld
+\end_inset 
+
+sourcing
+\begin_inset Quotes srd
+\end_inset 
+
+ or via shellish::input_loop().
+ e.g., 
+\begin_inset Quotes sld
+\end_inset 
+
+exit
+\begin_inset Quotes srd
+\end_inset 
+
+ (and friends) only work from the console, not when sourced.
+ Most commands don't do anything which is dependent of the input mode, however.
+\layout Itemize
+
+The API has been known to change radically between releases.
+ That said, the current API has been 
+\begin_inset Quotes sld
+\end_inset 
+
+fairly stable
+\begin_inset Quotes srd
+\end_inset 
+
+ since at least early 2004.
+\layout Subsection
+
+Short History
+\layout Standard
+
+libshellish evolved from an old (and long-obsolete) mini-project i once worked
+ on, called 
+\begin_inset Quotes sld
+\end_inset 
+
+elib
+\begin_inset Quotes srd
+\end_inset 
+
+, which was short for 
+\begin_inset Quotes sld
+\end_inset 
+
+libessentials
+\begin_inset Quotes srd
+\end_inset 
+
+ - a toolbox with all of my 
+\begin_inset Quotes sld
+\end_inset 
+
+essential
+\begin_inset Quotes srd
+\end_inset 
+
+ classes in it.
+ i wanted an easy way to write test applications for several other projects
+ and wrote shellish to fill that gap.
+\layout Standard
+
+Over time it's interface has changed significantly - always in the interest
+ of ease-of-use.
+ The current model has been in place approximately 6 months, so it appears
+ to be pretty stable.
+ Thus...
+ it's now time to document it a bit and dump it on the web site.
+ :)
+\layout Section
+
+Getting Started
+\layout Standard
+
+Using shellish is easy.
+ Rather than start off with a list of it's more important functions and
+ classes, we'll show a simple application which allows one to get to work
+ immediately with shellish.
+ The lines marked with a preceeding number are described in more detail
+ below the source code.
+\layout Subsection
+
+Our first shellish application
+\layout Quote
+
+
+\family typewriter 
+\size small 
+#include <s11n.net/shellish/shellish.hpp> // shellish framework
+\layout Quote
+
+
+\family typewriter 
+\size small 
+// client-written command handler:
+\layout Quote
+
+
+\color red
+[1]
+\family typewriter 
+\size small 
+\color default
+ int test_handler( const shellish::arguments & args ) {
+\begin_deeper 
+\layout Quote
+
+
+\family typewriter 
+\size small 
+// Iterate over the args either via index or using iterators...
+\layout Quote
+
+
+\color red
+[2]
+\family typewriter 
+\size small 
+\color default
+for( size_t i = 0; i < args.argc(); i++ ) {
+\begin_deeper 
+\layout Quote
+
+
+\family typewriter 
+\size small 
+shellish::ostream() << "args["<<i<<"] = ["<<args[i]<<"]"
+\begin_deeper 
+\layout Quote
+
+
+\family typewriter 
+\size small 
+<< std::endl;
+\end_deeper 
+\end_deeper 
+\layout Quote
+
+
+\family typewriter 
+\size small 
+}
+\layout Quote
+
+
+\family typewriter 
+\size small 
+return 0;
+\end_deeper 
+\layout Quote
+
+
+\family typewriter 
+\size small 
+}
+\layout Quote
+
+
+\family typewriter 
+\size small 
+int main( int argc, char ** argv ) {
+\begin_deeper 
+\layout Quote
+
+
+\color red
+[3]
+\family typewriter 
+\size small 
+\color default
+acme::argv_parser & args = shellish::init( argc, argv );
+\layout Quote
+
+
+\color red
+[4]
+\family typewriter 
+\size small 
+\color default
+std::string sessfile = args.get( "session", "session.s11n" );
+\layout Quote
+
+
+\family typewriter 
+\size small 
+shellish::load_session( sessfile );
+\layout Quote
+
+
+\color red
+[5]
+\family typewriter 
+\size small 
+\color default
+shellish::map_commander( "test", test_handler );
+\layout Quote
+
+
+\color red
+[6]
+\family typewriter 
+\size small 
+\color default
+shellish::input_loop( "myshell >" );
+\layout Quote
+
+
+\family typewriter 
+\size small 
+shellish::save_session( sessfile );
+\layout Quote
+
+
+\family typewriter 
+\size small 
+return 0;
+\end_deeper 
+\layout Quote
+
+
+\family typewriter 
+\size small 
+}
+\layout Standard
+
+That should be all pretty straightforward.
+ The marked lines are described here:
+\layout Enumerate
+
+This is an shellish-compliant 
+\begin_inset Quotes sld
+\end_inset 
+
+command handler
+\begin_inset Quotes srd
+\end_inset 
+
+.
+ These functions are mapped to commands using 
+\family typewriter 
+shellish::map_commander()
+\family default 
+, as shown in [5].
+ Note that this interface changed in version 2004.09.25, to remove a bothersome
+ second ostream argument.
+\layout Enumerate
+
+There are a number of ways to get the inividual elements from an shellish::argumen
+ts object.
+ Here we use the index operator.
+ See also 
+\family typewriter 
+arguments::shift()
+\family default 
+ and the 
+\family typewriter 
+shellish::args_list
+\family default 
+ type, or go STL-style via 
+\family typewriter 
+arguments::[const_]iterator
+\family default 
+.
+ In the loop, the call to 
+\family typewriter 
+shellish::ostream()
+\family default 
+ ensures that the output goes to the default ostream used by shellish.
+ This is almost always 
+\family typewriter 
+std::cout
+\family default 
+, but it may be reset by arbitrary commands or client code.
+ Client code is not required to use 
+\family typewriter 
+shellish::ostream()
+\family default 
+ as their default output stream - it is just a suggestion.
+\layout Enumerate
+
+Here we initialize shellish, passing on the command line arguments.
+ This this initializes the default command handlers and provides easy access
+ to command line args via the return value (and, later, from 
+\family typewriter 
+shellish::args()
+\family default 
+).
+ If you do not plan on using command line arguments, or want to implement
+ your own parser for those, feel free to ignore the return value of 
+\family typewriter 
+init()
+\family default 
+.
+ You 
+\begin_inset Quotes sld
+\end_inset 
+
+should
+\begin_inset Quotes srd
+\end_inset 
+
+ call 
+\family typewriter 
+init()
+\family default 
+ even if you will ignore the returned arguments handler, in case the client
+ passes on args which shellish inherently supports, like 
+\family typewriter 
+--classpath
+\family default 
+.
+\layout Enumerate
+
+This line sets the name for our session file.
+ Our default is 
+\begin_inset Quotes sld
+\end_inset 
+
+session.s11n
+\begin_inset Quotes srd
+\end_inset 
+
+, but if the user passes 
+\family typewriter 
+--session=filename
+\family default 
+ on the command line then that filename will be used.
+\layout Enumerate
+
+Here we map our command handler to the command name 
+\begin_inset Quotes sld
+\end_inset 
+
+test
+\begin_inset Quotes srd
+\end_inset 
+
+.
+ Thus when a user enters 
+\family typewriter 
+test [args...]
+\family default 
+ this handler will be called.
+\layout Enumerate
+
+This accepts input from the user, dispatching each line to it's mapped command
+ handler, until 
+\family typewriter 
+Ctrl-D
+\family default 
+ is pressed or one of the following commands are entered: 
+\family typewriter 
+quit
+\family default 
+, 
+\family typewriter 
+logout
+\family default 
+, 
+\family typewriter 
+exit
+\family default 
+.
+\layout Subsection
+
+Compiling and linking the application
+\layout Standard
+
+Compiling and linking against libshellish
+\layout Standard
+
+shellish installs a script named PREFIX/libshellish-config.
+ You may pass it --includes to get a list of flags needed by clients compiling
+ code against libshellish.
+ Use the --libs option to get linker arguments.
+ The output of those commands is suitable for direct assignment in a Makefile
+ variable:
+\layout Quote
+
+
+\family typewriter 
+EC = $(shell which libshellish-config)
+\layout Quote
+
+
+\family typewriter 
+ifeq (,$(EC))
+\layout Quote
+
+
+\family typewriter 
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+\SpecialChar ~
+$(error libshellish-config not found in PATH!)
+\layout Quote
+
+
+\family typewriter 
+endif
+\layout Quote
+
+
+\family typewriter 
+CXXFLAGS += $(shell $(EC) --includes)
+\layout Quote
+
+
+\family typewriter 
+LDFLAGS += $(shell $(EC) --libs)
+\layout Standard
+
+Alternately, you may use 
+\family typewriter 
+pkg-config libshellish
+\family default 
+ if your site has 
+\family typewriter 
+pkg-config
+\family default 
+ and libshellish's pkg-config data file is in its search path.
+\layout Standard
+
+When including the headers in client code, use this format:
+\layout Quote
+
+
+\family typewriter 
+#include <s11n.net/shellish/...>
+\layout Section
+
+Conventions
+\layout Standard
+
+shellish is modelled to work similarly to conventional shell code.
+ Thus it's conventions should be pretty easy for Unix users to get the hang
+ of.
+ The library is designed to be used as a framework for writing applications,
+ and to this end it provides a number of functions and classes to handle
+ tasks which are commonly necessary in shell-like applications.
+\layout Subsection
+
+Command Handlers
+\begin_inset LatexCommand \label{sub:Command-Handlers-conventions}
+
+\end_inset 
+
+
+\layout Standard
+
+Command Handlers are the functions which shellish maps to command tokens.
+ It uses several built-in handlers and allows user to plug in their own
+ via 
+\family typewriter 
+shellish::map_commander()
+\family default 
+.
+ The basics of the Command Handler interface are:
+\layout Itemize
+
+First parameter is a (
+\family typewriter 
+const shellish::arguments &
+\family default 
+), which holds the command line entered by a user, both in tokenized and
+ 
+\begin_inset Quotes sld
+\end_inset 
+
+raw
+\begin_inset Quotes srd
+\end_inset 
+
+ form.
+\layout Itemize
+
+Return an integer value: zero on success and non-zero on error.
+ Clients are 
+\begin_inset Quotes sld
+\end_inset 
+
+recommended
+\begin_inset Quotes srd
+\end_inset 
+
+ to use the 
+\family typewriter 
+shellish::CommandErrors
+\family default 
+ enum when feasible, but this is not a requirement.
+\layout Itemize
+
+Should never call 
+\family typewriter 
+exit()
+\family default 
+ (or similar) directly, as that will of course kill the whole application.
+\layout Itemize
+
+Mapping a command handler to the command 
+\begin_inset Quotes sld
+\end_inset 
+
+*
+\begin_inset Quotes srd
+\end_inset 
+
+ assigns that handler as the 
+\begin_inset Quotes sld
+\end_inset 
+
+catch all
+\begin_inset Quotes srd
+\end_inset 
+
+ handler - any commands which shellish cannot find handlers for are forwarded
+ to that handler.
+ Note that this works with the default dispatcher: if a client installs
+ his own via 
+\family typewriter 
+shellish::default_dispatcher()
+\family default 
+ then this may or may not apply.
+\layout Itemize
+
+Command handlers should not send output to std::cout - they should use 
+\family typewriter 
+shellish::ostream()
+\family default 
+ instead.
+ The reason is to allow clients to redirect that stream.
+ This is used, e.g., by one curses-based client to send the output to a curses
+ panel.
+ Clients wishing to intercept std::cerr should do so at their own discretion,
+ and shellish provides no equivalent of an 
+\family typewriter 
+errstream()
+\family default 
+ function (though this 
+\emph on 
+may
+\emph default 
+ be added at some point).
+\layout Subsection
+
+Data Entry
+\layout Standard
+
+shellish collects input from an input prompt on the command line by default,
+ though it can also be fed input from arbitrary streams.
+ In the worst case shellish uses std::cin to read input.
+ This works, but is not very fun to work with and also prohibits the use
+ of command-line history.
+ When linked with a fully-functional libreadline_cpp then either libeditline
+ or GNU readline is used, providing a powerful set of command-line editing
+ functionality.
+ Note that libreadline_cpp is linked against automatically if the configure
+ script finds it, but that your libreadline_cpp may or may not have editline/rea
+dline support linked in.
+ (If not, then when you start shellish you will be warned that interactive
+ editing will not be possible.)
+\layout Standard
+
+One line of input is considered to be one command.
+ When reading in from console mode, multiple commands may be entered on
+ a single line if separated with semicolons:
+\layout Quote
+
+
+\family typewriter 
+mycmd arg1 arg2 foo.out; ! cat foo.out
+\layout Standard
+
+(That works only with interactive console mode, not when reading streams
+ via 
+\family typewriter 
+dispatch(istream)
+\family default 
+ or the 
+\begin_inset Quotes sld
+\end_inset 
+
+source
+\begin_inset Quotes srd
+\end_inset 
+
+ command!)
+\layout Standard
+
+When a user enters a command it is sent to 
+\family typewriter 
+shellish::dispatch()
+\family default 
+, then looks up the handler associated with the first token.
+ If it finds one it passes the arguments on to that handler and returns
+ the handler's result, otherwise it returns an arbitrary non-zero error
+ code.
+\layout Subsubsection
+
+Built-in commands
+\layout Standard
+
+A number of built-in commands are automatically set up when shellish is initialize
+s (by calling 
+\family typewriter 
+shellish::init()
+\family default 
+).
+ For the whole list see the API documentation for 
+\family typewriter 
+shellish::setup_default_handlers()
+\family default 
+.
+ It includes all of the most basic commands, but does not have any complex
+ constructs like loops.
+\layout Subsubsection
+
+More on readline_cpp, GNU Readline and libeditline
+\layout Standard
+
+libreadline_cpp is a C++ library which wraps line-input functionality, so
+ shellish doesn't have to do that by itself.
+ It was originally part of shellish, and was intended as an API-workalike
+ for GNU Readline (but also worked without Readline if it wasn't available).
+ This allowed shellish to be distributed under different licenses, depending
+ on which readline support which was linked in.
+\layout Standard
+
+As of 28 November 2004 readline_cpp supports both GNU Readline and a BSD-license
+d readline clone called liblineedit.
+ liblineedit isn't quite as useful, out of the box, as readline, but the
+ license is not as draconian, and therefore readline_cpp's configure script
+ prefers it over GNU Readline (but, again, works with both).
+ (Also, editline's sources are pretty easy to hack on.
+ :)
+\layout Standard
+
+If editline support is compiled in then it provides several built-in functions
+ which operate at a level lower than shellish, and when entered by the user
+ they will not be propagated back to shellish.
+ For a list of these functions, enter the command 
+\family typewriter 
+el-help
+\family default 
+.
+ If that gives an error or shows nothing, then you are not using liblineedit,
+ otherwise it will give a list of editline's builtin functions.
+ You can use, e.g., 
+\family typewriter 
+el-bind
+\family default 
+ to change your key mappings.
+\layout Standard
+
+If you have shellish installed, you probably have readline_cpp as well, but
+ if you don't, you can get it and liblineedit from the s11n web site:
+\layout Quote
+
+
+\family typewriter 
+http://s11n.net/download/#readline_cpp
+\layout Quote
+
+
+\family typewriter 
+http://s11n.net/download/#editline
+\layout Section
+
+Using shellish's main features
+\layout Subsection
+
+Environment variables
+\layout Standard
+
+shellish supports conventional environment, via the object returned by 
+\family typewriter 
+shellish::env()
+\family default 
+.
+ That object, of type 
+\family typewriter 
+acme::environment
+\family default 
+, provides an easy interface for 
+\begin_inset Quotes sld
+\end_inset 
+
+lexically casting
+\begin_inset Quotes srd
+\end_inset 
+
+ variables to different types.
+ To set environment variables do one of the following:
+\layout Standard
+
+From the console interface:
+\layout Quote
+
+
+\family typewriter 
+set VAR=value
+\layout Quote
+
+
+\family typewriter 
+set VAR=
+\begin_inset Quotes srd
+\end_inset 
+
+quote the value if it has spaces
+\begin_inset Quotes srd
+\end_inset 
+
+
+\layout Standard
+
+From C++:
+\layout Quote
+
+
+\family typewriter 
+shellish::env().set( 
+\begin_inset Quotes sld
+\end_inset 
+
+VAR
+\begin_inset Quotes srd
+\end_inset 
+
+, 
+\begin_inset Quotes sld
+\end_inset 
+
+value
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Quote
+
+
+\family typewriter 
+shellish::env().set<int>( 
+\begin_inset Quotes sld
+\end_inset 
+
+VAR
+\begin_inset Quotes srd
+\end_inset 
+
+, 7 );
+\layout Quote
+
+
+\family typewriter 
+shellish::env().set( 
+\begin_inset Quotes sld
+\end_inset 
+
+VAR
+\begin_inset Quotes srd
+\end_inset 
+
+, 7.7 );
+\layout Standard
+
+To get use vars from the console interface:
+\layout Quote
+
+
+\family typewriter 
+echo ${VAR}
+\layout Quote
+
+
+\family typewriter 
+some_command arg1 ${VAR} ...
+\layout Standard
+
+And from C++:
+\layout Quote
+
+
+\family typewriter 
+double d = shellish::env().get( 
+\begin_inset Quotes sld
+\end_inset 
+
+VAR
+\begin_inset Quotes srd
+\end_inset 
+
+, -1.0 );
+\layout Quote
+
+
+\family typewriter 
+std::string s = shellish::env().get( 
+\begin_inset Quotes sld
+\end_inset 
+
+VAR
+\begin_inset Quotes srd
+\end_inset 
+
+, 
+\begin_inset Quotes sld
+\end_inset 
+
+
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Standard
+
+See the API docs for 
+\family typewriter 
+acme::environment
+\family default 
+ for the meaning of the second argument to 
+\family typewriter 
+get()
+\family default 
+.
+\layout Standard
+
+To expand variables in a string, simply do one of the following:
+\layout Quote
+
+
+\family typewriter 
+std::string std = shellish::env().expand_vars( mystring );
+\layout Standard
+
+or:
+\layout Quote
+
+
+\family typewriter 
+shellish:env().expand_vars_inline( mystring );
+\layout Standard
+
+Note that you can dynamically expand vars:
+\layout Quote
+
+
+\family typewriter 
+set foo=HOME
+\layout Quote
+
+
+\family typewriter 
+echo ${${foo}}
+\layout Standard
+
+Will expand to the value of 
+\family typewriter 
+$HOME
+\family default 
+.
+\layout Standard
+
+
+\series bold 
+Missing feature:
+\series default 
+ shellish currently has no way to 
+\begin_inset Quotes sld
+\end_inset 
+
+protecting
+\begin_inset Quotes srd
+\end_inset 
+
+ $VARS from expansion with quotes, as conventional shells do via, e.g., '$VAR'.
+ This can potentially be fixed by extending the string tokenizer a bit,
+ but so far hasn't become an issue.
+ You can backslash-escape var names to keep them from being expanded, e.g.:
+\layout Quote
+
+
+\family typewriter 
+shellish >echo 
+\backslash 
+$HOME
+\layout Quote
+
+
+\family typewriter 
+$HOME
+\layout Quote
+
+
+\family typewriter 
+shellish >
+\layout Subsubsection
+
+POSIX 
+\family typewriter 
+wordexp()
+\family default 
+ and shellish
+\begin_inset LatexCommand \label{sub:wordexp}
+
+\end_inset 
+
+
+\layout Standard
+
+Achtung: as of February 2005, wordexp() support was removed from shellish.
+ This means that shellish no longer does any wildcard/glob handling.
+ i am debating replacing the wordexp() support with glob() support and making
+ it togglable.
+\layout Standard
+
+The main reason for removing wordexp() support is that wordexp() expects
+ to be fed single lines of unparsed input, whereas shellish does pre-parsing
+ of it's lines and fed individual tokens to wordexp().
+ This caused call kinds of grief via-a-via quoting, amongst other things.
+ As wordexp() removes all quotes, it's not suitable for calling on user
+ input before shellish can get ahold of it, as shellish does the quoted-string
+ tokenizing itself.
+\layout Subsection
+
+Command line arguments
+\layout Standard
+
+shellish comes with a simple command line arguments parser.
+ It accepts arguments in any of the following formats:
+\layout Itemize
+
+
+\family typewriter 
+--arg value
+\family default 
+
+\newline 
+Assigns arg the given value.
+\layout Itemize
+
+
+\family typewriter 
+--arg=value
+\family default 
+
+\newline 
+Same as above, but this form is required if the value starts with a 
+\begin_inset Quotes sld
+\end_inset 
+
+-
+\begin_inset Quotes srd
+\end_inset 
+
+, such as a negative number.
+\layout Itemize
+
+
+\family typewriter 
+--arg
+\family default 
+
+\newline 
+Assigns arg a value of '1'.
+\layout Standard
+
+The parser does not care if you use single or double dashes: 
+\family typewriter 
+-foo
+\family default 
+ and 
+\family typewriter 
+--foo
+\family default 
+ are treated identically.
+\layout Standard
+
+Note that it does not support entering the same argument more than once:
+ only the last one set takes effect.
+ You may work around that by processing the argv array before or after passing
+ the list to 
+\family typewriter 
+shellish::init()
+\family default 
+.
+\layout Standard
+
+The parser is initialized via a call to 
+\family typewriter 
+shellish::init()
+\family default 
+, and they can be collected in one of two ways:
+\layout Itemize
+
+Getting 
+\family typewriter 
+argv_parser
+\family default 
+ object which 
+\family typewriter 
+init()
+\family default 
+ returns.
+\layout Itemize
+
+Calling 
+\family typewriter 
+shellish::args()
+\family default 
+.
+\layout Standard
+
+
+\family typewriter 
+acme::argv_parser
+\family default 
+ and 
+\family typewriter 
+acme::environment
+\family default 
+ both share a common base class, and thus their interfaces are almost identical.
+ The minor difference comes in when using 
+\family typewriter 
+argv_parser
+\family default 
+'s 
+\family typewriter 
+get()
+\family default 
+, 
+\family typewriter 
+is_set()
+\family default 
+ and 
+\family typewriter 
+unset()
+\family default 
+ members: there is no need to add dashes when querying them.
+ For example:
+\layout Quote
+
+
+\family typewriter 
+acme::argv_parser & a = shellish::init( argc, argv );
+\layout Quote
+
+
+\family typewriter 
+std::string sessionfile = a.get( 
+\begin_inset Quotes sld
+\end_inset 
+
+session
+\begin_inset Quotes srd
+\end_inset 
+
+, 
+\begin_inset Quotes sld
+\end_inset 
+
+default_file.s11n
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Standard
+
+This will return whatever value the user entered via 
+\family typewriter 
+--session=filename
+\family default 
+, or 
+\begin_inset Quotes sld
+\end_inset 
+
+default_file.s11n
+\begin_inset Quotes srd
+\end_inset 
+
+ if no such argument was given.
+\layout Standard
+
+Also, 
+\family typewriter 
+argv_parser
+\family default 
+ adds a couple entries to the argument automatically: 
+\family typewriter 
+$0
+\family default 
+ ..
+ 
+\family typewriter 
+$n
+\family default 
+, where the number is the argument at that position in the original 
+\family typewriter 
+argv
+\family default 
+ passed to 
+\family typewriter 
+init()
+\family default 
+.
+ Thus 
+\family typewriter 
+shellish::args().get_string(
+\begin_inset Quotes sld
+\end_inset 
+
+$0
+\begin_inset Quotes srd
+\end_inset 
+
+)
+\family default 
+ will return the application's name, and getting $3 will return the third
+ argument (or an empty string, if no such argument was given).
+ Note that these forms are completely unparsed, and thus in this example:
+\layout Quote
+
+
+\family typewriter 
+myapp --session=foo
+\layout Standard
+
+$1 will be the string 
+\begin_inset Quotes sld
+\end_inset 
+
+--session=foo
+\begin_inset Quotes srd
+\end_inset 
+
+.
+\layout Standard
+
+Note that these $N vars are not available from the console user interface,
+ only programmatically.
+\layout Standard
+
+There are a couple minor caveats to be aware of in 
+\family typewriter 
+argv_parser
+\family default 
+: please see it's API docs for full details.
+\layout Subsection
+
+Command aliases
+\layout Standard
+
+shellish's aliasing works very similarly to that of the Bash shell.
+ To alias from the command line, do:
+\layout Quote
+
+
+\family typewriter 
+alias foo=
+\begin_inset Quotes srd
+\end_inset 
+
+what foo should expand to
+\begin_inset Quotes srd
+\end_inset 
+
+
+\layout Standard
+
+Only the first token in a command is alias-expanded, as per long-standing
+ Unix shell conventions.
+ Before dispatching a command shellish does alias expansion on it's first
+ token.
+ Thus we can write a shortcut to run a system binary with this:
+\layout Quote
+
+
+\family typewriter 
+alias ls=
+\begin_inset Quotes srd
+\end_inset 
+
+! ls
+\begin_inset Quotes srd
+\end_inset 
+
+
+\layout Standard
+
+That will cause the external command '
+\family typewriter 
+ls
+\family default 
+' to be run via the C 
+\family typewriter 
+system()
+\family default 
+ call.
+\layout Standard
+
+To write that alias in C++ code do this:
+\layout Quote
+
+
+\family typewriter 
+shellish::aliases().alias( 
+\begin_inset Quotes sld
+\end_inset 
+
+ls
+\begin_inset Quotes srd
+\end_inset 
+
+, 
+\begin_inset Quotes sld
+\end_inset 
+
+! ls
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Standard
+
+To expand the first token in a string via alias expansion, do:
+\layout Quote
+
+
+\family typewriter 
+std::string exp = shellish::aliases().expand( mystring );
+\layout Standard
+
+That works recursively to expand aliases which themselves resolve to other
+ aliases.
+\layout Subsection
+
+Running external applications
+\layout Standard
+
+shellish offers three different approaches for running external commands:
+\layout Itemize
+
+
+\family typewriter 
+pipe command args
+\family default 
+
+\newline 
+Runs the arguments through the pipe() system call.
+\layout Itemize
+
+
+\family typewriter 
+system command args
+\family default 
+
+\newline 
+Runs the arguments through the system() system call.
+ Note that 
+\begin_inset Quotes sld
+\end_inset 
+
+
+\family typewriter 
+!
+\family default 
+
+\begin_inset Quotes srd
+\end_inset 
+
+ is built-in alias for 
+\family typewriter 
+system
+\family default 
+.
+\layout Itemize
+
+
+\family typewriter 
+fork command args
+\family default 
+
+\newline 
+Runs the arguments through the 
+\family typewriter 
+fork()
+\family default 
+ and 
+\family typewriter 
+exec()
+\family default 
+ system calls.
+ shellish has no job control support, and thus any processes run this way
+ are 
+\begin_inset Quotes sld
+\end_inset 
+
+lost
+\begin_inset Quotes srd
+\end_inset 
+
+ from shellish.
+ This is useful for running GUI apps, but not so much for running console
+ apps.
+\layout Itemize
+
+
+\family typewriter 
+bg command args
+\family default 
+
+\newline 
+This runs a command in a background thread, and is only enabled if the configure
+ script finds pthreads on your system.
+\series bold 
+
+\newline 
+Achtung:
+\series default 
+ you cannot recover a backgrounded thread to the foreground, and if you
+ exit the application before the backgrounded thread is finished, that thread
+ will be immediately terminated.
+\newline 
+
+\series bold 
+Achtung:
+\series default 
+ sometimes this command segfaults in 
+\family typewriter 
+pthread_create()
+\family default 
+ for reasons i don't understand.
+\layout Standard
+
+See the class 
+\family typewriter 
+shellish::shell_process
+\family default 
+ for the programmatic interface for the first 3 features.
+\layout Subsection
+
+
+\begin_inset Quotes sld
+\end_inset 
+
+emenu
+\begin_inset Quotes srd
+\end_inset 
+
+ files
+\begin_inset LatexCommand \label{sub:emenu-files}
+
+\end_inset 
+
+
+\layout Standard
+
+Since 30 June 2004 shellish has a built-in command called 
+\family typewriter 
+emenu
+\family default 
+.
+ It supports simple menu-style command interfaces loaded from external files
+ with lines in this format:
+\layout Quote
+
+
+\family typewriter 
+Menu Entry Label|command to pass to shellish::dispatch()
+\layout Standard
+
+or:
+\layout Quote
+
+
+\family typewriter 
+command to pass to shellish::dispatch()
+\layout Standard
+
+Each command line must be an shellish command which has a mapped command handler,
+ plus any arguments.
+ Menu files do 
+\emph on 
+not
+\emph default 
+ support multiple commands per line, separated by a semicolon.
+\layout Standard
+
+Example:
+\layout Quote
+
+
+\family typewriter 
+File Listing|! ls
+\layout Quote
+
+
+\family typewriter 
+Show Current Directory|pwd
+\layout Quote
+
+
+\family typewriter 
+! who
+\layout Quote
+
+
+\family typewriter 
+# comment line
+\layout Standard
+
+Passing 
+\family typewriter 
+emenu
+\family default 
+ a name will cause it to try to load the menu from a file named one of:
+\layout Itemize
+
+
+\family typewriter 
+MENUNAME 
+\family default 
+(e.g., as an absolute path to a file)
+\layout Itemize
+
+
+\family typewriter 
+./MENUNAME[.emenu]
+\layout Itemize
+
+
+\family typewriter 
+${HOME}/.shellish/menu/MENUNAME[.emenu]
+\layout Itemize
+
+
+\family typewriter 
+PREFIX/share/shellish/menu/MENUNAME[.emenu]
+\layout Standard
+
+If it finds one it will show the user a simple menu interface, where each
+ number maps to a line in the menu file.
+ e.g.
+ using the above menu file we would see:
+\layout Quote
+
+
+\family typewriter 
+shellish >emenu demomenu
+\layout Quote
+
+
+\family typewriter 
+emenu: ./demomenu.emenu
+\layout Quote
+
+
+\family typewriter 
+0: Cancel
+\layout Quote
+
+
+\family typewriter 
+1: File Listing
+\layout Quote
+
+
+\family typewriter 
+2: Show Current Directory
+\layout Quote
+
+
+\family typewriter 
+3: ! who
+\layout Quote
+
+
+\family typewriter 
+Enter number:
+\layout Standard
+
+The menu loops, returning after executing a command, until Cancel is selected.
+ The Cancel option is always number zero, and on most terminals Ctrl-D acts
+ as Cancel.
+\layout Standard
+
+You may pass additional arguments to a menu item by typing them after the
+ number.
+ e.g., entering 
+\begin_inset Quotes sld
+\end_inset 
+
+1 /tmp
+\begin_inset Quotes srd
+\end_inset 
+
+ above would call 
+\begin_inset Quotes sld
+\end_inset 
+
+! ls /tmp
+\begin_inset Quotes srd
+\end_inset 
+
+.
+ 
+\layout Standard
+
+Alias and environment var expansion are performed on each menu command before
+ dispatching it.
+\layout Section
+
+Command Handlers in detail
+\layout Standard
+
+The heart of shellish functionality revolves around the so-called Command
+ Handlers, as briefly described in section 
+\begin_inset LatexCommand \ref{sub:Command-Handlers-conventions}
+
+\end_inset 
+
+.
+ These functions are provided by clients and have the following signature:
+\layout Quote
+
+
+\family typewriter 
+int function_name( const shellish::arguments & )
+\layout Standard
+
+They are mapped into the framework with a simple API call:
+\layout Quote
+
+
+\family typewriter 
+shellish::map_commander( 
+\begin_inset Quotes sld
+\end_inset 
+
+mycommand
+\begin_inset Quotes srd
+\end_inset 
+
+, function_name [, 
+\begin_inset Quotes sld
+\end_inset 
+
+optional help text
+\begin_inset Quotes srd
+\end_inset 
+
+] );
+\layout Standard
+
+Once this is done, any input line starting with the mapped command is routed
+ to the assigned handler.
+ 
+\family typewriter 
+map_commander()
+\family default 
+ accepts an optional third argument: a help text string which is shown when
+ a user inputs 'help'.
+\layout Standard
+
+Per long-standing C and shell conventions, handlers return zero on success
+ and non-zero on error.
+ The library does not apply any special meaning to any error codes, but
+ the enumeration 
+\family typewriter 
+shellish::CommandErrors
+\family default 
+ defines some commonly-used ones which might be useful.
+ To reiterate: clients can use whatever error codes they like, as the library
+ applies no special meaning to them.
+\layout Standard
+
+The library does no catching of exceptions, so a thrown exception will almost
+ certainly cause shellish to abort it's input loop (if indeed it is running).
+\layout Subsection
+
+Getting arguments
+\layout Standard
+
+An 
+\family typewriter 
+shellish::arguments
+\family default 
+ object encapsulates all arguments passed to a handler.
+ They provide the following ways of getting their tokens:
+\layout Itemize
+
+
+\family typewriter 
+operator[](int) const
+\family default 
+ :
+\newline 
+e.g., args[1].
+ Returns the given argument on success, or an empty string if the argument
+ does not exist.
+\layout Itemize
+
+
+\family typewriter 
+shift()
+\family default 
+: pops the first item off of the args list and returns it, or returns an
+ empty string if there are no more arguments.
+ Note that handlers get const 
+\family typewriter 
+arguments
+\family default 
+ objects, so they must make a copy if they wish to use 
+\family typewriter 
+shift()
+\family default 
+:
+\newline 
+
+\family typewriter 
+shellish::arguments localargs = args;
+\layout Itemize
+
+STL-style iterators, accessible via the 
+\family typewriter 
+begin()
+\family default 
+ and 
+\family typewriter 
+end()
+\family default 
+ member functions.
+\layout Itemize
+
+
+\family typewriter 
+argc()
+\family default 
+ returns the number of arguments in the list.
+\layout Itemize
+
+
+\family typewriter 
+argv()
+\family default 
+ returns the raw arguments list.
+\layout Itemize
+
+
+\family typewriter 
+str() const
+\family default 
+: returns the complete, un-tokenized input given by the user.
+ Has no meaning for a default-constructed arguments object.
+\layout Itemize
+
+
+\family typewriter 
+tostring()
+\family default 
+: returns any remaining (i.e., non-
+\family typewriter 
+shift()
+\family default 
+ed) arguments as a single string.
+ Be aware that this might hose any complex token quoting.
+\layout Standard
+
+To convert arguments to types other than strings simply use the 
+\family typewriter 
+from_string()
+\family default 
+ function, like so:
+\layout Quote
+
+
+\family typewriter 
+int foo = tostring::from_string<int>( args[1], -1 );
+\layout Standard
+
+Will return 
+\family typewriter 
+args[1]
+\family default 
+'s integer value, or -1 if the conversion to int fails or if 
+\family typewriter 
+args[1]
+\family default 
+ is not set.
+\layout Standard
+
+You are of course welcome to use any other string-to-T conversion you like,
+ such as the classic C function 
+\family typewriter 
+atol()
+\family default 
+.
+\layout Subsection
+
+Dispatching commands
+\layout Standard
+
+Though client code 
+\begin_inset Quotes sld
+\end_inset 
+
+should
+\begin_inset Quotes srd
+\end_inset 
+
+ never need to do this directly, it may be useful to know how shellish dispatches
+ input: it simply passes it to 
+\family typewriter 
+shellish::dispatch()
+\family default 
+.
+ That will treat the given input as one command line and will dispatch it.
+ 
+\family typewriter 
+dispatch()
+\family default 
+ does no alias or variable expansion, and does not recognize multiple commands
+ separated by semicolons.
+ It may be passed either a 
+\family typewriter 
+std::string
+\family default 
+ or an 
+\family typewriter 
+shellish::arguments
+\family default 
+ object, plus a 
+\family typewriter 
+std::ostream
+\family default 
+.
+\layout Standard
+
+It does the following additional tasks:
+\layout Itemize
+
+If the environment variable 
+\begin_inset Quotes sld
+\end_inset 
+
+
+\family typewriter 
+echo
+\family default 
+
+\begin_inset Quotes srd
+\end_inset 
+
+ is set to a true value then the command is output to the given ostream
+ before it is run.
+\layout Itemize
+
+The environment variable 
+\begin_inset Quotes sld
+\end_inset 
+
+
+\family typewriter 
+?
+\family default 
+
+\begin_inset Quotes srd
+\end_inset 
+
+ is set to the return code of the called command handler, or to 
+\family typewriter 
+shellish::ErrorCommandNotMapped
+\family default 
+ if no hander is mapped.
+ Thus the command '
+\family typewriter 
+echo $?
+\family default 
+' will show the return code of the last-run command, just as in most Unix
+ shells.
+\layout Section
+
+
+\family typewriter 
+shellish
+\family default 
+, the generic libshellish client front-end
+\begin_inset LatexCommand \label{sec:shellish-client}
+
+\end_inset 
+
+
+\layout Standard
+
+Client code may be implemented as shared libraries of command handler, loaded
+ at will, as opposed to via a 
+\family typewriter 
+main()
+\family default 
+ function front-end.
+ This is accomplished with the 
+\family typewriter 
+shellish
+\family default 
+ client application.
+ It is used like so:
+\layout Quote
+
+
+\family typewriter 
+/path/to/shellish -dl libname[:libname2[:libnameN]] [-p 
+\begin_inset Quotes sld
+\end_inset 
+
+command prompt text:
+\begin_inset Quotes srd
+\end_inset 
+
+]
+\layout Standard
+
+
+\begin_inset Quotes sld
+\end_inset 
+
+libname
+\begin_inset Quotes srd
+\end_inset 
+
+ is normally base name of a library to load, but an absolute path is also
+ accepted.
+ Multiple libs may be given by separating them with commas or colons.
+\layout Standard
+
+Example usage:
+\layout Quote
+
+
+\family typewriter 
+stephan@owl:~> ~/bin/shellish -dl libshellish_demo_dll -p 'prompt :'
+\layout Quote
+
+
+\family typewriter 
+Opened DLL: /home/stephan/lib/libshellish_builtins.so
+\layout Quote
+
+
+\family typewriter 
+Opened DLL: /home/stephan/lib/libshellish_ui.so
+\layout Quote
+
+
+\family typewriter 
+Opened DLL: /home/stephan/lib/libshellish_demo_dll.so
+\layout Quote
+
+
+\family typewriter 
+prompt :
+\layout Standard
+
+(The first two DLLs are automatically loaded by the shellish framework.)
+\layout Subsection
+
+DLL search path
+\layout Standard
+
+The default search path used for DLLs is defined in the macro 
+\family typewriter 
+shellish_SHARED_LIB_PATH
+\family default 
+ in 
+\family typewriter 
+shellish_config.hpp
+\family default 
+.
+ If you pass 
+\family typewriter 
+--classpath=/a/colon:/delimited/PATH
+\family default 
+ to 
+\family typewriter 
+shellish
+\family default 
+ then that will be used instead of the default.
+ The 
+\family typewriter 
+--classpath
+\family default 
+ option is supported by all libshellish client apps which call 
+\family typewriter 
+shellish::init()
+\family default 
+.
+\layout Subsection
+
+Creating DLLs
+\layout Standard
+
+To create a compliant DLL, simply link one or more command handlers into
+ a DLL file.
+ The name of the DLL is unimportant, but it must have the standard DLL file
+ name extension for your platform (only tested on Unix platforms with 
+\begin_inset Quotes sld
+\end_inset 
+
+.so
+\begin_inset Quotes srd
+\end_inset 
+
+ extension, so far).
+ 
+\layout Standard
+
+The client DLL must be able to register its handler(s) with libshellish, and
+ this is done using a simple trick.
+ Simply add code similar to the following to your DLL:
+\layout Quote
+
+
+\family typewriter 
+namespace { // see notes below
+\begin_deeper 
+\layout Quote
+
+
+\family typewriter 
+void my_init_function() {
+\begin_deeper 
+\layout Quote
+
+
+\family typewriter 
+// DLL init code goes here.
+\layout Quote
+
+
+\family typewriter 
+// The name of this func is irrelevant, but it must be unique.
+\layout Quote
+
+
+\family typewriter 
+// i.e.
+ loading a DLL should not cause duplicate symbols.
+\layout Quote
+
+
+\family typewriter 
+shellish::map_commander( 
+\begin_inset Quotes sld
+\end_inset 
+
+foo
+\begin_inset Quotes srd
+\end_inset 
+
+, my_foo_handler );
+\layout Quote
+
+
+\family typewriter 
+...
+\end_deeper 
+\layout Quote
+
+
+\family typewriter 
+}
+\layout Quote
+
+
+\family typewriter 
+int my_init_placeholder = (my_init_function(),0);
+\end_deeper 
+\layout Quote
+
+
+\family typewriter 
+} // end anonymous namespace
+\layout Standard
+
+That will run 
+\family typewriter 
+my_init_function()
+\family default 
+ when the DLL is opened for the first time.
+ One simple way to enforce uniqueness of the init function signature and
+ placeholder variable is to wrap the code in an anonymous namespace and
+ don't declare it in any headers.
+\layout Standard
+
+That's all there is to it.
+ There are no changes to how normal libshellish client code is written or
+ used.
+\layout Standard
+
+Note that the command-line args given to 
+\family typewriter 
+shellish
+\family default 
+ are available to the DLL code via 
+\family typewriter 
+shellish::args()
+\family default 
+, so a DLL can effectively add command line options to the 
+\family typewriter 
+shellish
+\family default 
+ client.
+ For example, the DLL init code could contain something like the following:
+\layout Quote
+
+
+\family typewriter 
+std::string fname = shellish::args().get( 
+\begin_inset Quotes sld
+\end_inset 
+
+infile
+\begin_inset Quotes srd
+\end_inset 
+
+, 
+\begin_inset Quotes sld
+\end_inset 
+
+
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Quote
+
+
+\family typewriter 
+if( fname.empty() ) { ...
+ error ...
+ }
+\layout Standard
+
+If you want your DLL to force a change to the 
+\family typewriter 
+shellish
+\family default 
+ input prompt, add this to your DLL init code:
+\layout Quote
+
+
+\family typewriter 
+shellish::env().set( "SHELLISH_PROMPT", "my prompt:" );
+\layout Standard
+
+This is fine for a DLL which is intended to be used as a 
+\begin_inset Quotes sld
+\end_inset 
+
+main
+\begin_inset Quotes srd
+\end_inset 
+
+ application, but may interfere with other DLLs or libshellish client code
+ which links against your DLL, so it is not recommended.
+\layout Subsection
+
+Loading DLLs
+\begin_inset LatexCommand \label{sub:Loading-DLLs}
+
+\end_inset 
+
+
+\layout Standard
+
+To load a library from the libshellish prompt (from any libshellish client),
+ use the builtin command 
+\family typewriter 
+dlload
+\family default 
+:
+\layout Quote
+
+
+\family typewriter 
+dlload libname [libname2...]
+\layout Standard
+
+To load DLLs programatically, use whatever approach you like.
+ How a DLL is opened is not important for our purposes.
+ One simple, yet somewhat crude, way to do it:
+\layout Quote
+
+
+\family typewriter 
+shellish::dispatch( 
+\begin_inset Quotes sld
+\end_inset 
+
+dlload MyCommandHandlers
+\begin_inset Quotes sld
+\end_inset 
+
+ );
+\layout Standard
+
+Would find and open 
+\family typewriter 
+MyCommandHandlers.so
+\family default 
+.
+\layout Standard
+
+Or use:
+\layout Quote
+
+
+\family typewriter 
+std::string dll = cllite::open_dll( 
+\begin_inset Quotes sld
+\end_inset 
+
+MyCommandHandlers
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Quote
+
+
+\family typewriter 
+if( dll.empty() ) { ...
+ no DLL found or error opening it...
+ }
+\layout Quote
+
+
+\family typewriter 
+// else dll holds the path to the DLL
+\layout Standard
+
+If 
+\family typewriter 
+cllite::use_exceptions()
+\family default 
+ is toggled on, a failure in the above 
+\family typewriter 
+open_dll()
+\family default 
+ call would throw a 
+\family typewriter 
+cllite::cl_exception
+\family default 
+ explaining the error (e.g., couldn't find DLL or the DLL open failed for
+ some reason (often due to missing symbols on out-of-date DLLs)).
+\layout Section
+
+Tips and Tricks
+\layout Standard
+
+Here are some useful tips and tricks for getting more out of shellish...
+\layout Subsection
+
+Input prompt
+\layout Standard
+
+The input prompt, as served by 
+\family typewriter 
+shellish::input_loop()
+\family default 
+, accepts environment variables.
+ e.g.
+\layout Quote
+
+
+\family typewriter 
+shellish::input_loop( 
+\begin_inset Quotes sld
+\end_inset 
+
+${MY_PROMPT} >
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Standard
+
+If the value of MY_PROMPT changes then the prompt will be updated.
+ Use the 
+\family typewriter 
+set
+\family default 
+ command to change it:
+\layout Quote
+
+
+\family typewriter 
+set MY_PROMPT=
+\begin_inset Quotes srd
+\end_inset 
+
+foo :
+\begin_inset Quotes srd
+\end_inset 
+
+
+\layout Standard
+
+The equivalent, from the C++ API:
+\layout Quote
+
+
+\family typewriter 
+shellish::env().set( 
+\begin_inset Quotes sld
+\end_inset 
+
+MY_PROMPT
+\begin_inset Quotes srd
+\end_inset 
+
+, 
+\begin_inset Quotes sld
+\end_inset 
+
+foo :
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Standard
+
+Note that trailing spaces are trimmed from the variable's value , and will
+ not show up in the prompt (sorry about that).
+\layout Subsection
+
+Going around 
+\family typewriter 
+shellish::input_loop()
+\layout Standard
+
+
+\family typewriter 
+shellish::input_loop()
+\family default 
+ is a convenience function.
+ Client code may instead choose to use 
+\family typewriter 
+shellish::read_line()
+\family default 
+ to collect input, and then pass the result to 
+\family typewriter 
+dispatch()
+\family default 
+.
+ 
+\family typewriter 
+shellish::read_line()
+\family default 
+ uses readline_cpp's support, if available, otherwise it defaults to using
+ 
+\family typewriter 
+std::cin
+\family default 
+.
+ Client code may also provide their own input handler, and simply pass the
+ input to 
+\family typewriter 
+shellish::dispatch()
+\family default 
+.
+\layout Standard
+
+Note that clients which do not use 
+\family typewriter 
+input_loop()
+\family default 
+ will need to do their own multiple-commands-per-line parsing.
+ (Tip: see 
+\family typewriter 
+stringutil::stdstring_tokenizer
+\family default 
+ for a class which can do this.)
+\layout Subsection
+
+
+\family typewriter 
+prompt_for_input()
+\layout Standard
+
+Added in February 2005, this feature allows console and non-console UIs
+ to collect input in a unified way.
+ This function calls:
+\layout Quote
+
+
+\family typewriter 
+shellish::dispatch( 
+\begin_inset Quotes sld
+\end_inset 
+
+shellish-prompt-for-input ...
+\begin_inset Quotes srd
+\end_inset 
+
+ );
+\layout Standard
+
+where 
+\begin_inset Quotes sld
+\end_inset 
+
+...
+\begin_inset Quotes srd
+\end_inset 
+
+ is the prompt string passed to 
+\family typewriter 
+prompt_for_input()
+\family default 
+.
+ The default handler for the 
+\family typewriter 
+shellish-prompt-for-input
+\family default 
+ command is 
+\family typewriter 
+shellish::handle_prompt_for_input()
+\family default 
+.
+ See the docs for these two functions for the internal conventions which
+ must be followed by clients who wish to override the 
+\family typewriter 
+shellish-prompt-for-input
+\family default 
+ command, such that their implementation will work when the command is called
+ from arbitrary shellish code.
+ The 
+\family typewriter 
+shellish-prompt-for-input
+\family default 
+ command has no usable effect from the console (unfortunately a side-effect
+ of internal details).
+\layout Standard
+
+Thus, client command handlers which prompt for input should call 
+\family typewriter 
+prompt_for_input()
+\family default 
+, and rely on the underlying handler to do the actual collection.
+ For example, one curses-based client reads the input via a curses panel.
+\layout Standard
+
+The returned string is not automatically processed for variable/alias expansion.
+\layout Section
+
+Random Notes
+\layout Standard
+
+The shellish library has evolved fairly steadily since early 2000, when i
+ first started learning the STL.
+ i get a great deal of use out of it, and find it to be a very convenient
+ way to create test front-ends for other libraries.
+ For example, to test my classloader i could make use of an interface for
+ which a session might look like:
+\layout Quote
+
+
+\family typewriter 
+cltest> new MyObject; new MyObject
+\layout Quote
+
+
+\family typewriter 
+cltest> ls
+\layout Quote
+
+
+\family typewriter 
+Object pool list:
+\layout Quote
+
+
+\family typewriter 
+1 @ 0x47893920
+\layout Quote
+
+
+\family typewriter 
+2 @ 0x47893928
+\layout Quote
+
+
+\family typewriter 
+cltest> delete 1
+\layout Quote
+
+
+\family typewriter 
+cltest> ls
+\layout Quote
+
+
+\family typewriter 
+Object pool list:
+\layout Quote
+
+
+\family typewriter 
+2 @ 0x47893928
+\layout Standard
+
+Using such an interface it is often fairly simple to interactively test
+ specific parts of a library.
+ shellish's command history/editing, aliasing, scriptability and sessions
+ support help a lot here.
+\layout Subsection
+
+Potential uses for shellish
+\layout Standard
+
+Some other uses for which shellish might be useful are:
+\layout Itemize
+
+Test/prototype front-end for library code.
+\layout Itemize
+
+A console for UI-less applications, like game servers or database servers.
+\layout Itemize
+
+A command dispatcher for a GUI application which accepts user commands via,
+ e.g., a text input box.
+ (Remember, use of shellish's input-related functions is optional.)
+\layout Itemize
+
+Text-based games.
+ i sometimes get the idea of writing a Choose Your Own Adventure engine
+ (inspired by the classic game 
+\emph on 
+Tunnels & Trolls
+\emph default 
+)...
+ may someday...
+\layout Subsection
+
+Potential TODOs
+\layout Standard
+
+Some 
+\emph on 
+potential
+\emph default 
+ to-dos for shellish:
+\layout Itemize
+
+Add a proper language parser, so constructs like loops can be implemented.
+ i would rather extend an existing shell, like bash or zsh.
+\layout Itemize
+
+Job control, e.g.
+ backgrounding/foregrounding processes.
+ VERY low priority, and i would only do it as a learning exercise.
+\layout Itemize
+
+Add proper support for a generic error stream, instead of relying on cerr.
+ This is so that the handlers are portable to GUI apps which use, e.g., a
+ stream which sends text to a text-view widget.
+\layout Itemize
+
+Provide a more generic API for command handlers which prompt for input,
+ to allow, e.g., a GUI interface to potentially hook in to them.
+ While non-interactive handlers are safe for use with a GUI front-end, interacti
+ve ones will currently only work with the shell interface.
+\layout Itemize
+
+A way to switch 
+\begin_inset Quotes sld
+\end_inset 
+
+contexts
+\begin_inset Quotes srd
+\end_inset 
+
+ or 
+\begin_inset Quotes sld
+\end_inset 
+
+modes
+\begin_inset Quotes srd
+\end_inset 
+
+, such that command handler sets can be bundled together with an app or
+ DLL, and we can switch between them at runtime.
+ This would allow, e.g., two DLLs to map the 
+\begin_inset Quotes sld
+\end_inset 
+
+save
+\begin_inset Quotes srd
+\end_inset 
+
+ command without stepping on each other.
+ Not yet sure how to do this in a clean way yet.
+\layout Itemize
+
+Clean up the command handler mapping interface to make it easier for client
+ code to use directly (currently no client code does this, but there are
+ valid uses for it, like command handler forwarders, which would be useful
+ for the above-mention context/mode-switching).
+\layout Itemize
+
+Break the backend up such that we could have multiple logical shellish environment
+s in the same app, each with it's own command history, etc.
+\layout Section
+
+The End
+\layout Standard
+
+If you have any feedback regarding shellish, please feel free to contact it's
+ maintainer at the address at the top of this document.
+ Any and all feedback is welcome.
+\layout Standard
+
+For a working example of an shellish application see the shellish source tree:
+ 
+\family typewriter 
+src/test.cpp
+\family default 
+.
+ During the build it gets compiled to a binary named 
+\family typewriter 
+noshell
+\family default 
+.
+ Alternately, see 
+\family typewriter 
+src/client.cpp
+\family default 
+, for the source for the client app described in section 
+\begin_inset LatexCommand \ref{sec:shellish-client}
+
+\end_inset 
+
+.
+\the_end

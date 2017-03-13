@@ -1,0 +1,1905 @@
+This is the informal ChangeLog for libs11n (there is no formal
+one). Newest items are at the top.
+
+libs11n home page: http://s11n.net/
+
+========================================================================
+
+1.2.10: 20 March 2010
+
+- A few platform/compiler portability patches, e.g. gcc 4.4.
+
+- Added patches from Damien Hocking to make s11n able to link as a
+DLL on Windows platforms.
+
+
+1.2.9: (Apparently this was never released.)
+
+- Build tree now won't die when a clean tree is built using parallel
+compilation (e.g. make -j2).
+
+- Corrected incorrect s11n_S11N_LIBRARY_VERSION_HEX macro value (was
+set to version 1.2.7 instead of 1.2.8).
+
+
+1.2.8: 8 Sept 2008
+
+- A small fix for the multiple-registration fix from 1.2.7. The change
+apparently does not make a difference, but it makes me feel better.
+
+- Fixed a couple warnings in the class factory code for certain compilers
+(e.g. gcc 4.2.3).
+
+- Added s11nlite::load_node([stream|string], node_type &).
+
+
+1.2.7: 5 June 2008
+
+Achtung: not strictly code-compatible with 1.2.6 and earlier. This
+incompatibility only (potentially) affects the one or two of you out
+there using custom s11n_traits<> specializations.
+
+- The new de/serialize_versioned() funcs support simple version checking
+for specific objects or trees.
+
+- Back-ported a fix from 1.3.x which allows a Serializable to be registered
+with multiple base Serializable interfaces without an ODR violation. This
+required adding an additional template argument to s11n_traits<>, but it
+should not affect any client-side usage except possibly in the case of
+custom s11n_traits<> implementations.
+
+
+1.2.6: 26 April 2008
+
+Achtung: not binary-compatible with 1.2.5 and earlier.
+
+- Fixed a (very old) potential memory leak in the base
+serialize(NodeType,STRING) (not OSTREAM) implementation. Previously,
+one ostream would be leaked if the underlying serializer threw an
+exception.
+
+- Corrected a long-standing, low-impact bug in all of the Serializers
+which would cause them to not serialize properly if re-used after a
+serialize() call threw or propagated an exception.
+
+- Add new ctor to s11n_exception which takes a printf-like format
+string. This breaks binary compatibility, but the mem leak and
+serialize/throw fixes mentioned above also require a recompile because
+they affect inlined code.
+
+- Removed some unused vars in the compact_serializer which caused gcc 4.2
+to complain (and subsequently fail if -Werror was turned on).
+
+
+
+1.2.5: 7 February 2007
+
+Only very minor changes. If 1.2.3 or 1.2.4 works for you, there is
+no need to upgrade.
+
+- Build process: added basic support for building a Kubuntu .deb package.
+
+- Build process: added --with-serializers configure option to enable
+  only building certain Serializers. By disabling unused/unwanted handlers
+  the library size can be cut considerably (e.g. down to 200k if only the
+  expat serializer is enabled and the library is compiled without
+  debug support).
+
+- Added headers <s11n.net/s11n/proxy/reg_s11n_traits_template{3,4}.hpp>
+
+- reg_s11n_traits_template{1,2}.hpp updated to allow use with templates
+  which have concrete types, not typenames, as template arguments.
+
+- Added two code fixes from James Ingraham for QNX platforms running gcc
+3.3.x
+
+
+
+1.2.4: 31 May 2006
+
+Only minor touch-ups. If 1.2.3 works for you, there is no need to
+upgrade.
+
+- Corrected install path for user manual: PREFIX/share/... instead of
+  PREFIX/shared/...
+
+- Corrected install process to honor ${DESTDIR}.
+
+- Updated the "nobuildfiles" Makefile to build a shared lib. Only works
+  with g++. Also added very basic [un]install rules.
+
+- Commented out the name of an unused parameter in some traits code,
+  to avoid a warning from gcc4.
+
+- Fixed a missing ::std:: in the <s11n.net/s11n/proxy/std/multimap.hpp>
+
+
+
+1.2.3: 25 Dec 2005 (Merry Christmas!)
+
+(This is really what 1.2.0 should have been.)
+
+- Fixed broken cleanup handlers in the default proxies for std::set<>
+  and std::multiset<>. Many thanks to Rattlemouse for reporting the
+  bug. Note that [multi]set<T*> is not guaranteed to be leak-safe during
+  a deserialization failure because s11n cannot legally clean up the
+  (const T*) contained in the set.
+
+- After the embarassing above-mentioned bug was discovered, i have
+  started integrating unit tests into the tree. See src/unit/*.?pp.
+
+- Fixed a "mirror image" of the leak in the *other* overload of
+  load_node_classnoad_serializer(). This leak was introduced in 1.2.1,
+  and the "first half" of the leak was found/fixed in 1.2.2.
+  (Again, sorry about that.) Thanks again to Rattlemouse for first
+  reporting it.
+
+- Fixed a bug in wesnoth_serializer which caused many property names to have
+  their first and last characters chopped off. This affected all properties
+  WITHOUT a 'w' or 'z' in the names, because i didn't spell the alphabet
+  correctly in the code which checks whether a property name needs to be
+  quoted. :/ (If anyone actually used this format, the bug would have been
+  found a long time ago. ;)
+
+
+1.2.2: 18 Dec 2005
+
+- Fixed a memory leak in s11n::io::load_node_classload_serializer(). The
+  leak was introduced in 1.2.1 during refactoring.
+
+- Fixed a double-list-insert bug in s11n::util::node_tree<>.
+
+- Fixed a documented-but-not-implemented bug in 
+  s11n::util::node_tree<>::climb_tree() when (0==node).
+
+- Clarified behaviour of deserialize(NodeT,cleanup_ptr<>) when it
+  fails.
+
+
+1.2.1: 9 Dec 2005
+
+- Minor internal change to how magic cookies are read, to allow some
+  binary formats to be used (those with string prefixes can now be
+  searched for cookies). This change was made to assist in the creation
+  of an sqlite3-powered s11n backend, which uses binary database files
+  which have a stringified prefix.
+
+- The -dl/-DL options from s11nconvert 1.0 have been re-added
+  (again, so the sqlite plugin could be loaded).
+
+- The library manual has undergone a huge makeover. Pete Harlow
+  contributed a conversion of the manual in OpenDocument, and that
+  is now the master document. This allows much finer control over
+  layout, which means, amongst other things, we can make it prettier
+  :). However, the intra-document hyperlinks in the HTML exports
+  don't work, so i'm not gonna ship HTML versions any more :(.
+
+- io layer's load_xxx() functions refactored to support Serializers
+  which do not like streams (sqlite3). This allows those Serializers
+  to integrate more transparently into client apps.
+
+
+
+1.2.0: 25 Nov 2005
+
+- No significant changes since 1.1.3. Minor patches, touch-ups, and
+  documentation changes only.
+
+- Now ships in two different variants: the standard build tree and a
+  platform-neutral "plain" tree with no build files and platform-
+  specific features turned off by default. Code-wise the trees are
+  the same except that the plain trees come with pre-generated
+  copies of all files created by the standard build process.
+
+
+========================================================================
+1.1-dev tree...
+
+
+1.1.3: 29 Sept 2005
+
+i got knocked offline by a broken internet router at home, and
+coincidentally had a few weeks off of work during that time, so this
+release has lots of major changes. This release is a "must-upgrade",
+with several important fixes and the single longest list of changes of
+*any* s11n release to-date.
+
+Many thanks to martin f. krafft and Christian Prochnow for their
+feedback on exception handling!
+
+- Please uninstall any older 1.1 installation before installing this,
+  or you might end up with a duplicate header or two in different
+  subdirs.
+
+- Moved the proxy headers pod_*.hpp and std_*.hpp to pod/* and std/*,
+  respectively. This perl command will patch your code for this
+  change:
+  perl -i -pe 's,/(std|pod)_(.+),/$1/$2,g' [input files]
+
+- Added s11nlite::simple_config, a very basic config file handler.
+
+- s11nbrowser has been ported to 1.1.3.
+
+- Minor fix to the Win32 plugin code, which couldn't return an error
+  string in many cases.
+
+- Internal refinements in the serializable registration process.
+
+- Cleanups to client_api<> to make it more subclass-friendly.
+
+- Added more than 20 pages to the manual: it has finally passed
+  the 100-page mark.
+
+- Moved the dreaded strtool utilities into s11n::io::strtool namespace
+  and moved the header into s11n/io, since it's only used from the i/o
+  layer.
+
+- Removed deprecated s11n::clone(). Use s11n::s11n_clone().
+
+- Removed s11n::dump_node_debug(). Hasn't been used since 0.6
+  or earlier. Add several debugging-related functions in the
+  new s11n::debug namespace.
+
+- Removed s11nlite::sharing namespace code. It isn't used anymore.
+
+- s11n_api_marshaler<SerType> changed to
+  s11n_api_marshaler<NodeType,SerType>. The older way didn't
+  allow per-node-type specialization from the client side
+  (which so far hasn't proven necessary). Only affects clients
+  who explicitely specialized this type (which is probably nobody).
+
+- s11n::throw_policy()-related code, added in 1.1.0, has been
+  removed. Too many concerns about maintainability of code honoring
+  various policies.
+
+- After much hair-pulling over memory management guarantees
+  in the face of exceptions, s11n_traits has been extended to
+  include a cleanup_functor. Specializations can do cleanup
+  of, e.g. unmanaged pointers in a container. The major
+  algos use this to ensure specific behaviours in the face of
+  errors. This corrects some potential leaks and allows some
+  post-failure guarantees which were formerly impossible to make.
+
+- The pair, map, and list-related deserialization algos now
+  offer "the strong safety guaranty", meaning that they do not
+  modify their target if a failure/exception happens, nor
+  will they leak when holding unmanaged pointers.
+
+- Removed abstract_creator::release(). It is potentally
+  dangerous, and the cleanup_functor handles the case nicely. Moved
+  abstract_creator into the s11n::Private namespace, to emphasize
+  that clients should not use it.
+
+- Added the s11nlite::micro_api class, an *easier* way to load and
+  save and load Serializables, including buffering them to/from
+  strings (e.g., for transport over network or a copy/paste
+  buffer).
+
+- Fixed the std::valarray proxy to work with 1.1. Nobody really
+  uses valarrays, do they?
+
+- Added a s11n::deserialize() overload which takes a (reference
+  to a pointer) to a Serializable, and allocates it if necessary.
+
+- Added s11n::cleanup_serializable() and the new type
+  s11n::cleanup_ptr<SerType>, which acts like a std::auto_ptr but uses
+  cleanup_serializable() to destroy the object it points at. This
+  ensures proper cleanup of containers, even nested ones, during
+  deserialization failure.
+
+- Added some debuggering macros to trace different types of
+  activities within the library. The tracing options can be
+  changed at runtime to help track down particular types of
+  problems. Tracing output can be optionally sent to an
+  arbitrary stream, rather than cerr.
+
+- Removed the pointer_stripper<> class, as it is obsoleted by
+  the more general type_traits<>.
+
+- Added general s11n_traits<T*> specialization, needed for some
+  algos to behave as transparently as i'd like them to.
+
+- Finally re-routed s11nlite::load/save variants through
+  the instance() object.
+
+- Added lots more sample client code under src/client/sample,
+  including a demo of how to tell s11n to take advantage of a
+  className() member function.
+
+Was just told my internet router would take another 10 days to
+replace... you'd think i'm in the back woods of Lapland and not in a
+German metropolis.
+
+- Added node_traits::empty(node), to allow some algos to
+  ensure that they are working on virgin nodes. See the next
+  change...
+
+- serialize_list() and serialize_map() now throw if they
+  are given non-empty nodes to populate, to help avoid the
+  common error case of re-using a node for multiple containers.
+
+- Added node_traits<NodeType>::swap(NodeType&,NodeType&), so
+  we can potentially provide more state-related guarantees for
+  s11n nodes during serialization.
+
+- Moved [de]serialize_subnode() from serialize.hpp to algo.hpp
+  to eliminate a circular dependency and to stress that those
+  are not core algos, but convenience operations.
+
+- Started moving "implementation detail" types, like phoenix<>
+  and variant, into the s11n::Detail namespace.
+
+- Wrote a short paper describing a generic cleanup_functor
+  mechanism, based off of the one implemented in this release
+  but applicable to arbitrary libraries.
+
+- Minor fixes to the build process (e.g., BIN_PROGRAMS now
+  rebuild if the Makefile is updated).
+
+- Fixed a really odd bug in simplexml_serializer's lexer which
+  would cause some nodes to be improperly embedded inside should-be
+  neighbors due to a nasty file-scope var which was not properly
+  re-set upon exiting the lexer.
+
+Was just told by my ISP "we can't give you a date for replacing your
+router." Well, my FORMER ISP. Looks like i'll be offline another 3-4
+weeks waiting on the installation from the next provider.
+
+- Installed Debian 3.1 today and must sadly inform: When
+  building under Debian, zfstream and libexpat support won't
+  build because debian installs the bz2/zlib libs in a strange way
+  (no conventional libfoo.so links). Also, the pre-build flexers
+  must be used because Debian ships with flex 2.5.x, which generates
+  non-compilable C code. The configure script should catch this for
+  you, but if you do a 'make distclean' the pre-generated copies
+  will be nuked and then the tree won't build at all.
+  To be fix someday. (Sorry, martin.)
+
+- Correction to the plugins code for Unix platforms using libdl,
+  where a bad #ifdef broke compilation (curiously, Debian doesn't
+  install libltdl by default, though that is the GNU variant of
+  libdl and Debian is extremely GNU-centric).
+
+- compact_serializer: fixed an endless loop brought on by a broken
+  change in the string util lib.
+
+- expat_serializer changed to throw an exception if it serializes
+  data which looks like its node names or keys are not XML compliant.
+  It does only a "quick check" - the first char - but it will no longer
+  save some data it knows it cannot later load. The primary reason
+  was to enforce correctness when using s11n::map::serialize_streamable_map(),
+  as that commonly-used, space-saving algo will happily write int- or
+  double-based keys, which are supported by the non-strictly-XML
+  serializers.
+
+- Classes data_node_child_{de}serializer were removed because
+  they are never used. They will be replaced with something a bit
+  more well-thought-out.
+
+- Started separating the template function declarations from their
+  implementations. e.g., we now have the core API declarations in
+  serialize.hpp and the implementations in serialize.tpp. This is
+  organizational only, and does not at all affect how clients use the
+  library.
+
+- Some API cleanups in the s11n::fac API.
+
+- s11n::cl::classloader_register()'s second template parameter
+  was removed. It was historical in nature and hasn't been used
+  in a long time. The cl API has been changed a small bit to
+  accomodate this. This affects some clients who manually
+  did their own classloader registrations.
+
+- Moved the s11n_api_marshaler<> type into the s11n::Detail
+  namespace, to remove it from the public API.
+
+- Changed the default serialization of doubles to use a precision
+  of 16 instead of "fixed" (6-digit). If i go higher than that then
+  numbers like 1.1 end up serializing using, say, 20 digits, with
+  12 or 16 zeros and a trailing "888". This oddity is certainly
+  platform-dependent, though
+
+- Read Scott Meyers' new 3rd edition Effective C++ and did
+  some appropriate touch-ups throughout the library.
+
+- Added more than 20 pages to the manual: it's at 123 at the moment.
+
+- Work has begun on some experimental code borrowing techniques from
+  functional and metatemplate libraries like Boost.MPL. We may
+  eventually be able to define serialization "transactions" this
+  way, by composing functors which perform selected parts of
+  an overall serialization operation. It may also alow us to more
+  easily bypass the default API marshaling, a seldom-used but
+  nonetheless sometimes useful option.
+
+- Added many functor equivalents for long-existing APIs, in
+  particular the list/map/pair de/ser API.
+
+- Minor code optimizations throughout the library, cutting
+  many 3-5-line functions down to one or two lines, suitable
+  for inlining.
+
+- The Golden Age of s11n via Functional Composition has begun.
+  Some interesting things are developing here. See the new
+  functional.hpp header.
+
+- Added a set of empty "tag" structs with which to tag all
+  de/ser functors. The primary benefit is that all functors
+  get grouped by tag type in the API docs, which is a big
+  help in understanding their roles in the library.
+  All of the available de/ser algos now have functor
+  equivalents which subclass these tags, and pre-existing
+  proxy classes also now subclass them.
+
+Geez. i hope it all still compiles under Windows.
+
+
+
+1.1.2: 28 June 2005
+
+- Removed several deprecated functions from s11n::io.
+
+- Removed deprecated typedef serializer_interface from s11nlite.
+
+- Added s11nlite::instance(client_interface*), to allow clients
+  to swap out the implementation at runtime.
+
+- Code builds under Win32. Requires a small amount of effort,
+  but it can be done without any code changes. See README.WIN32 for
+  more info. A win32-specific zip file will be distributed separately
+  from the Unix-centric releases. Many thanks to Ashran
+  (www.hackersquest.org) for his work on this port.
+
+- client_api's interface is now const-free. See the API docs for why.
+
+- Added more sample client code under src/client/sample, including one
+  demonstrating loading Serializables from DLLs (if plugins support
+  is enabled).
+
+- Compile-error fix when promoting chars to first-class Serializables.
+
+- Added s11n::type_traits<>, which will eventually replace some other
+  utility types, like pointer_stripper<>.
+
+- Re-introduced basic support for loading DLLs, but it's got a different
+  back-end than 1.0.x and is not as well-tested. Plugins support is enabled
+  unless you pass --disable-plugins to configure, or configure does not
+  find libdl or libltdl. For Win32 the plugins are always enabled, but
+  are completely untested.
+
+
+1.1.1: 19 June 2005
+
+- s11nconvert is ported, but missing DLL support.
+
+- A fix in the factory layer, where factories from different compilation
+  units were incorrectly being separately instantiated.
+
+- Fixed an endless loop which happened during stream output in
+  some cases, caused by new entity translation code.
+
+- throw_policy() now explicitely never throws.
+
+- Started adding new sample client code under src/client/sample.
+  It is not built by default - run make from that directory,
+  and set your LD_LIBRARY_PATH to include ../../ before running
+  the apps.
+
+
+1.1.0: 29 May 2005
+
+- If installing over a 1.0 installation, please completely uninstall
+  1.0 before installing 1.1, or you will almost certainly experience
+  header-related problems, plus possibly s11nconvert linking to the
+  incorrect library version.
+
+- Architecturally 98% the same as 1.0, but major source tree
+  restructurings. The new header layout is more more logical
+  and scalable.
+
+- Client-side compile times cut considerably. Simple tests show
+  times cut to between 20% and 50% of comparable s11n 1.0 code.
+
+- Added two new sections to the library manual:
+  - Main differences between 1.0 and 1.1/1.2, including how to
+    accomodate them in client code.
+  - Discussions about the "expected overall costs of deployment"
+    for s11n clients.
+
+- reg_serializable_traits.hpp renamed to reg_s11n_traits.hpp.
+
+- For registration purposes, std containers and PODs now each have
+  their own #include file. This speeds up build times for the
+  cases which don't use all of the different types (which is by far
+  the most common case). It inherently also gives users much more
+  flexibility about which proxies they install, at the slight
+  developer-time cost of having to include a couple extra headers
+  (again, the main benefit is compile time savings).
+  See the headers under <s11n.net/s11n/proxy/*.hpp>.
+
+- Removed the long-standing ::classname<>() family
+  of functions and types, replacing them with
+  s11n_traits<T>::class_name(), which fits in much
+  better with the overall model.
+
+- Removed the iterator-related typedefs and functions from the
+  s11n_node interface, because it was confusing to remember
+  if the iterator types applied to the properties map or the
+  children list. The iterator API can now be reached via the
+  properties() and children() functions and the container typedefs of
+  s11n_node (which have always existed).
+
+- New factory layer, in an attempt to make it more
+  ammendable to plugging in client-side factories.
+  This also means that Serializers are linked directly
+  in (again), instead of loaded via DLLs, until we
+  get full platform-portable DLL support.
+
+- Removed ALL 3rd-party dependencies, including dependencies
+  on the utility libs shipped with 1.0.
+
+- Moved some of the smaller util libs directly (back) into
+  this tree, mainly to make forking the core lib into other
+  trees easier.
+
+- libs11n_zfstream (libz/libz2) support is now optional,
+  and used if the configure script finds it.
+
+- The beloved s11nconvert tool is not yet ported, because most of its
+  work required the no-longer-used utility libs. The 1.0 s11nconvert
+  can be used on 1.1 data, but be sure that your s11nconvert
+  binary is linking to libs11n 1.0, not 1.1 (it might start up
+  when linked against 1.1 but will fail with a "no serializers
+  loaded" error).
+
+========================================================================
+1.0.x branch...
+
+
+1.0.1: 26 Feb 2005
+
+- Fixed several compile errors brought on by
+  gcc 3.4 (which has stricter typename conventions).
+
+- MANY thanks goes to Mike Radford for the gcc 3.4
+  patches and for giving me ssh access to his box
+  to fix a couple remaining typename problems (which
+  don't show up under my gcc 3.3).
+
+- Should be bin-compatible with 1.0.0 client code,
+  but a recompile couldn't hurt, either ;).
+
+- Extremely minor touch-ups, mainly to docs.
+
+
+
+3... 2... 1.0.0! 1 Jan 2005:
+
+- Minor tweaks to some sample code.
+
+- Several API doc updates and corrections.
+
+- Removed the (undocumented) node_traits_wrapper class.
+  It was untested, sorely broken, and couldn't possibly
+  have worked the way i envisioned it.
+
+- A couple preemtive fixes for traits-related bugs-in-waiting.
+
+- Deprecated a few useless functions, like
+  s11n::io::save_xxx<SerializERT>(). They will go away in 1.1.
+
+- Removed the ulong proxy from pods_streamable.hpp,
+  because it collides with the size_t proxy (ODR
+  violations) on 64-bit platforms (thanks, Gregor!).
+
+- Removed the timing info from s11nconvert -v. The numbers
+  coming out on my box are just plain wrong.
+
+
+1.0.0RC2: 20 Dec 2004
+
+- Fixed missing explicit return in
+  s11n::list:;deserialize_streamable_list().
+
+- Many library manual cleanups, including corrections for several
+  blatant lies.
+
+- Added long-documented, but apperently never implemented,
+  S11N_ABSTRACT_BASE argument to reg_serializable_traits.hpp.
+  Required a small fix in the classloader layer.
+
+- A couple minor build tools fixes.
+
+- The libs11n-config script no longer returns such
+  verbose --libs info.
+
+- This is likely the last release before 1.0.0.
+  Then again, didn't Linus himself once say,
+  "RC early, RC often"? ;)
+
+
+1.0.0RC1: 15 Dec 2004 (Happy Birthday, mom!)
+
+- s11n::add_child() (never used) fixed to use node_traits<> instead
+  of NodeType::children(). This does not require a client recompile:
+  it only affects code which uses a custom NodeType (none of which
+  currently exists).
+
+- Renamed xxx_serializer_proxy to xxx_serializable_proxy, because
+  the original name is a confusing misnomer (those types deal with
+  Serializables, not Serializers). Despite this change, client code
+  which does not specifically use these types (most does not)
+  are binary compatible if they're built against 0.9.17.
+
+- Added s11n::list::streamable_list_serializable_proxy, which
+  can be used to proxy i/ostreamable Serializable types more
+  space-efficiently than the standard list_serializable_proxy can.
+
+	
+
+0.9.17: 19 Nov 2004
+
+- Likely to become 1.0RC soon. :) There have been no significant
+  interface changes, and only one major bug fix, recently.
+
+- Fixed a major bug in s11n::abstract_creator which caused
+  containers containing other containers of the same general
+  type (sequence or map) to deserialize improperly (but
+  containers containing pointers to containers of that type
+  worked). This affected vector/set/list/set/multiset, and
+  very possibly pair/map/multimap as well (though those were
+  never demonstrated). MANY thanks to Patrick Lin for reporting
+  this problem!
+
+- Tweaks in the map/list classloader registrations, to fix
+  not-happening registrations for those types (still don't
+  understand how this apporach is different, but it works
+  for me).
+
+- Added an "Absolute No-no's for s11n client code" section to
+  the library manual, containing hard-learned tips about things
+  which client code definately should not do.
+
+- Removed an extraneous space appearing between properties in the
+  parens_serializer output. No functional difference, but saves a
+  bit of file space.
+
+- Build tree re-orgs:
+  - Moved the Serializers into their own subdirs.
+  - Headers for code in the s11n::io namespace have been
+    moved to <s11n.net/s11n/io/xxx.hpp>. Shouldn't affect
+    most client code, but will affect some.
+  - To be safe, uninstall previous s11n versions, or rm -fr
+    ${prefix}/include/s11n.net/s11n, at the least. Failure
+    to do this may cause duplicate headers to exist in the
+    includes tree, and may lead to confusing build problems
+    in older client code.
+
+- Reworked the underlying FlexLexer subclassing code for all of
+  the flex-based Serializers, to get around macro-generated
+  subclasses (does not affect the interface or client code).
+
+- Added -clex option to s11nconvert, to enable throwing of
+  exceptions in the classloader. This is for debuggering
+  failed Serializer DLL loads. (i.e., it was added for debuggering
+  the above-mentioned FlexLexer change.)
+
+
+0.9.16: 2 Oct 2004
+
+- s11nconvert: when verbose mode is on it now outputs load/save
+  timing information.
+
+- Fixed compile errors in src/client/(sample,playground)/* brought on
+  by recent headers changes. (Sorry about that.)
+
+- Removed (temporarily?) the src/stest subtree, because it needs some
+  serious rewiring since 0.9.14.
+ 
+
+0.9.15: 28 Sept 2004
+
+- Minor documentation corrections.
+
+- Several minor fixes and additions to the supporting libraries.
+
+- Added s11n::util::node_tree type, which can help manage
+  parent/children relationships for trees of nodes.
+
+
+
+0.9.14: 13 Sept 2004
+
+- Client-side build times cut significantly:
+  PODs are no longer registered as first-class Serializables
+  any longer. They can be registered by including the new
+  header <s11n.net/s11n/pods_streamable.hpp>. This appears
+  to save approximately 4 seconds of build time per
+  client-side impl file which includes s11n.hpp or s11nlite.hpp
+  (on my 1.6GHz PC), and cuts 12 seconds off of the libs11n build
+  time. This cut the build time of the s11nbrowser app by more
+  than half!
+  This also allows clients to completely skip the s11n-installed
+  POD proxying and install their own, which has proven
+  useful in at least one client-side case.
+
+- The built-in Serializers are now installed as DLLs, instead of compiled
+  in with the lib. s11nconvert loads the commonly-available formats
+  automatically, and others can be loaded with the [-dl DLLNAME]
+  command-line argument.
+
+- Removed s11nlite::default_serializer_type. It was never used in the
+  lib and is now problematic because the Serializers are DLL-loaded.
+
+- Added -K option to s11nconvert: shorthand for --known-serializers.
+
+- Added node_traits<>::properties(), to allow clients to get directly
+  at a node's properties.
+
+- Added new Serializer: wesnoth. Not well-tested, but basically works,
+  at least with simple data sets.
+
+
+
+0.9.13: 4 Sept 2004
+
+- Fixed broken classloading of std containers. A silly bug regarding
+  classloader registrations. Refactored that part of the code
+  significantly, as well, to ease maintenance.
+
+- Added s11n::node_traits_wrapper<> convenience type.
+  See node_traits_wrapper.hpp for details.
+
+
+
+0.9.12: 2 Sept 2004
+
+- Fixed major ommission: std::vector proxies were accidentally
+  removed in 0.9.10's changes.
+
+- Fixed some missing #includes in src/client/{sample,playground}/*.cpp,
+  which i broke with 0.9.10's changes (sorry).
+
+- Removed s11n::list::[de]serialize_pointer_list(), which has been
+  long obsolete.
+
+- Internal fiddlings with the container-based proxies.
+
+- Changed all s11n::{list,map} functions which returned size_t to
+  return bool, for consistency with the rest of the lib's API.
+
+
+
+0.9.11: skipped.
+
+
+
+0.9.10: 31 Aug 2004
+
+- The std-namespace container registrations ARE NO LONGER INCLUDED VIA
+  s11n.hpp (and thus s11nlite.hpp), because they eat up lots of compile
+  time and aren't used  by most client code. Include map.hpp for
+  std::map, std::multimap and std::pair support, and include list.hpp
+  for std::list, std::vector, and std::[multi]set support. Clients not
+  serializing such structures are encouraged to not include those headers,
+  as they inherently cost a notable amount of compile time even for no-op
+  cases.
+
+- Including sam_std_containers.hpp now generates an error. See above.
+  That file will go away soon, but is left around for a while because
+  some docs still refer to it.
+
+- Replaced the list/map/set/etc SAMs with s11n_traits<> specializations
+  (much leaner, code-wise).
+
+- std::valarray types: include valarray.hpp to add this support.
+
+- Changed several different serialize_XXX() functions and proxies
+  to set the node's class name.
+
+
+- Re-added s11n::library_version(). i have no idea why i ever
+  removed it. :/ (Probably got skipped in the 0.6->0.7 rewrite?)
+
+- Removed all long-form classname aliases for std-namespace containers.
+  i.e., "std::map<foo,bar>" is now simply "map". This shouldn't affect
+  any client-side data produced by recent versions of the library
+  (0.9.6+).
+
+- Corrections and additions to the s11nconvert man page.
+
+- Tweaks to the debian_{build,install}.sh scripts.
+
+- Fixed a tiny quasi-bug which caused std-namespace containers to be
+  registered twice (each) with their classloaders.
+
+
+0.9.9: 24 Aug 2004
+
+- Functionally identical to 0.9.8. Only build-related tweaks, for the
+  Debian project.
+ 
+
+0.9.8: 22 Aug 2004
+
+- Fixed a potentially massive memory leak in the
+  acme::free_{list,map}_entries() functions. This doesn't
+  affect this lib directly but may very well affect
+  some client code.
+
+- expat_serializer: fixed non-escaping of property data,
+  broken by recent changes in string functions.
+
+- Added s11nlite::config(). Uses file ~/.s11nlite
+
+- s11nlite::serializer_class(string) is now persistant
+  across sessions.
+
+- Renamed s11nlite::node_traits_type to s11nlite::node_traits.
+  Old name still exists for a while, but is deprecated.
+
+- Added a way to disable the default registrations for PODs
+  and std:: containers. See sam_std_containers.hpp and
+  default_registrations.hpp for instructions. This can be used
+  to speed up compilation of client files which include s11n
+  headers but do not actualy serialize any PODs or containers.
+  (On my box 1.6GHz this saves 4 seconds per file.)
+
+
+
+0.9.7: 18 Aug 2004
+
+- Corrections to s11nconvert man page (-S option was first
+  called -is, and the man page still referenced that).
+
+- Fixed: s11nconvert's -dl option wasn't trying FOO_serializer,
+  as the -s and -S options did, when FOO is passed in.
+
+- Added -DL option to s11nconvert: exactly like -dl but
+  does not bail out of the given DLL cannot be found/opened.
+
+- Added --known-serializers option to s11nconvert, to allow
+  shell scripts to use s11nconvert to collect the list of
+  known Serializers (perhaps dynamically loaded, via -dl DLL).
+
+- Minor internals changes to s11n::io namespace to accomodate...
+
+- Data streams may now use the special magic cookie
+  "s11n::io::serializer ClassName" to auto-load a Serializer
+  named ClassName. This is used for DLL-based Serializers
+  so they can be auto-loaded via the cookie mechanism.
+
+- Minor bug fixes vis-a-vis node_traits<>.
+
+- Renamed some (non-client-side) macros int the  Serializers
+  to avoid collisions when linking against GNU Readline.
+
+
+
+0.9.6: 15 Aug 2004
+
+- Implemented a proof-of-concept mysql-powered Serializer. :)
+  It will be distributed as soon as (or IF) i can figure out how to
+  do so without forcing libs11n into the GPL.
+
+- Registered name for std::string shortened to "string".
+  This does not affect client code UNLESS it uses (string *),
+  in which case they will need to sed their data files to
+  replace std::string with string. This change was done to
+  cut data file sizes down by 5 byter per serialized
+  std::string.
+
+- s11n_node now uses std::vector for storing children
+  instead of std::list. This should be a tab bit more
+  efficient.
+
+- Added node_traits<>::create() and node_traits<>::create(string).
+
+- s11n::io::data_node_serializer<>'s de/serialize(string)
+  functions are virtual now, to allow serializers which
+  don't use streams to interpret the string as, e.g.,
+  a database identifier (like the mysql_serializer does).
+
+- Created mysql_serializer serializer, which uses a
+  mysql backend. It is not distributed with s11n because
+  it is required to be GPL'd.
+
+- Changed the template args to s11n::io::save_{node,serializable}<>(),
+  removing the NodeType (which is now extracted from
+  SerializerT::node_type).
+
+- s11nconvert:  added option (-dl DLLNAME) to load DLLs. Meant
+  to be used in conjunction with...
+
+- s11nconvert:  added option (-is SERIALIZER) to force a specific
+  serializer to parse the given input (see the --help info, please).
+
+- Some internal changes in some of the accompanying sub-libs.
+
+
+
+	
+0.9.5: 13 Aug 2004
+
+- Added s11n::io::register_serializer<NodeT>(), to simplify the
+  plugging-in of additional Serializers. This doesn't add as
+  much back-end garbage code as reg_serializer.hpp does, and
+  is preferred over that supermacro.
+
+- Changed the internal registration process for Serializers to
+  use register_serializer<>().
+
+- Removed the "convenience" Serializer typedefs from serializers.hpp
+  and s11nlite.hpp. They were never used and haven't been really valid
+  since the addition of node_traits.
+
+- Usage-compatible with 0.9.4, but not binary-compatible.
+
+- Added s11n::io::create_serializer<NodeType>(), to classload
+  Serializers.
+
+- Added --enable-ccdv option to configure script, to enable
+  "pretty" compilation output. This is not recommended
+  for developers, but looks nice. :)
+
+- Minor code and docs cleanups.
+
+- Added an index to the library manual.
+
+- Changed the LyX export (lib manual) to use 'lyx -e'
+  instead of lyxport. This allows easier generation
+  of the index and should allow building of the manual
+  on more machines (the lyxport utility is pretty
+  niche-market, and not included in any Linux distros,
+  as far as i know).
+
+
+
+0.9.4: 10 August 2004
+
+- Some internal cleanups vis-a-vis the type traits additions.
+
+- Added ulong to default registrations. Should also add udouble,
+  uchar, etc., but these eat up compile times, so i prefer to add
+  them on an as-needed basis.
+
+- Fixed a compile bug in s11n::s11n_cast<>().
+
+- Added typedef s11nlite::node_traits_type.
+
+- Several minor fixes vis-a-vis the recent node_traits additions.
+
+- Added some unit tests under src/stest.
+
+
+
+0.9.3: 27 June 2004
+
+While i had hoped to make 0.9.2 the release candidate for 1.0, i
+couldn't help myself in making some fairly radical changes...
+
+- GREAT NEWS: compile times are cut significantly! Moved Serializer
+  registrations into the library's implementation code.
+  This means they are no longer #included by client code, which speeds
+  up client-side compile times considerably. For example, a
+  set of registrations for all six Serializers for one Data Node type
+  was taking 23 seconds on my 2GHz box! This should have a significant
+  effect on reducing client-side compile times, especially those where
+  more than one file includes the s11n headers.
+
+- Introducing s11n::traits::node_traits and s11n_traits. These are
+  the "next generation" in API marshalling.
+
+- Added s11n_node, which supercedes data_node as the prefered
+  reference implementation of the Data Node concept. Both are supported,
+  however. s11n_node has a slightly leaner API and was designed to
+  support the new Type Traits approach.
+
+- The SAM layer is now implemented in terms of s11n_traits. SAM can,
+  in theory, be made obsolete, but he is very useful for
+  pointer-to-reference conversions.
+
+- Added NodeType template parameter to s11n::io::serializer_list() because
+  of the addition of s11n::s11n_node.
+
+- expat_serializer's "short name" changed from expatxml to expat,
+  for consistency with existing "short name naming conventions."
+
+- Removed 2 unused/untested functions from the abstract_creator<>
+  class.
+
+- Added try/catch blocks to the core de/serialize() functions.
+
+- API doc and lib manual touch-ups.
+
+- The "supermacros" reg_proxy.hpp and reg_serializable.hpp have been
+  obsoleted by reg_serializable_traits.hpp, and are now implemented
+  in terms of the latter.
+
+- Class registration has changed slightly. See the library manual
+  and reg_serializable_traits.hpp for details.
+
+
+0.9.2: 23 June 2004
+
+- Added new serializer: expatxml. It is grammatically identical to
+  funxml but uses the expat parser. It is only enabled if libexpat
+  is found by configure. Note that it is fully XML compliant, and
+  thus does not support some constructs which, e.g., funxml does,
+  like numeric node names.
+
+- Added s11n::io::serializer_list(), which returns a list of
+  the registered serializers.
+
+- Touched up error checking in s11nconvert.
+
+- Fixed compile error in s11n::list::serialize( node, string, Serializable ).
+  Fixed: subnode name was not being set.
+
+- Fixed: s11n::map::serialize_map( node, string, Serializable ) subnode
+  name was not set.
+
+
+0.9.1: 11 June 2004
+
+- Serialized std:: containers now save using a short form of their name,
+  since it is unimportant to have the full names in the serialized data.
+  e.g., map<string,string> will now save using the classname "map". The
+  older names are still recognized for reading files, but data is always
+  saved using the newer format. This means std:: containers saved with this
+  version cannot be read by 0.9.0 and earlier without some client-side
+  classloader aliasing added to <=0.9.0 client code.
+
+
+
+0.9.0: 3 June 2004
+
+While functionally it is almost identical to 0.8.4, there are a huge
+number of internal changes which will require client-side code
+changes, mostly in the form of namespace- and include-path
+changes. Sorry about that - such is the cost of software
+development. :/
+
+After many emails trying to convincing me of the benefits of doing so,
+martin krafft finally managed to convince me to break the library into
+smaller parts. All of the non-s11n-specific code has been split off
+into separate sub-libraries, with their own namespaces and source
+trees. While this may make life a little more difficult for the s11n
+developers, it "should" ease client-side development a bit, partly by
+providing more focused API, uncluttered by the general utility code
+which made up half (or more) of the older trees. Additionally, it
+frees up a lot of utility code for easier inclusion into other
+projects, without those projects having to include all of s11n.
+
+Summary of significant changes:
+
+- Headers moved from <s11n/foo.h> to <s11n.net/SOMEDIR/foo.hpp>, where
+  SOMEDIR depends on the sub-lib which the code now belongs to.
+
+- Utility code broken out into several different sub-libraries,
+  each in it's own namespace. See the top-level README in the all-libs
+  tarball for details.
+
+- The build/installation is now made up of several libraries. To
+  simplify distribution/installation they are distributed together,
+  along with a single README explaining the whole installation process.
+
+- Doxygen doc generation has been moved into it's own sub-project, so
+  it can pick up the headers for all of the sub-projects. This allows
+  their docs to cross-reference each other, providing a unified API doc
+  set for all of the s11n.net packages.
+
+- s11nconvert now installs a man page under man section 1, so
+  'man s11nconvert' should work after installation. (This was
+  to meet requirements for distribution in Debian Linux.)
+
+- Distribution tarball renamed from s11n-VERSION to libs11n-VERSION.
+
+- Re-added free functions
+  s11n::[de]serialize( NodeType, SerializableType, FunctorType )
+  to allow clients to explicitely use their own functors in special
+  cases. Achtung: this approach bypasses API marshalling, but this may
+  be necessary for some unusual cases, or when clients want/need to
+  de/serialize a type using a de/serialize function other than the one
+  installed in the lib (e.g., you want to bypass an existing proxy).
+
+- API docs cleaned up a bit.
+
+- Lib manual brought up to date for new namespaces.
+
+- Now installs libs11n.pc, a data file for the pkg-config tool.
+
+
+(************************************************** end 0.9.0)
+
+
+0.8.5: 17 May 2004
+
+Minor build-fix update, to address a bug report from the Debian team.
+
+- s11nconvert now links to the in-build-tree libs11n.
+
+- client/sample/* no longer built by default.
+
+Thanks to Christian Steigies, of the Debian team, for the bug reports.
+
+
+(************************************************** end 0.8.5)
+
+
+0.8.4: 15 May 2004
+
+- Fixed a bogus pointer argument passed from serialize_list(). Thanks
+  to martin f. krafft for catching that one.
+
+- Adding some extra includes to s11n.h, to make it a "one-stop #include
+  file". Thanks again to martin for catching that omission.
+
+- Fixed a classload registration bug which would show up when
+  loading types without having saved one beforehand. Thanks to
+  Keven Weber for allowing ssh access to his box, which was
+  essential in tracking this down.
+
+- Fixed a classname quoting bug in the funtxt serializer.
+
+- Fixed weird bug: parens serializer broke when parsing in class
+  nodes with certain single-letter names: A, C, E, P, S
+  An anonymous sourceforge user noticed that ACEPS is an anagram
+  for SPACE, which pinpointed the bug in the lexer code. (Thanks,
+  whoever you are!)
+
+- Removed the 4-arg versions of s11n::de/serialize_subnode(),
+  as it relied on a function which was removed in 0.8.3.
+  It's usage was not in line with the core lib's way of doing
+  things, in any case.
+
+- Added std::multiset support.
+
+- Renamed demo app's binary from demo_struct to demo_s11n,
+  since it now encompasses several demos.
+
+- Added client/sample/demo_hierarchy, demonstrating a serializable
+  class hierarchy.
+
+- Renamed s11nlite::serialize( NodeT, string, SerT ) to
+  serialize_subnode(), because that's what it's called in the rest
+  of the API.
+
+- Several documentation updates & corrections. Many thanks to
+  Marshall Cline for his input on these!
+
+- Pre-flexed lexers are now used whenever lib/node/lex/flexes.tar
+  is found, to get around some incompatibilities in flexers built
+  on other boxes (in particular, on Debian hosting flex 2.5.31).
+
+- Side note: Many thanks to martin f. krafft for a) including
+  s11n into Debian unstable and b) giving me access to a Debian box
+  on which to test fixes.
+
+(************************************************** end 0.8.4)
+
+
+0.8.3: 12 April 2004
+
+- This release probably holds the record for the least number of
+  "significant"   changes, not counting the last compile-error
+  quick-release (0.8.2b). That's a great sign! So far,
+  client-side usage hasn't revealed a case which 0.8.2b couldn't
+  fundamentally handle. :)
+
+- std::set and std::multimap are now transparently supported, thanks
+  to code from Gary Boone. Added --multimap and --set demos to
+  client/sample/demo_struct (it's not just a struct demo any more,
+  i guess).
+
+- fixed typo-induced compile error in the 3-arg version of
+  serialize_streamable_list().
+
+- fixed demo app output: the NDEBUG macro is set to 1 when doing
+  non-debug builds, and when this is set assert()s have no
+  effect. Since the demo wraps all test calls in assert(),
+  they produced no output on non-debug builds. :/ As i *always*
+  build in debug mode, i never noticed this problem: Gary (again)
+  brought this one to my attention. (Finding the reason for the
+  missing output took me a while, though! ;)
+
+- Added 3-argument forms of de/serialize_{list,map}(), which accept
+  a subnode name.
+
+- Removed the forms of s11n::de/serialize() which accepted a de/ser
+  functor, as they a) allowed clients to inadvertently bypass
+  API marshaling and b) were never used by the lib. These were
+  removed some time ago, but a CVS slip-up re-introduced them. :/
+
+- Several corrections in the library manual, mainly to bring it
+  up-to-date for 0.8.x.
+
+- Removed pair_second_deleter, as it is obsoleted by
+  pair_entry_deallocator.
+
+(************************************************** end 0.8.3)
+
+0.8.2b:
+
+- Fixed a compile error in map.h which didn't show up until compiling against
+  a client app.
+
+0.8.2: 21 March 2004
+
+- i'd like to welcome Gary Boone to the development team! We're now
+  at a whopping TWO members! :)
+
+- Can now de/serialize std::maps/vector/list/pair without having
+  to register them! The only registrations which need to happen are
+  for their contained types. This is a HUGE IMPROVEMENT in usability
+  and flexibility! Adding such default support for other container
+  types is relatively trivial (see sam_stl_containers.h). See
+  client/sample/demo_struct for a complete demonstration. Note that
+  you may still install custom proxies for specific container
+  instantiations, for complete control over their serialization.
+
+- Lots of header re-orgs and API changes, in the interest
+  of dependencies reduction, improving ease of understanding the API,
+  and simplifying source organization:
+  - list-related algos/functors are now in <s11n/list.h> and
+    live in namespace s11n::list.
+  - map-related functions/functors --> <s11n/map.h> and
+    s11n::map namespace.
+  - s11n::de/serialize_value_list() ==> renamed:
+        s11n::list::de/serialize_streamable_list()
+    As "value" is extremely ambiguous, and therefor confusing.
+
+- Various deserialize_subnode() convenience functions added.
+
+- Added s11nlite::serializer_class(string), to set the name of the
+  Serializer class s11nlite should use for save() operations.
+  This supercedes the macro-based method, which is ineffective
+  on client app builds. See demo_struct.cpp for an example of it's
+  usage.
+
+- s11nlite:: functions which are not necessary vis-a-vis template
+  type resolution have been (are being) removed, as they provide
+  no benefit except to clutter s11nlite with a bunch of 1-line
+  functions. Those which *do* keep the user from having to explicitely
+  specify a NodeType are kept. It is hoped that the new namespaces,
+  e.g. s11n::list, will help avoid confusion in using s11nlite with
+  the API living in non-s11nlite namespaces.
+
+- Two "frivilous" internal template-based layers have been removed,
+  to help reduce compile times and object/binary file sizes.
+
+- Added reg_map_serializable.h, to simplify the registration of
+  std::map types containing any mix of PODs or Serializables. This
+  is ONLY necessary if you want to proxy a map in a customized way,
+  otherwise maps are supported by default.
+
+
+(************************************************************ end 0.8.2)
+
+0.8.1: 18 March 2004
+
+- Fixed a bad ODR collision bug when s11nlite.h was included
+  by more than one implementation file in a project.
+
+
+
+0.8.0: 17 March 2004
+
+- Many, MANY thanks to Gary Boone for all of his feedback
+  and interaction with me on these changes!
+
+  This release is so HUGE, in fundamental ways,
+  that it deserves a codename:
+
+        "Hol den Vorschlaghammer!"
+         (Get the sledgehammer!)
+
+- Recent developments have provided some exciting new
+  ways to register arbitrary information with s11n,
+  using ONLY in-language techniques which COMPLETELY
+  avoid ALL of the various problems related to using the
+  conventional registration macros for complex
+  types (i.e., those with template parts).
+  Experimentation suggests that s11n just got 100x
+  times easier to use when it comes to handling some
+  of the most "difficult" cases, like awkward
+  container combinations.
+
+- impl_class() is now handled AUTOMATICALLY (once again!)
+  for registered MONOMORPHIC types - POLYMORPHIC types must
+  still set this in their serialize operator, as usual :(.
+  (i might finally have a workaround for this... need to
+  experiment...)
+
+- New demo app: client/sample/src/demo_struct.cpp  shows
+  several proxying samples, including lists, vectors
+  and maps. Run client/sample/demo_struct.
+
+- Some header file re-orgs. Now most algorithms are really in
+  the algos header, and functors in the functors header.
+
+- Both pointer- and non-pointer Serializables should now be supported
+  in an identical manner for all de/serialize() operations. This greatly
+  simplifies some generic serialization code, which no longer needs
+  to know if it is dealing with pointers or not. This means that these
+  now work identically:
+      MyType foo(); MyType *fooptr = &foo;
+      ...
+      s11nlite::save( foo, std::cout );
+      s11nlite::save( fooptr, std::cout );
+  As do these:
+      s11nlite::deserialize( node, foo );
+      s11nlite::deserialize( node, fooptr ); // must be non-0
+
+
+- Developed a whole new way of registering class meta-information,
+  such as proxies, which completely avoids ALL macro-related
+  problems, can be used to avoid ODR violations, and can still be
+  performed at compile-time. It is based on including header
+  file snippets and defining certain "one-time-use" macros
+  which are consumed by the registration process. Each snippet
+  may, of course, have it's own requirements, interface, and
+  benefits. This allows EASY EASY EASY EASY EASY swapping-out
+  of proxy types at compile time, potentially even based on,
+  e.g., #defines from config.h.
+
+- New weird class: abstract_creator<>
+  Can abstractly create and destroy objects regardless of whether they
+  are heap- or stack-based, further simplifying some generic serialization
+  algorithms. (This is a strange class, with strange usage, but it
+  makes possible some previously impossible-to-consolidate code
+  cases involving mixing pointer/reference types. i.e., some
+  functors can handle pointer and value types properly, including
+  de/allocation, regardless of the underlying type. Previously
+  such code had to implemented in two slightly-different
+  implementations, only for relatively minor syntactic reasons.
+
+- New function: s11n[lite]::s11n_cast(), can "cast" any
+  Serialiable to a "compatible" type, e.g., list<Foo*> to
+  vector<Foo> (pointerness is irrelevant!).
+
+- New function: free_map_entries() cleans up all pointers in maps,
+  without having to know if the map stores value types or pointers,
+  allowing some more-generic map-centric template code in places.
+  See also, free_map_entries().
+
+- Removed functions: de/serialize_pointer_list(), in favour of
+  newer, more generic de/serialize_list().
+
+- lots of algo/functor reorgs, to implement the functors on top
+  of the algos, instead of the other way around.
+
+- Fixed: not all parsers handled all class names nicely.
+  (e.g., "list<int *>", "std::map<std::string, SomeType<Foo *> *>").
+  Required minor grammar changes to parens and funtxt: they are
+  read-compatible with older data but data written with these versions
+  is not readable with older versions of those input parsers.
+
+- Significant changes (simplifications) in the underlying classloader
+  library's interface: cllite, the class_loader<> equivalent of s11nlite.
+  See cllite.h and the class_loader ChangeLog
+  (in that lib's source tree).
+
+- It is now possible to change the default s11nlite serializer
+  at compile time via client code: see s11nlite.h for info.
+
+- Removed some of the member functions from s11n::data_node - the ones
+  which have appropriate algorithm-based substitutes:
+  node.child(string) -->
+        s11n::find_child_by_name(node,string)
+  node.children(string,container) -->
+        s11n::find_children_by_name(node,string,container)
+
+- Doubled the size of the manual. It now weighs in at almost 60 pages...
+  and there's no end in sight to what /could/ potentially go into it.
+  (Publishing deal, anyone?)
+
+- Added the beginnings of an index to the manual: all major Terms and
+  Definitions are there, anyway.
+- After adding about 100 index entries for the manual, lyx now
+  craps out when exporting the library manual. AAARRRRGGGGG!!!
+
+- Globally replaced the S11N_NAMESPACE token (the namespace
+  placeholder) to the more approachable S11N_NS, saving not only
+  my fingers, but literally tens of k of wasted file space ;).
+  (Should have done that AGES ago.)
+
+- Added experimental support for generic meta-data nodes in the
+  Serializers, available via their base interface.
+
+
+(*********************************************************** end 0.7.2)
+
+
+0.7.1: 10 March 2004
+
+- old-mode s11n code left out of the distribution tarball. Contact
+  me if you'd like it and i'll gladly hand it over. It hasn't changed
+  since the last release, and is unlikely to change at all... ever
+  again.
+
+- Major change to the registration macros introduced in 0.7.0:
+  the NodeType argument (first arg) has been removed, as i realized
+  that having that here hard-codes proxies and clients to specific
+  Node Types. We now let automatic type resolution call the shots.
+  This greatly simplifies some things and makes maintenance
+  easier later on. Also, it has interesting implications for classes
+  implementing *multiple* Serializable interfaces, and for
+  writing generic Container-Serializer proxies.
+
+- Fixed dumb bug: a misplaced 'static' meant that s11nconvert wrote
+  the wrong magic cookie when used in a pipe context, or two serializers
+  used one-after-the-other.
+
+- Added some more demo code in client/sample/src/main.cpp, showing how
+  turn a, e.g., std::map into a Serializable.
+
+- s11n::io:save_serializable(): re-ordered the template args (it's easier
+  to use this way) and removed the nodename argument (because in practice
+  we NEVER care what the name of the root node is, so the func now provides
+  a dummy name).
+
+- A number of corrections and additions to the docs. (My favourite typo
+  in the 0.7.0 docs was: "returns true on false and success on error.")
+  
+- funxml_serializer<> fixed to translate XML chars in class templates'
+  names. (The supplied parser has always supported reading these, but
+  a real XML parser wouldn't handle them before this change.)
+
+- Added function: s11n::de/serialize_value_pair()
+
+- Several other fixes/additions... undocumented here.
+
+- Updated web site to match this API, removing references to the old API.
+
+(*********************************************************** end 0.7.1)
+
+	
+0.7.0: 7 March 2004
+
+########################################################################
+# ACHTUNG: MAJOR CHANGES!
+# 
+# There is a new s11n subsystem, which will eventually replace much of
+# the current way of serializing objects. The new way is much more
+# flexible, allowing clients to go so far as define their own s11n_node
+# type. This new model is infantile, but shows a lot of promise and is
+# moving along quickly. (In only two days most of the framework was
+# replaced.)
+#
+########################################################################
+
+
+The long list of notable changes and additions in the new code:
+
+- Code based around the older model is not built by default.
+  To enable it use:  ./configure --enable-old-s11n
+
+- Fair warning: this is 50+% BRAND NEW CODE. It's only lightly tested,
+  but "seems to mostly work okay." The s11nlibconfig client app
+  is not yet ported to support the new model yet, and s11nconvert
+  has changed significantly.
+
+- The code based around s11n_node is "officially deprecated" as of 1
+  March 2004. It will  still be supported for a while (i've got a lot
+  of code which uses it!) but the newer model is much preferred and
+  already overshadows the old code enough to give little hope of the
+  old model surviving much longer.
+
+- Implemented independently of the "old" code, to facilitate phasing
+  away from the older model. The new tree is much slimmer, as it does
+  away with much of the "evolution cruft" the API has developed.
+
+- Introducing 's11nlite', a namespace which encapsulates most
+  common de/serialize options without having to use so many
+  templated types. This is provides an extremely simple interface
+  into s11n. It is also a demonstration of how easy it is to
+  implement your own serialization front-ends on top of libs11n.
+  This can be used, e.g., to completely insulte client-side objects
+  from s11n behind a client-side serialization interface, while
+  letting s11n do the back-door work.
+
+- A completely new library manual: doc/s11nlite.lyx. The old manual
+  (s11n.lyx) is currently empty, but will be filled out with information
+  which is "too deep for s11nlite."
+
+- The core interface is made up of a handful of de/serialize() overloads,
+  all of which work on types supporting some general conventions, which
+  means clients can *completely* swap out the underlying framework if
+  they like, while keeping the core interface, or vice versa.
+
+- Is implemeneted in parallel to the to the "older" model (if you can
+  call 6 months "old"), so it doesn't interfere with any older code.
+
+- s11n_node is replaced with s11n::data_node, a pure container type.
+  data_node defines some conventions for generic DOM-style containers
+  compatible with s11n. data_node is only hard-coded in as few places
+  as possible, so users can provide their own node types and create
+  their own serialization interfaces using the framework provided by
+  this library.
+
+- Proxying serialization is now easier than ever. Arbitrary functors
+  can be installed as proxies for a given BaseType in one line
+  of code, and these functors automatically apply to all subtypes
+  of BaseType. This allows easy serialization of many generic container
+  types, like std::map and std::list, as well as your own class
+  templates. Additionally, it allows serialization accounting, logging,
+  call chaining, etc., without a Serializable type needing to know about
+  it.
+
+- Base Serializable types which conform to a "default" interface
+  no longer need to be registered as serializables - the library
+  will pick them up automatically or fail at compile-time.
+
+- The de/serialize() free functions now work on all node and Serializable
+  types conforming to certain (minimal) conventions, instead of using
+  hard-coded types.
+
+- Classloader registration has been moved to a separate macro, and the
+  framework's access to the built-in classloader has been reduced to
+  fewer points. It is now possible, with a small amount of hacking, to use
+  client-side classloaders for all deserialization operations.
+
+- The new registration macros are now simpler to use (i hope), and
+  are even optional for classes which support 2 operator() overloads
+  (the so-called serialization operators).
+  
+- Simplified the s11n<-->lex interface, so class templates can now
+  communicate with them without some of the former type-related
+  problems. Also, lexers should be able to parse out any node
+  type which can fit within the data_node_tree_builder's interface
+  (no more hard-coded node type in the lexers).
+
+- i/o layer moved to the s11n::io namespace. The core is 100%
+  independent of it.
+
+- Clients must now only include one of two header files:
+  s11nlite.h (recommended) or s11n.h (the core library)
+
+- Overall less code: lib build time is cut by approximately half.
+  (Client code build times are "probably unaffected.")
+
+- Fixed a compile error caused by a missing header, plus fixed
+  FlexLexer.h-related build problems reported by Gary.
+  (Thanks, Gary!)
+
+- Created missing README and INSTALL files, after Gary Boone
+  pointed out that s11n didn't have these.
+
+- List/vector serializers fixed to keep proper ordering of the
+  re/stored elements. Additionally, de/serializing ANY
+  value-based list or map is a one-line operation, as is
+  de/serializing lists of pointers to Serializables.
+
+- Several macros fixed to accept single-arg template types
+  as argument (multi-arg templates still won't work because
+  the commas break the C macros).	
+
+- Slightly faster than 0.6.x: up to 20% in tests on large data
+  sets (100k random serializable objects).
+
+- Gawd only knows what else...
+
+- See also: the ChangeLog for class_loader 0.7.0
+
+
+(*********************************************************** end 0.7.0)
+
+########################################################################
+# Everything below this line pertains to the "old-style" s11n code,
+# i.e., that built around the s11n_node data structure.
+# That code is "officially deprecated" as of 1 March 2004. It will
+# still be supported (i've got a lot of code which uses it!) but
+# the newer model (versions 0.7.0+) represent newer ways of doing things.
+########################################################################
+
+
+0.6.1: 29 Feb 2004
+
+- Added free functions serialize<>() and deserialize<>(),
+  both of which accept a node, an arbitrary object, and functor. The
+  functor is responsible for the serialization of an object, aiding
+  in the serialization of non-Serializables and 3rd-party classes,
+  as well as serializing class templates.
+
+- It is now possible, e.g., to de/serialize a 
+  std::map<std::string,std::string> using the same
+  client-side interface as is used for all other objects.
+  The file parsers now accept C++ template names as
+  class names, helping to fix a deficiency caught by
+  Ton Oguara: s11n deserialize class templates before.
+  It now can, but requires a bit of client-side work
+  (details coming later in the manual...)
+  See lib/s11n/createS11n{Proxy,Functor} (installed under $prefix/bin)
+  for helper scripts which create the necessary boilerplate
+  code.
+  
+- Re-enabled hex_serializer, but don't use it yet: it's got a
+  bug or two.
+
+- Work has begun on a slightly different, more flexible,
+  model for s11n, using pure data containers of user-defined
+  types (with defaults included, of course). This should 
+  add a lot of flexibility to client-side usage. It already
+  removes or reduces several limitations of the library.
+  See lib/s11n/data_node*.* for details, and the test functions
+  in client/s11nlibconfig/main.cpp for samples & test code.
+
+- Side note: experimentation has shown that functors can be used to
+  apply client-side serialization logic to for arbitrary s11n
+  operations. e.g., normally the same de/serialize logic is applied
+  to the same TYPES on all calls involving those TYPES. Functors
+  allow you to custom-serialize   an object (or objects). It also
+  potentially allows serializer chaining, which opens up some weird
+  possibilities...
+
+
+
+
+0.6.0: 12 Jan 2004
+
+- Added the s11nlibconfig, a tool for manipulating
+  the library config object. Please don't confuse this
+  with...
+
+- s11n-config, a new script which is useful
+  for configuring libs11n clients to compile/link
+  against this library.
+
+(i appologize for the naming confusion. The first
+one does not have a better name alternative and
+the second one follows existing naming conventions
+for such scripts, e.g., gtk-config.)
+
+- Added save_serializable( Serializable &, ostream & )
+  to s11n_globals.h.
+
+- Removed the 'static' specifier from the free functions
+  in s11n_globals.h (it shouldn't have been there).
+
+- Removed the bogus string argument for property_store's ctor:
+  this was a leftover from long-gone code.
+
+- Some minor post-main() fixes.
+
+- Minor documentation corrections/additions.
+
+- See the ChangeLog for class_loader 0.6.0.
+
+
+0.5.3: 6 Jan 2004
+
+- Eliminated the need for linking with libs11n_class_loader.
+
+- Added s11n-config script, to help client configure scripts determine the
+  properies of libs11n. This is created at configure-time and installed
+  under ${prefix}/bin.
+
+- Changed compact_serializer to use 4-byte size tokens instead of 8-byte,
+  saving considerable file space. The parser can read in older data but
+  will always write with the newer format. It uses a new magic cookie,
+  so older versions will never get asked to read newer-format data.
+
+- node_loader now buffers all input coming from streams so it can pass
+  the whole thing, including magic cookie, to the selected input parser.
+  This was required for formats which accept more than one cookie, so they
+  can internally distinquish some details (e.g., compact_serializer).
+  It's less efficient than before, especially for very large input streams.
+  i'm looking for a better way to do this, since this could "potentially"
+  overflow the maximum size of a std::string.
+
+- The distribution tarball now comes with pre-flexed lex parsers. flex
+  is used if it is found, otherwise pre-generated lexers are used. Use
+  --without-flex to explicitely use the pre-built lexer. (i've had to
+  do this on one Solaris box, where it's flex didn't play nice.)
+
+- Removed the auto-saving of ~/.libs11n.conf, as it can Cause Grief in
+  several common cases. As a side-effect of this, calls to s11n::config()
+  made post-main() are not guaranteed to get any changes made to the
+  config object during application session.
+
+- Some minor documentation corrections.
+
+- Some source tree re-orgs.
+
+- See the ChangeLog for class_loader 0.5.2
+
+- Fixed a class naming mistake in the previous ChangeLog:
+  property_list --> pointer_list
+
+
+0.5.2: 1 Jan 2004
+
+- Fixed a broken loop in ~pointer_list() which caused a post-main
+  hang at times. The fix means that pointer_list can no longer safely
+  be used for holding the same child pointer multiple times. In practice
+  this capability has never been used, so i'm not gonna sweat it. See
+  the comments for pointer_list::delete_all() for the explanation.
+
+
+	
+0.5.1: 25 Dec 2003
+
+- Again overhauled the internal handling of Serializers'
+  translation maps, to take advantage of phoenix<>.
+
+- See the ChangeLog for class_loader 0.5.1
+
+
+0.5.0: 19 Dec 2003
+
+- Overhauled the way serializers handle their character
+  translation tables, to avoid some post-main() crashes
+  caused by destruction of static objects "in the wrong order."
+  i'm still not 100% tickled with this approach, because it
+  requires more map<> objects than is really necessary, but it
+  is the safest approach, i think. (Another alternative would be
+  to get a Phoenix Singleton and plug it in there for the
+  translation maps.)
+
+- Fixed a couple other obscure, post-main()-static-destruction
+  bugs.
+
+- Added the s11n::config(), a persistant s11n_node which holds
+  library-wide configuration information, stored in ~/.libs11n.conf.
+  (This is what revealed the statics bugs mentioned above.)
+
+- Added experimental support for toggling the use of indention to
+  "pretty up" the serializers for which indention might be
+  useful. See basic_serializer::use_indention().
+  The default behaviour is to use human-friendly indention.
+
+- Added a couple free functions and s11n_node members to simplify some
+  complex client-side de/serialization cases.
+
+- Fixed a bug in funtxt which broke input parsing when property values
+  had '=' characters in them.
+
+- Changed many unsigned types to size_t.
+
+- Found that there is a need to be able to de/ser std::maps of
+  Serializable pointers. How best to do this is still under
+  consideration.
+
+- Minor documentation corrections.
+
+- Fixed a potential crash in s11n_io::save( s11n_node, string )
+  when the given filename could not be opened.
+
+- Added experimental support for persistent compression_policy()
+  settings. This may be a nuisance, as it will be applied to all
+  clients, so it may go away. Clients can, of course, store app-specific
+  compression policies in s11n::config().
+	
+- See class_loader 0.5.0 ChangeLog.
+
+	
+0.4.1: 8 Dec 2003
+
+- Stress again (introduced in 0.4.0): client-supplied Serializable
+  types should call s11n_node::impl_class() from their serialize()
+  methods, as practice has now shown that the template-based cannot
+  handle several common cases. Grrrrrr...
+
+- Fixed the broken copying of s11n_node's properties
+  in it's copy() method.
+
+- Added config option --s11n-namespace, to build
+  the whole lib under a different namespace (defaulting
+  of course s11n). Use this sparingly, as it has
+  very wide-reaching, and not always obvious, effects
+  on client usage of the library. If the namespace
+  is not 's11n' then the linked library will take on the
+  name libNAMESPACE_s11n.so, to allow it to co-exist
+  with the s11n distribution on the same system.
+  If you're bored, try ./configure --namespace bob.
+  (To be safest, do a 'make distclean' first.)
+
+- Minor documentation changes.
+
+- Please see the changelog for class_loader 0.4.1,
+  from http://s11n.net/class_loader/ as this tree
+  includes that code.
+
+- fixed an installation bug: config.h wasn't going to the correct
+  dir.
+
+- A whole slew of build-related changes, largely to take
+  advantage of new file-filtering capabilities provided
+  by toc. (Okay, that's a bit of a lie: that support was
+  added to toc because this tree wanted it. ;)
+
+
+0.4.0: 1 Dec 2003
+
+- Added copy ctor/operator and copy() to s11n_node.
+
+- All sorts of refactoring to support making the lib
+  namespace settable at build-time. This allow us to
+  share cvs trees in multiple projects with
+  different namespaces and to compile this library
+	with clients who use two different-namespaced
+	versions of this library. Collisions which happened
+  in earlier versions of this lib which happened
+  in these cases have been resolved.
+
+- All (significant) classes now use STL-style naming
+  conventions, for consistency. e.g., ParenSerializer is now
+	paren_serializer. There are a couple classes still hanging
+  out with the OldNamingStyle, but they will be phased out
+  eventually.
+
+- Several documentation corrections and updates. i can't
+  believe i still had my home page as the URL :/.
+
+- Experience now shows that automatically setting
+  a node's impl_class() via behind-the-scenes templates
+  cannot be done 100% reliably. This means that client
+  Serializable classes are now encouraged to set this
+  from their serialize() methods. :/
+  Unfortunate, but the only other reliable option is to
+  add this to Serializable interfaces, which is actually
+  more work for clients and less reliable because it
+  would require modifying all Serializable ctors to call
+  impl_class().
+
+0.3.2: 11 Nov 2003
+
+- Lots of changes to class_loader, as described in
+  the ChangeLog for libclass_loader 0.3.{0,1}.
+
+- Split the classloader and core lib into separate
+  DLLs, for maintenance reasons. Static lib is still
+  one library. This shouldn't affect client usage.
+
+
+0.3.1: 31 Oct 2003
+
+- Lots of build/source re-orgs to consolidate everything
+  into one namespace (s11n, of course).
+
+- Added support for libltdl: if it is found it is preferred
+  over libdl. Hid the dlopen-related code in
+  dll_loader::open/close_dll(). (Thanks to Roger Leigh,
+  from comp.lang.c++, for introducing me to libltdl!)
+
+- Simplified usage of node_loader a bit and added
+  another convenience method.
+
+- Added load_serializable<>( string||stream ) functions.
+  For some reason doxygen refuses to list them,
+  so please see s11n_globals.h for the docs.
+
+- SimpleXMLSerializer: fixed a horrible set of bugs in the
+  property reading and entity translation. Newline translation
+  in property values /might/ not be 100% correct yet, though.
+
+- FunTxtSerializer: changed the way backslashed newlines are
+  handled in input, for consistency with other formats and
+  to fix some whitespace-related data portability problems.
+
+- hex_serializer has been removed until it's parsing bugs are
+  fixed.
+
+
+0.3.0: 29 Oct 2003
+
+- ChangeLog started
+
+- refactored to support changing class_loader's namespace at
+library configure/build-time, so we can maintain identical code and
+build files in both the s11n and class_loader trees yet have different
+lib names and namespaces for class_loader.
+
+- class_loader and friends have been moved to the s11n namespace.
+
+- Dependencies on the toolbox namespace have been reduced,
+  via the above refactoring.
+
+- removed the bogus int return value from class_loader::register_xxx().
+  (Thanks go to Tom on comp.lang.c++ for that!)
+
+[a couple 0.2.x releases missing...]
+
+0.2.0:
+  - Domain online :). First public release.

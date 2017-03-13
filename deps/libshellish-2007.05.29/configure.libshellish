@@ -1,0 +1,135 @@
+#!/do/not/bash
+# configure script for the shellish project
+
+toc_test check_dist_md5s
+
+toc_export PACKAGE_DESCRIPTION="C++ framework for writing shell-like applications."
+
+toc_test user_is_stephan_beal
+
+toc_test_require gnu_cpp_tools
+# toc_test use_ccdv
+toc_test_require gcc_try_compile ${TOC_HOME}/tests/cpp/check_stl_newstyle.cpp
+
+
+configure_enable_plugins=${configure_enable_plugins-1}
+if test x0 != "x${configure_enable_plugins-1}"; then
+    toc_test libltdl || toc_test libdl # prefer libltdl over libdl.
+    if test x = "x${LDADD_DL}"; then
+	toc_boldecho "Plugins support is being disabled. No DLL loader found."
+	toc_export shellish_CONFIG_ENABLE_PLUGINS=0
+    else
+	toc_export shellish_CONFIG_ENABLE_PLUGINS=1
+	toc_boldecho "Plugins support enabled. Disable with --disable-plugins."
+    fi
+else
+	toc_boldecho "Plugins support explicitely disabled."
+	toc_export shellish_CONFIG_ENABLE_PLUGINS=0
+fi
+
+toc_export shellish_CONFIG_HAVE_LIBLTDL=${HAVE_LIBLTDL-0}
+toc_export shellish_CONFIG_HAVE_LIBDL=${HAVE_LIBDL-0}
+
+
+{ # readline support?
+    readln=0
+    if [ 1 = ${configure_with_readline-1} ] ; then
+        toc_test find_appconfig libreadline_cpp && {
+            readln=1
+            eval $(${libreadline_cpp_config} --toc-config | sed -e 's/$/; /')
+	    echo "Using libreadline_cpp version ${LIBREADLINECPP_LIBRARY_VERSION}."
+        }
+    else
+        echo "libreadline_cpp support has been disabled via --without-readline."
+    fi
+    toc_export HAVE_LIBREADLINECPP=$readln
+    test x0 = "x${readln}" && {
+    cat <<EOF
+${TOC_BOLD_}
+************************************************************************
+WARNING: building without libreadine_cpp!
+This means that interactive editing and command history will not be
+enabled!
+************************************************************************
+${_TOC_BOLD}
+EOF
+    }
+    unset readln
+} # end readline
+
+
+use_pthread=0
+toc_test gcc_try_compile ${TOC_HOME}/tests/c/check_for_pthread.c && {
+    accum_ldadd="${accum_ldadd} -lpthread"
+    use_pthread=1
+}
+toc_export shellish_HAVE_PTHREAD=${use_pthread}
+unset use_pthread
+
+
+
+########################################################################
+# optional support for libs11n 1.1.3+
+uses11n=0
+if test x1 = "x${configure_enable_s11n-1}"; then
+    if toc_test find_appconfig libs11n; then
+	echo "Using ${libs11n_config} for libs11n config info..."
+	if echo $(${libs11n_config} --version) | grep "^1.0." &> /dev/null; then
+	    cat <<EOF
+	************************************************************
+	s11n was found, but is an older version than supported.
+	Disabling s11n support.
+	To enable it, install libs11n 1.1.3+, available from:
+	http://s11n.net/download/
+	************************************************************
+EOF
+	else
+	    eval $(${libs11n_config} --toc-eval)
+#	toc_export LIBS11N_PREFIX="$(${libs11n_config} --prefix)"
+	    uses11n=1
+	    echo "Enabling optional s11n support: libs11n ${LIBS11N_LIBRARY_VERSION}"
+	fi
+    else
+	echo "libs11n-config not found: assuming no s11n support."
+    fi
+else
+    echo "s11n support was explicitely disabled."
+fi
+toc_export SHELLISH_ENABLE_S11N=${uses11n}
+unset uses11n
+# end s11n checks
+########################################################################
+
+############################ shellish-config
+removeDupes=${TOC_HOME}/bin/removeDupeArgs
+internal_ldadd="-L${prefix}/lib ${LIBREADLINECPP_CLIENT_LDADD} ${LIBS11N_CLIENT_LDADD} ${LDADD_DL} ${accum_ldadd}"
+accum_ldadd="-L${prefix}/lib -lshellish"
+inc="$(${removeDupes} -I${prefix}/include ${LIBREADLINECPP_CLIENT_INCLUDES} ${LIBS11N_CLIENT_INCLUDES})"
+toc_test_require PACKAGE_NAME-config \
+    PACKAGE_PREFIX=LIBSHELLISH_ \
+    CLIENT_LDADD="${accum_ldadd}" \
+    CLIENT_INCLUDES="${inc}"
+# eval $(./${PACKAGE_NAME}-config --toc-config | sed -e 's/$/; /')
+
+########################################################################
+# SHELLISH_LIB_LDADD == the flags which libshellish will use for linking
+toc_export SHELLISH_LIB_LDADD="${internal_ldadd}"
+
+############################ /shellish-config
+
+PACKAGE_LDADD="${accum_ldadd}" \
+    PACKAGE_CFLAGS="${inc}" \
+    toc_test_require create_pkg-config_data
+
+# for in-tree test code:
+toc_export SHELLISH_LDADD="${accum_ldadd}"
+toc_export SHELLISH_INTERNAL_INCLUDES="${inc}"
+
+toc_export shellish_SHARED_DATA_DIR=${prefix}/share/shellish
+toc_export shellish_SHARED_LIB_DIR=${prefix}/lib/shellish
+
+toc_test_require atfilter_file \
+    src/shellish/shellish_config.hpp.at \
+    src/shellish/shellish_config.hpp
+
+toc_test_require toc_project_makefile

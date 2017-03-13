@@ -1,0 +1,36 @@
+#!/do/not/bash
+# intended for sourcing by toc
+
+########################################################################
+# helpful notes
+cat <<EOF
+
+Here are a few things you might find helpful along your way:
+
+*) When using s11n client applications, make sure your LD_LIBRARY_PATH
+   (or equivalent) contains the path to libs11n.so.
+   Pre-install, this is:
+      ${PWD}/src
+   Post-installation this will be:
+      ${prefix}/lib
+
+*) Use the libs11n-config script to get information needed for compiling
+   and linking client applications against libs11n. Right now it lives
+   at ./, and it will be installed to ${prefix}/bin.
+
+*) See the README.* and INSTALL files for further information, including
+   hints on starting points for working with s11n and info on  building
+   the API documentation.
+
+Thanks for taking the time to try out s11n! Feel free to send any
+and all feedback, fixes, etc., so we can keep making s11n better:
+
+	http://s11n.net
+	stephan@s11n.net
+	(please do not use the mailing list: it is overrun by spammbots)
+
+EOF
+# /helpful notes
+########################################################################
+
+return 0

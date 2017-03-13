@@ -1,0 +1,78 @@
+========================================================================
+This is the INSTALL file for libs11n (s11n).
+http://s11n.net
+maintainer: stephan@s11n.net
+========================================================================
+
+ACHTUNG:
+
+While the core code is not platorm specific, the build tree and
+configure script are *quite* GNU-specific, and REQUIRE "recent"
+versions of the most common GNU tools, like sed, GNU make, GNU tar,
+gzip, etc. Complete docs for the build tree can be found on the build
+tool's home page:
+
+        http://toc.sourceforge.net
+
+(shameless plug: i wrote that, too ;)
+
+s11n uses a conventional 'configure' script, which is run like so:
+
+        ./configure [--options]
+
+Run it with --help to see the complete list of options. None are
+normally necessary, but setting a prefix is required if you want
+to install s11n as a non-root user:
+
+        ./configure --prefix=$HOME
+(i.e., somewhere to which you have write access)
+
+If configure finds problems then you won't be able to build s11n
+without manual intervention - feel free to contact us if you
+have build problems.
+
+After configuring, simply:
+
+        make
+        make install
+
+Files are installed under:
+
+        PREFIX/bin (compiled bins and scripts)
+        PREFIX/lib (libraries)
+        PREFIX/include/s11n (headers)
+        PREFIX/share/doc/s11n (API and library manual)
+
+
+After installing s11n you must make sure it's lib directory
+is in your LD_LIBRARY_PATH (or in /etc/ld.so.conf) in order
+for s11n client applications to be able to link to them.
+
+Use the libs11n-config tool to get information about the installed s11n
+version, including version information and information necessary for
+compiling/linking against it as a client.
+
+
+========================================================================
+Misc notes:
+
+If you have the 'lyx' tool installed (and configure found it) you
+can build the library manual:
+
+        cd doc; make lyx
+
+If configure finds the doxygen [API doc generation tool] you can build
+the API docs with:
+
+        cd doc/doxygen; make doxygen
+
+The API docs are automatically created at install time if
+configure finds doxygen. You can get doxygen at:
+
+        http://www.stack.nl/~dimitri/doxygen/
+
+
+========================================================================
+the end
+========================================================================
+

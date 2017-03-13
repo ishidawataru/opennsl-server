@@ -1,0 +1,35 @@
+--enable-ccdv
+	Enables "pretty" compiler output. Pretty useless, but looks
+	nice on color terminals.
+
+--with-flex=/path/to/flex
+	Currently the lexers in the build tree are only known to work
+	with GNU flex 2.5.4. If that flex is not found the tree will
+	use pre-built lexers. If you want to specify a path to a
+	known-working flex version, use this option. If you do, the
+	flex version check is bypassed. This may or may not result
+	in compilable lexers.
+
+--without-zfstream
+	Disables the check for the libs11n_zfstream helper library,
+	which means your s11n will not support zlib/bzip2 de/compression.
+
+--disable-plugins
+	Disables the build of the optional plugins layer. This means that
+	loading Serializables, Serializers, and whatnot, from DLLs WILL
+	NOT WORK. It requires libltdl or libdl, and plugins are disabled
+	if neither of those are found (preference goes to libltdl over
+	libdl).
+
+--with-serializers="list of serializers"
+	Setting this enables the building of only specific Serializers
+ 	(i/o handlers). The 'expat' Serializer is automatically added
+	to this list if the libexpat test finds libexpat and
+	--without-libexpat is not specified.
+	Available serializers are:
+	compact funtxt funxml parens simplexml wesnoth
+	By default, all are built. Disabling serializers, using
+	--without-serializers, greatly speeds up the build but
+	the library cannot function fully without at least 1
+	Serializers available.
+

@@ -1,0 +1,4 @@
+# a demo file for shellish's 'emenu' command
+File Listing|! ls
+Show Current Directory|pwd
+! who

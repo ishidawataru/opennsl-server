@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+# Makes relative paths in the contexts of build trees.
+
+$shared_makefile = "toc_shared.make.at";
+
+# Usages:
+
+# $0 [$shared_makefile_filename] [/starting/point/path]
+# If $shared_makefile_filename is given, then that name is used instead
+# of '$shared_makefile'. If a path is given, that is assumed to be our
+# starting point (it normally assumes $PWD as the starting point).
+#
+# It climbs up from the starting point and stops when it finds a
+# file named '$shared_makefile' (or the name given as the first argument). It
+# prints a relative path from the starting dir to that path, or no output if 
+# '$shared_makefile' is not found.
+# 
+# stephan - stephan@s11n.net
+
+$configure = $shared_makefile;
+$topdir = "/";
+
+if( @ARGV == 0 )
+{
+    $mode = "findtop";
+    $subdir = $ENV{'PWD'};
+}
+
+if( @ARGV == 1 )
+{
+    $mode = "findtop";
+    if( -d $ARGV[0] ) {
+	$subdir = $ARGV[0];
+        $subdir =~ s!/$!!;
+    }
+    else {
+	$subdir = $ENV{'PWD'};
+	$configure = $ARGV[0];
+    }
+}
+
+if( @ARGV == 2 )
+{
+    $mode = "twoargs";
+    $configure = $ARGV[0];
+    $subdir = $ARGV[1];
+}
+
+if( ! $mode || $ARGV[0] =~ /-(help|h|\?)/ ) {
+    $usage = "Usages:\n$0 [configure_filename] [/path/to/some/code/project/subdir\n";
+    print $usage."\n";
+    exit 1;
+}
+
+if( $subdir !~ m|/| ) {
+#    print "$0: Sorry, but i'm under-featured: i cannot handle relative paths as input!\n";
+#    print "Try \$PWD/$subdir instead?\n";
+    $subdir = $ENV{'PWD'}."/".$subdir;
+#    exit 1;
+}
+
+$subdir =~ s|/\./|/|g; # clean up the mess i caused with the above tip :/
+
+# print "$mode: $topdir $subdir\n";
+$curdir = $subdir;
+
+$relpath = "./";
+while( $curdir && $curdir !~ m|^$topdir$| )
+{
+    $conf =  $curdir."/".$configure;
+    #print "conf=$conf\n";
+    if( -f $conf ) {
+	last;
+	break;
+    }
+    #print "curdir=[$curdir]\n";
+    $relpath .= "../";
+    $curdir =~ s|(.*)/[^/]+$|$1|;
+}
+if( ! $curdir ) { $relpath = ""; }
+#print "relpath=[$relpath]";
+$relpath =~ s!/$!!;
+print $relpath;
+

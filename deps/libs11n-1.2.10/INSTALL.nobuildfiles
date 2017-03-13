@@ -1,0 +1,48 @@
+This is the INSTALL file for the "nobuildfiles" distributions of
+libs11n.
+
+Because these distributions are inherently platform-independent, they
+include no automated build or installation rules. It comes with a
+simple Makefile, src/Makefile, which demonstrates the various code
+dependencies and can build object files on most C++ platforms hosting
+GNU make.
+
+Whether you use the sample Makefile or not, you may eventually decide
+to install this library somewhere. Here are some tips:
+
+All of the headers are in the ./include directory. Copy all subdirs of
+that directory to a place where you normally store your shared header
+files, like /usr/local/include or C:\Dev\C++\includes. When using this
+library from client code, simply include that top-level path to your
+platform's INCLUDES equivalent, e.g. -I/usr/local/include.
+
+There is not terribly much point in installing the sources or compiled
+object files. If you want to fork them into your own project's tree,
+simply copy them over as-is.
+
+If you build libraries, you should then copy them to wherever you like
+to keep your shared libraries, like /usr/local/lib or
+C:\Windows\System32. As of this writing, s11n does not work completely
+when built as a static library, as its factory model requires some
+static object resolution rules which apparently don't apply when it
+comes to static libraries. The sympoms are that any pointer-based
+deserialization will fail, and this happens because factory
+registrations never happen, and thus types can't be classloaded.
+
+Linking client apps against installed libraries is inherently platform
+specific. On most Unix platforms you would add something like the
+following to your linker arguments: -L/usr/local/lib -ls11n
+
+The src dir contains sources for two binaries (applications): a
+test/demo app (test.cpp) and s11nconvert (main.cpp). They can be built
+by following the rules shown in src/Makefile or linking to shared
+libraries which you generate (see above). The test app gives a quick
+demonstration of using s11n, but is nowhere near as extensive as the
+samples in the core source distribution. The s11nconvert tool can be
+used to convert data between any s11n-compatible formats, and is
+useful to have around if you're using libs11n.
+
+The full library documentation is available via the website:
+
+http://s11n.net/download/
+

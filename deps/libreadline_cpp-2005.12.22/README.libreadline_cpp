@@ -1,0 +1,9 @@
+This is the README for libreadline++
+
+readline++ is a C++ front-end to the excellent GNU libreadline,
+providing the basic libreadline functionality through a C++
+interface. It can also function without libreadline, and linking it
+without libreadline affects the license under which it is
+released. See the LICENSE file for details.
+
+

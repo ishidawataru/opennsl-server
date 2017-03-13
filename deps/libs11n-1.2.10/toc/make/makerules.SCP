@@ -1,0 +1,43 @@
+#!/bin/sh
+# Creates makefile rules for use with SCP.make
+
+test 0 = ${#@} && {
+        echo "usage: $0 target1 [... targetN]"
+        exit 1
+}
+thisapp="\$(TOC_MAKESDIR)/makerules.SCP"
+filters_makefile="\$(TOC_MAKESDIR)/SCP.make"
+
+echo "############################## SCP rules:"
+
+for t in "$@"; do
+    cat <<EOF
+ifeq (,\$(${t}_SCP_LOGIN))
+    ${t}_SCP_LOGIN = \$(SCP_LOGIN)
+endif
+
+ifeq (,\$(${t}_SCP_PATH))
+    ${t}_SCP_PATH = \$(SCP_PATH)
+endif
+
+ifeq (,\$(${t}_SCP_LOGIN))
+    \$(error Neither SCP_LOGIN nor ${t}_SCP_LOGIN have been set!)
+endif
+
+ifeq (,\$(${t}_SCP_PATH))
+    \$(error Neither SCP_PATH nor ${t}_SCP_PATH have been set!)
+endif
+
+ifeq (,\$(${t}_SCP_FILES))
+    \$(error ${t}_SCP_FILES must be set to a list of files to scp!)
+endif
+
+.PHONY: scp-${t} SCP-${t}
+scp-${t}:
+	\$(SCP_BIN) \$(SCP_FLAGS) \$(${t}_SCP_FILES) \$(${t}_SCP_LOGIN):\$(${t}_SCP_PATH)
+SCP: scp-${t}
+SCP-${t}: scp-${t}
+EOF
+done
+echo "############################## end SCP rules"
+

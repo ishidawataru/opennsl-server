@@ -1,0 +1,114 @@
+#!/do/not/bash
+# configure script for the eshell project
+
+toc_export PACKAGE_DESCRIPTION="C++ mini-framework for shell-style data entry."
+
+toc_test check_dist_md5s
+
+toc_test user_is_stephan_beal
+
+toc_test_require gnu_cpp_tools
+toc_test_require gcc_try_compile ${TOC_HOME}/tests/cpp/check_stl_newstyle.cpp
+
+toc_test libs11n && {
+    toc_export HAVE_LIBS11N=1
+    echo "Enabling libs11n extensions."
+} || {
+    toc_export HAVE_LIBS11N=0
+    echo "libs11n not found. Disabling s11n extensions."
+}
+
+
+configure_enable_gpl=0
+licensedesc="Public Domain"
+
+EDIT_LDADD=
+EDIT_INC=
+toc_export HAVE_EDITLINE=0
+toc_export HAVE_GENUINE_LIBEDIT=0
+toc_export HAVE_READLINE=0
+
+# Look for libeditline...
+try_next_edit=1
+if [ 1 = ${try_next_edit} -a 1 = "${configure_with_libeditline-1}" ]; then
+    if toc_test find_appconfig libeditline; then
+	try_next_edit=0
+        EDIT_LDADD="$(${FIND_APPCONFIG} --libs)"
+        EDIT_INC="$(${FIND_APPCONFIG} --includes)"
+        licensedesc="BSD"
+        toc_export HAVE_EDITLINE=1
+    fi
+fi
+
+# Look for "genuine" libedit...
+if [ 1 = ${try_next_edit} -a 1 = "${configure_with_libedit-1}" ]; then
+    if toc_test find_header editline/readline.h; then
+	try_next_edit=0
+	h="${TOC_FIND_RESULT}"
+	edinc="${h##/editline/readline.h}"
+	edlib="${edinc##/include}"
+        EDIT_LDADD="-L${edlib} -ledit"
+        EDIT_INC="-I${idinc}"
+        licensedesc="BSD"
+        toc_export HAVE_GENUINE_LIBEDIT=1
+    fi
+fi
+
+
+# Fall back to GNU readline...
+if [ 1 = ${try_next_edit} -a 1 = "${configure_with_libreadline-1}" ]; then
+    if toc_test readline; then
+	    try_next_edit=0
+            configure_enable_gpl=1
+            licensedesc="GNU General Public License version 2. Copyright (c) 2002-2005 stephan beal <sgbeal@users.sourceforge.net>."
+            EDIT_LDADD="${LIBREADLINE_LDADD}"
+    fi
+fi
+
+toc_add_config LIBREADLINECPP_LICENSE="$licensedesc"
+
+############################ PACKAGE_NAME-config
+# ldadd="${LIBREADLINE_LDADD} -L${prefix}/lib -lreadline_cpp"
+removeDupes=${TOC_HOME}/bin/removeDupeArgs
+ldadd="$(${removeDupes} ${EDIT_LDADD} -L${prefix}/lib)"
+clientldadd="$(${removeDupes} -L${prefix}/lib -lreadline_cpp)"
+includes="$(${removeDupes} -I${prefix}/include)"
+toc_test_require PACKAGE_NAME-config \
+    PACKAGE_PREFIX=LIBREADLINECPP_ \
+    CLIENT_LDADD="$clientldadd" \
+    CLIENT_INCLUDES="$includes"
+############################ /PACKAGE_NAME-config
+PACKAGE_LDADD="$clientldadd" toc_test create_pkg-config_data
+toc_export INCLUDES="${INCLUDES} $includes"
+toc_export LIBREADLINECPP_LDADD="${ldadd}"
+toc_export LIBREADLINECPP_CLIENT_LDADD="${clientldadd}"
+toc_test_require atfilter_file src/Readline_config.hpp.at src/Readline_config.hpp
+
+toc_test_require toc_project_makefile
+
+if [ 1 = $configure_enable_gpl ] ; then
+    cat <<EOF
+${TOC_BOLD_}
+ACHTUNG:
+Enabling optional GNU libreadline support. This means that this
+package is held to the terms of the GNU General Public License.  If
+you configure with the option --without-libreadline your source tree
+will not contain GNU libreadline support, but will be in the Public
+Domain. This configure script will first look for libeditline, a GNU
+readline quasi-replacement which can be found at:
+  http://s11n.net/editline/
+${_TOC_BOLD}
+EOF
+fi
+
+if [ 0 = "0${EDIT_LDADD}" ]; then
+    cat <<EOF
+${TOC_BOLD_}
+ACHTUNG:
+No line-editing library was found or, or was disabled. This means that interactive
+input editing and command history are disabled. This source tree can use
+both GNU Readline or the BSD-licensed libeditline.
+${_TOC_BOLD}
+EOF
+fi
+

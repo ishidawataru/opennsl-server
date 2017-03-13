@@ -1,0 +1,204 @@
+#!/do/not/bash
+#^^^ this helps emacs out, so it'll start in shell-script-mode.
+# This is the main configure script code for the s11n source tree.
+# This file will be sourced by the configure script, and is not
+# intended to be run directly.
+
+toc_add_config PACKAGE_RELEASE_CODENAME="The Software Still Known As S11n"
+toc_export PACKAGE_VERSION_HEX="$PACKAGE_VERSION_HEX"
+toc_test check_dist_md5s
+
+toc_export PACKAGE_DESCRIPTION="C++ library for generic object serialization"
+
+
+########################################################################
+# Pass --bare-bones to enable configuration for a setup with no 3rd-party
+# library dependencies. This is intended to be used for generating, e.g.,
+# .deb packages.
+if [[ x1 = "x${bare_bones-0}" ]]; then
+    toc_boldecho "Setting up for bare bones build."
+    toc_export configure_with_zfstream=0
+    toc_export configure_with_libexpat=0
+    toc_export prefix=/usr
+    toc_export configure_enable_stephan_beal=0
+#    toc_export configure_enable_plugins=1
+fi
+
+test x0 != "x${configure_enable_stephan_beal-1}" && toc_source_test user_is_stephan_beal
+# ^^^ don't ask. Must come before gnu_cpp_tools test.
+
+####### compilers:
+toc_test_require gnu_cpp_tools
+toc_test_require gcc_try_compile ${TOC_HOME}/tests/cpp/check_stl_newstyle.cpp
+if test x1 = x${configure_enable_ccdv-0}; then
+    toc_test use_ccdv
+else
+    toc_export configure_enable_ccdv=0
+    test -f ccdv && rm ccdv # build process checks for this file to know whether to use ccdv
+fi
+
+
+####### plugins support?
+configure_enable_plugins=${configure_enable_plugins-1}
+if test x0 != "x${configure_enable_plugins-1}"; then
+    toc_test libltdl || toc_test libdl # prefer libltdl over libdl.
+    if test x = "x${LDADD_DL}"; then
+	toc_boldecho "Plugins support is being disabled. No DLL loader found."
+	toc_export s11n_CONFIG_ENABLE_PLUGINS=0
+    else
+	toc_export s11n_CONFIG_ENABLE_PLUGINS=1
+	toc_boldecho "Plugins support enabled. Disable with --disable-plugins."
+    fi
+else
+	toc_boldecho "Plugins support explicitely disabled."
+	toc_export s11n_CONFIG_ENABLE_PLUGINS=0
+fi
+
+toc_export s11n_CONFIG_HAVE_LIBLTDL=${HAVE_LIBLTDL-0}
+toc_export s11n_CONFIG_HAVE_LIBDL=${HAVE_LIBDL-0}
+
+############################################################
+# accumulate -I and -L/-l entries here:
+includes_path=
+ldadd="${LDADD_DL}" # LDADD_DL is exported by the ltdl/dl tests
+############################################################
+
+toc_export s11n_CONFIG_DLL_EXTENSION=".so:.dynlib" # .dynlib is for Darwin systems.
+
+############################################################
+# supplemental libs
+{
+
+toc_boldecho "Enable zlib/bzip2 file stream support?"
+if [[ x0 != x${configure_with_zfstream-1} ]]; then
+    if toc_test find_appconfig libs11n_zfstream; then
+	toc_export HAVE_ZFSTREAM=1
+        confbin=${TOC_FIND_RESULT}
+        eval $($confbin --toc-config | sed -e 's/$/; /')
+	toc_boldecho "Using libs11n_zfstream version ${LIBZFSTREAM_LIBRARY_VERSION}."
+	echo "To explicitely disable zfstream, pass --without-zfstream to the configure script."
+    else
+	toc_export HAVE_ZFSTREAM=0
+	echo "zlib/bz2lib support disabled."
+    fi
+else
+    echo "zfstream support has been explicitely disabled."
+    toc_export HAVE_ZFSTREAM=0
+fi
+
+}
+# end supplemental libs check
+############################################################
+
+############################################################
+# Figure out which Serializers to build...
+{ 
+    toc_test libexpat
+    sl="compact funtxt funxml parens simplexml wesnoth"
+    : ${configure_with_serializers:=${sl}}
+    test x0 = "x${configure_with_serializers}" && configure_with_serializers=
+    if [[ x1 = x${HAVE_LIBEXPAT-0} ]]; then
+	ldadd="$ldadd -lexpat"
+	configure_with_serializers="${configure_with_serializers} expat"
+    fi
+
+    if test x0 = "x${configure_with_serializers}" -o x = "x${configure_with_serializers}"; then
+	toc_export configure_with_serializers=
+	toc_boldecho "Warning: disabling build of all Serializers."
+    else
+	toc_boldecho "Enabling serializers: ${configure_with_serializers}"
+    fi
+#    if [[ x0 = "x${configure_with_serializers}" ]]; then
+#	toc_export configure_with_serializers=
+#    fi
+    toc_export configure_with_serializers="${configure_with_serializers}"
+    toc_export s11n_BUILD_SERIALIZERS_LIST="${configure_with_serializers}"
+}
+# end Serializers check
+############################################################
+
+
+
+toc_test doxygen
+
+
+############################################################
+# The following is a kludge to allow me (the maintainer)
+# to work with my local flex version, while distributing
+# pre-flexed lexers with the dist tarball.
+# i hate this, but there are too many flex releases out
+# there which generate non-compilable code!!!
+# Use --with-flex=/path/to/flex to specify a specific flex
+# binary.
+    use_local_flex=0
+    FLEX_BIN=
+    echo -n "Which lexers should we use? ... "
+    toc_find_in_path ${configure_with_flex-flex} "$prefix/bin:$PATH" && \
+        toc_export FLEX_BIN=${TOC_FIND_RESULT}
+    if [ "x" != "x${FLEX_BIN}" ] ; then
+        # Check if FLEX_BIN is a known-working version...
+        ${FLEX_BIN} --version | grep '2.5.4' &>/dev/null && use_local_flex=1
+    fi
+    if [ "x" != "x${configure_with_flex}" -a "x" != "x${FLEX_BIN}" ]; then
+        # If user specifies a flex binary, force the tree to use it.
+        use_local_flex=1
+    fi
+    if [ 0 = $use_local_flex ] ; then
+        toc_boldecho " Using pre-flexed lexers."
+    else
+        toc_boldecho " Using $FLEX_BIN. Let's hope it works!"
+    fi
+    toc_export SERIALIZERS_USE_LOCAL_FLEX=${use_local_flex}
+    unset use_local_flex
+# end flex tests
+########################################################################
+
+
+
+{ # generate PACKAGE_NAME-config:
+    removeDupes=${TOC_HOME}/bin/removeDupeArgs
+    export ldadd
+    export includes_path
+    ldadd="$(${removeDupes} ${ldadd} ${LIBZFSTREAM_CLIENT_LDADD})"
+    includes_path="$(${removeDupes} ${includes_path} -I${prefix}/include ${LIBZFSTREAM_CLIENT_INCLUDES})"
+    toc_export INCLUDES="${INCLUDES} ${includes_path}"
+    toc_export LIBS11N_LDADD="${ldadd}"
+    toc_test_require PACKAGE_NAME-config \
+        PACKAGE_PREFIX=LIBS11N_ \
+        CLIENT_LDADD="$(${removeDupes} -L${prefix}/lib -ls11n)" \
+        CLIENT_INCLUDES="$(${removeDupes} ${includes_path})"
+
+    # import the PACKAGE_NAME-config info to ease life for code under ./src/client/*
+    eval $(./${PACKAGE_NAME}-config --toc-eval) || {
+	# older toc versions didn't have the --toc-eval feature, or output lines without closing semicolons.
+	echo "Error calling './${PACKAGE_NAME}-config --toc-eval'. You probably have an out-of-date toc tree."
+	toc_die 1 "Try a newer toc: CVS or http://s11n.net/download/#toc"
+    }
+    unset includes_path
+    unset ldadd
+}
+
+
+##### create ${PACKAGE_NAME}.pc pkginfo file:
+test x1 = "x${HAVE_ZFSTREAM}" && PACKAGE_REQUIRES="libs11n_zfstream"
+PACKAGE_CFLAGS="${LIBS11N_CLIENT_INCLUDES}" \
+    PACKAGE_LDADD="${LIBS11N_CLIENT_LDADD}" \
+    toc_test_require create_pkg-config_data
+
+
+
+###### stuff:
+toc_export BUILD_USER="$USER"
+toc_export BUILD_HOST=`hostname`
+toc_export PACKAGE_EMAIL_ADDRESS=s11n-devel@lists.sourceforge.net
+toc_export PACKAGE_URL="http://s11n.net/"
+toc_export PACKAGE_LICENSE="Public Domain"
+
+##### close the config-filtered files:
+toc_test_require atfilter_file src/s11n/s11n_config.hpp.at src/s11n/s11n_config.hpp
+toc_test_require atfilter_file src/plugin/plugin_config.hpp.at src/plugin/plugin_config.hpp
+toc_test_require toc_project_makefile
+
+
+return 0
+# Now toc.make will be generated by the top-level configure process.
