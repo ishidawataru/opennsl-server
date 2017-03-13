@@ -52,7 +52,7 @@ int DRIVER(const shellish::arguments & args) {
             }
     } else {
         if (args.argc() == 1){
-            MODE_PORT = true;
+            MODE_DRIVER = true;
             shellish::ostream() << "Driver Mode: Activated" << std::endl;
             return 0;
         } else {

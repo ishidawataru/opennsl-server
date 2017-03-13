@@ -100,7 +100,7 @@ auto port_handler = [](const shellish::arguments & args){
 	if ((args.argc() == 1) && (args[0] == "port")) {
 		prompt = "osh configure port> ";
 	}
-	return configure_wrapper(L2, args);
+	return configure_wrapper(PORT, args);
 };
 
 auto vlan_handler = [](const shellish::arguments & args){
