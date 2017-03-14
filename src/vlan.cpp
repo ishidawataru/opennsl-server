@@ -14,6 +14,7 @@
 extern "C" {
 #include "opennsl/error.h"
 #include "opennsl/vlan.h"
+#include "opennsl/types.h"
 }
 
 bool MODE_VLAN = false;
@@ -25,7 +26,7 @@ int VLANCreate(const shellish::arguments & args) {
     auto ret = opennsl_vlan_create(0, vid);
     if (ret != OPENNSL_E_NONE) {
         std::ostringstream err;
-        shellish::ostream() << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        shellish::ostream() << "opennsl_vlan_create() failed " << opennsl_errmsg(ret);
         return 1;
     }
     return 0;
@@ -33,14 +34,30 @@ int VLANCreate(const shellish::arguments & args) {
 
 int VLANAddPort(const shellish::arguments & args) {
     size_t i_len_args = args.argc();
+    size_t offset;
+    bool untag = true;
+    if (args[i_len_args-1] != "tagged"){
+        offset = i_len_args;
+    } else {
+        untag = false;
+        offset = i_len_args-1;
+    }
     std::string tmp_vid = args[i_len_args-1];
     int vid = std::stoi(tmp_vid);
+    opennsl_pbmp_t pbmp;
+    opennsl_pbmp_t upbmp;
     std::string tmp_port = args[i_len_args-2];
     int port = std::stoi(tmp_port);
-    auto ret = opennsl_vlan_gport_add(0, vid, port, 0);
+    OPENNSL_PBMP_CLEAR(pbmp);
+    OPENNSL_PBMP_CLEAR(upbmp);
+    OPENNSL_PBMP_PORT_ADD(pbmp, port);
+    if (untag) {
+        OPENNSL_PBMP_PORT_ADD(upbmp, port);
+    }
+    auto ret = opennsl_vlan_port_add(0, vid, pbmp, upbmp);
     if (ret != OPENNSL_E_NONE) {
         std::ostringstream err;
-        shellish::ostream() << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        shellish::ostream() << "opennsl_vlan_port_add() failed " << opennsl_errmsg(ret);
         return 1;
     }
     return 0;
@@ -52,10 +69,13 @@ int VLANDelPort(const shellish::arguments & args) {
     int vid = std::stoi(tmp_vid);
     std::string tmp_port = args[i_len_args-2];
     int port = std::stoi(tmp_port);
-    auto ret = opennsl_vlan_gport_delete(0, vid, port);
+    opennsl_pbmp_t pbmp;
+    OPENNSL_PBMP_CLEAR(pbmp);
+    OPENNSL_PBMP_PORT_ADD(pbmp, port);
+    auto ret = opennsl_vlan_port_remove(0, vid, pbmp);
     if (ret != OPENNSL_E_NONE) {
         std::ostringstream err;
-        shellish::ostream() << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        shellish::ostream() << "opennsl_vlan_port_remove() failed " << opennsl_errmsg(ret);
         return 1;
     }
     return 0;
@@ -68,7 +88,40 @@ int VLANDestroy(const shellish::arguments & args) {
     auto ret = opennsl_vlan_destroy(0, vid);
     if (ret != OPENNSL_E_NONE) {
         std::ostringstream err;
-        shellish::ostream() << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        shellish::ostream() << "opennsl_vlan_destroy() failed " << opennsl_errmsg(ret);
+        return 1;
+    }
+    return 0;
+}
+
+int VLANList(const shellish::arguments & args) {
+    opennsl_vlan_data_t *listp; 
+    int count;
+    auto ret = opennsl_vlan_list(0, &listp, &count);
+    if (ret != OPENNSL_E_NONE) {
+        std::ostringstream err;
+        shellish::ostream() << "opennsl_vlan_list() failed " << opennsl_errmsg(ret);
+        return 1;
+    }
+    for (auto i = 0 ; i < count; i++) {
+        shellish::ostream() << "VID:" <<listp[i].vlan_tag << std::endl;
+        shellish::ostream() << "Members:";
+        int port;
+        OPENNSL_PBMP_ITER( listp[i].port_bitmap, port) {
+            shellish::ostream() << port;
+        }
+        shellish::ostream() << std::endl;
+        shellish::ostream() << "Untagged:";
+        port = 0;
+        OPENNSL_PBMP_ITER( listp[i].ut_port_bitmap, port) {
+            shellish::ostream() << port;
+        }
+        shellish::ostream() << std::endl << std::endl;
+    }
+    ret = opennsl_vlan_list_destroy(0, listp, count);
+    if (ret != OPENNSL_E_NONE) {
+        std::ostringstream err;
+        shellish::ostream() << "opennsl_vlan_list_destroy() failed " << opennsl_errmsg(ret);
         return 1;
     }
     return 0;

@@ -25,6 +25,21 @@ int PortInit(const shellish::arguments & args) {
     return 0;
 }
 
+int PortShutdown(const shellish::arguments & args) {
+    size_t i_len_args = args.argc();
+    std::string tmp_shut = args[0];
+    int shutdown = (int) (tmp_shut == "no");
+    std::string tmp_port = args[i_len_args-1];
+    int port = std::stoi(tmp_port);
+    auto ret = opennsl_port_enable_set (0, port, shutdown);
+    if (ret != OPENNSL_E_NONE) {
+        std::ostringstream err;
+        shellish::ostream() << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        return 1;
+    }
+    return 0;
+}
+
 int PortExit (const shellish::arguments & args) { 
     MODE_PORT = false;
     shellish::ostream() << "Port Mode: Deactivated" << std::endl;
@@ -32,7 +47,7 @@ int PortExit (const shellish::arguments & args) {
 }
 
 int PORT(const shellish::arguments & args) {
-    std::unordered_map<std::string, shellish::command_handler_func> commands = { {"init", PortInit}, {"exit", PortExit} };
+    std::unordered_map<std::string, shellish::command_handler_func> commands = { {"init", PortInit}, {"no", PortShutdown}, {"shut", PortShutdown}, {"shutdown", PortShutdown}, {"exit", PortExit} };
     if (MODE_PORT) {
         auto search = commands.find(args[0]);
         if (search != commands.end()) {
