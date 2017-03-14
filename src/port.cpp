@@ -11,6 +11,7 @@
 extern "C" {
 #include "opennsl/error.h"
 #include "opennsl/port.h"
+#include "examples/util.h"
 }
 
 bool MODE_PORT = false;
@@ -20,6 +21,16 @@ int PortInit(const shellish::arguments & args) {
     if (ret != OPENNSL_E_NONE) {
         std::ostringstream err;
         shellish::ostream() << "opennsl_port_init() failed " << opennsl_errmsg(ret);
+        return 1;
+    }
+    ret = example_port_default_config(0);
+    if (ret != OPENNSL_E_NONE) {
+        shellish::ostream() <<  "example_port_default_config() failed " << opennsl_errmsg(ret);
+        return 1;
+    }
+    ret = example_switch_default_vlan_config(0);
+    if(ret != OPENNSL_E_NONE) {
+        shellish::ostream() <<  "example_port_default_vlan_config() failed " << opennsl_errmsg(ret);
         return 1;
     }
     return 0;

@@ -42,11 +42,11 @@ int VLANAddPort(const shellish::arguments & args) {
         untag = false;
         offset = i_len_args-1;
     }
-    std::string tmp_vid = args[i_len_args-1];
+    std::string tmp_vid = args[offset-1];
     int vid = std::stoi(tmp_vid);
     opennsl_pbmp_t pbmp;
     opennsl_pbmp_t upbmp;
-    std::string tmp_port = args[i_len_args-2];
+    std::string tmp_port = args[offset-2];
     int port = std::stoi(tmp_port);
     OPENNSL_PBMP_CLEAR(pbmp);
     OPENNSL_PBMP_CLEAR(upbmp);
@@ -108,13 +108,13 @@ int VLANList(const shellish::arguments & args) {
         shellish::ostream() << "Members:";
         int port;
         OPENNSL_PBMP_ITER( listp[i].port_bitmap, port) {
-            shellish::ostream() << port;
+            shellish::ostream() << port << ", " ;
         }
         shellish::ostream() << std::endl;
         shellish::ostream() << "Untagged:";
         port = 0;
         OPENNSL_PBMP_ITER( listp[i].ut_port_bitmap, port) {
-            shellish::ostream() << port;
+            shellish::ostream() << port << ", ";
         }
         shellish::ostream() << std::endl << std::endl;
     }
