@@ -134,7 +134,7 @@ int VLANExit (const shellish::arguments & args) {
 }
 
 int VLAN(const shellish::arguments & args) {
-    std::unordered_map<std::string, shellish::command_handler_func> commands = { {"create", VLANCreate}, {"add", VLANAddPort}, {"delete", VLANDelPort}, {"destroy", VLANDestroy}, {"exit", VLANExit} };
+    std::unordered_map<std::string, shellish::command_handler_func> commands = { {"create", VLANCreate}, {"add", VLANAddPort}, {"delete", VLANDelPort}, {"destroy", VLANDestroy}, {"list", VLANList}, {"exit", VLANExit} };
     if (MODE_VLAN) {
         auto search = commands.find(args[0]);
         if (search != commands.end()) {
