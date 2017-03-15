@@ -10,6 +10,10 @@
 
 #include <s11n.net/shellish/shellish_debuggering_macros.hpp> // CERR
 
+#ifndef __common_
+#define __common_
+#include "common.cpp"
+#endif
 
 extern "C" {
 #include "opennsl/error.h"

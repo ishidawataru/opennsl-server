@@ -8,6 +8,11 @@
 #include <s11n.net/shellish/arguments.hpp>
 #include <s11n.net/shellish/builtins.hpp>
 
+#ifndef __common_
+#define __common_
+#include "common.cpp"
+#endif
+
 extern "C" {
 #include "opennsl/error.h"
 #include "opennsl/port.h"
@@ -33,6 +38,7 @@ int PortInit(const shellish::arguments & args) {
         shellish::ostream() <<  "example_port_default_vlan_config() failed " << opennsl_errmsg(ret);
         return 1;
     }
+    
     return 0;
 }
 

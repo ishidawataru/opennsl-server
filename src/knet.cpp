@@ -10,6 +10,10 @@
 
 #include <s11n.net/shellish/shellish_debuggering_macros.hpp> // CERR
 
+#ifndef __common_
+#define __common_
+#include "common.cpp"
+#endif
 
 extern "C" {
 #include "opennsl/error.h"
@@ -19,30 +23,6 @@ extern "C" {
 
 bool MODE_KNET = false;
 
-uint8_t* mac_convert_str_to_bytes(const std::string mac) {
-    unsigned char* bytes = new unsigned char[6];
-    int values[6];
-    int i;
-    char * x;
-    if(6 == sscanf( mac.c_str(), "%x:%x:%x:%x:%x:%x%c", &values[0], &values[1], &values[2], &values[3], &values[4], &values[5], x))
-    {
-        /* convert to uint8_t */
-        for( i = 0; i < 6; ++i ) {
-            bytes[i] = (unsigned char) values[i];
-        }
-    } else if (6 == sscanf( mac.c_str(), "%x-%x-%x-%x-%x-%x%c", &values[0], &values[1], &values[2], &values[3], &values[4], &values[5], x))
-    {
-        /* convert to uint8_t */
-        for( i = 0; i < 6; ++i ) {
-            bytes[i] = (unsigned char) values[i];
-        }
-    } else {
-        for( i = 0; i < 6; ++i ){
-            bytes[i] = (unsigned char) 0x00;
-        }
-    }
-    return bytes;
-}
 
 opennsl_knet_netif_t get_netif (const shellish::arguments & args) {
     opennsl_knet_netif_t ret;
@@ -121,6 +101,8 @@ int KNETDelete (const shellish::arguments & args) {
 }
 
 int trav_fn(int unit, opennsl_knet_netif_t *info, void *user_data) {
+    std::string mac;
+    mac = mac_convert_bytes_to_sting(info->mac_addr);
     shellish::ostream() << info->id << " - " << info->mac_addr << " - " << info->port << " - " << info->vlan <<std::endl;
     return 0;
 }

@@ -10,6 +10,10 @@
 
 #include <s11n.net/shellish/shellish_debuggering_macros.hpp> // CERR
 
+#ifndef __common_
+#define __common_
+#include "common.cpp"
+#endif
 
 extern "C" {
 #include "opennsl/error.h"
@@ -43,13 +47,24 @@ opennsl_l2_addr_t get_l2_addr(const shellish::arguments & args) {
         tmp_port = (args[i_len_args-1]);
         tmp_mac =  (args[i_len_args-2]);
     }
-    std::memcpy(mac, tmp_mac.c_str(), 6);
+    unsigned char* baseMac = mac_convert_str_to_bytes(tmp_mac);
     port = std::stoi(tmp_port);
     vid = std::stoi(tmp_vid);
+    memcpy(mac, baseMac, 6);
     opennsl_l2_addr_t_init(&ret, mac, vid);
     ret.flags = (OPENNSL_L2_L3LOOKUP | OPENNSL_L2_STATIC);
     ret.port = port;
     return ret;
+}
+
+int L2Init(const shellish::arguments & args) {
+    auto ret = opennsl_l2_cache_init(0);
+    if (ret != OPENNSL_E_NONE) {
+        std::ostringstream err;
+        shellish::ostream() << "opennsl_l2_cache_init() failed " << opennsl_errmsg(ret);
+        return 1;
+    }
+    return 0;
 }
 
 int L2AddAddress (const shellish::arguments & args) { 
@@ -83,7 +98,9 @@ int L2DeleteAddress (const shellish::arguments & args) {
 }
 
 int trav_fn(int unit, opennsl_l2_addr_t *info, void *user_data) {
-    shellish::ostream() << info->mac << " - " << info->port << " - " << info->vid <<std::endl;
+    std::string mac;
+    mac = mac_convert_bytes_to_sting(info->mac);
+    shellish::ostream() << mac << " - " << info->port << " - " << info->vid <<std::endl;
     return 0;
 }
 
@@ -104,7 +121,7 @@ int L2Exit (const shellish::arguments & args) {
 }
 
 int L2(const shellish::arguments & args) {
-    std::unordered_map<std::string, shellish::command_handler_func> commands = { {"add", L2AddAddress}, {"delete", L2DeleteAddress}, {"list", L2ListAddress}, {"exit", L2Exit} };
+    std::unordered_map<std::string, shellish::command_handler_func> commands = { {"init", L2Init}, {"add", L2AddAddress}, {"delete", L2DeleteAddress}, {"list", L2ListAddress}, {"exit", L2Exit} };
     if (MODE_L2) {
         auto search = commands.find(args[0]);
         if (search != commands.end()) {
