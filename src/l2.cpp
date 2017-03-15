@@ -88,7 +88,8 @@ int L2DeleteAddress (const shellish::arguments & args) {
     } else {
         tmp_mac = (args[i_len_args-1]);
     }
-    std::memcpy(mac, tmp_mac.c_str(), 6);
+    unsigned char* baseMac = mac_convert_str_to_bytes(tmp_mac);
+    std::memcpy(mac, baseMac, 6);
     int vid = std::stoi(tmp_vid);
     auto ret = opennsl_l2_addr_delete(0, mac, vid);
     if ( ret != OPENNSL_E_NONE ) {

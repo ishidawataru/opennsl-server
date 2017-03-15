@@ -85,6 +85,7 @@ int VLANDelPort(const shellish::arguments & args) {
     return 0;
 }
 
+
 int VLANDestroy(const shellish::arguments & args) {
     size_t i_len_args = args.argc();
     std::string tmp_vid = args[i_len_args-1];
