@@ -20,6 +20,7 @@ extern "C" {
 #include "opennsl/knet.h"
 }
 
+#define FILTER_RAW_DATA_SIZE                24
 
 bool MODE_KNET = false;
 
@@ -30,25 +31,59 @@ opennsl_knet_netif_t get_netif (const shellish::arguments & args) {
     size_t i_len_args = args.argc();
     unsigned char* baseMac = mac_convert_str_to_bytes(args[i_len_args-1]);
     ret.type = OPENNSL_KNET_NETIF_T_TX_LOCAL_PORT;
-    std::string tmp_port = args[i_len_args-2];
+    std::string tmp_port = args[i_len_args-3];
+    std::string tmp_vlan = args[i_len_args-2];
+    //ret.vlan = std::stoi(tmp_vlan);
     ret.port = std::stoi(tmp_port);
-    strcpy(ret.name, args[i_len_args-3].c_str());
+    strcpy(ret.name, args[i_len_args-4].c_str());
     memcpy(ret.mac_addr, baseMac, 6);
     delete baseMac;
     return ret;
 }
 
-opennsl_knet_filter_t get_filter (const opennsl_knet_netif_t* netif) {
+opennsl_knet_filter_t bpdu_filter (const opennsl_knet_netif_t* netif) {
     opennsl_knet_filter_t ret;
     opennsl_knet_filter_t_init(&ret);
     ret.type = OPENNSL_KNET_FILTER_T_RX_PKT;
-    ret.flags = OPENNSL_KNET_FILTER_F_STRIP_TAG;
+    ret.flags |= OPENNSL_KNET_FILTER_F_STRIP_TAG;
     ret.dest_type = OPENNSL_KNET_DEST_T_NETIF;
     ret.dest_id = netif->id;
-    ret.match_flags = OPENNSL_KNET_FILTER_M_INGPORT;
+    ret.match_flags |= (OPENNSL_KNET_FILTER_M_INGPORT | OPENNSL_KNET_FILTER_M_RAW);
+    //ret.m_vlan = netif->vlan;
     ret.m_ingport = netif->port;
+    ret.priority = 0;
+    ret.raw_size = 24;
+    memset(ret.m_raw_data, 0, FILTER_RAW_DATA_SIZE);
+    memset(ret.m_raw_mask, 0, FILTER_RAW_DATA_SIZE);
+    /* BPDU - based on dst mac */
+    ret.m_raw_data[0] = 0x01;
+    ret.m_raw_data[1] = 0x80;
+    ret.m_raw_data[2] = 0xC2;
+    ret.m_raw_data[3] = 0x00;
+    ret.m_raw_data[4] = 0x00;
+    /* Populate filter mask */
+    ret.m_raw_mask[0] = 0xFF;
+    ret.m_raw_mask[1] = 0xFF;
+    ret.m_raw_mask[2] = 0xFF;
+    ret.m_raw_mask[3] = 0xFF;
+    ret.m_raw_mask[4] = 0xFF;
     return ret;
 }
+
+opennsl_knet_filter_t l3_filter (const opennsl_knet_netif_t* netif) {
+    opennsl_knet_filter_t ret;
+    opennsl_knet_filter_t_init(&ret);
+    ret.type = OPENNSL_KNET_FILTER_T_RX_PKT;
+    ret.flags |= OPENNSL_KNET_FILTER_F_STRIP_TAG;
+    ret.dest_type = OPENNSL_KNET_DEST_T_NETIF;
+    ret.dest_id = netif->id;
+    ret.match_flags |= OPENNSL_KNET_FILTER_M_INGPORT | OPENNSL_KNET_FILTER_M_VLAN;
+    ret.m_vlan = netif->vlan;
+    ret.m_ingport = netif->port;
+    ret.priority = 0;
+    return ret;
+}
+
 
 int KNETInit (const shellish::arguments & args) { 
     auto ret = opennsl_knet_init(0);
@@ -68,7 +103,14 @@ int KNETAdd (const shellish::arguments & args) {
         shellish::ostream() << "opennsl_knet_netif_create() failed " << opennsl_errmsg(ret);
         return 1;
     }
-    auto filter = get_filter(&netif);
+    auto filter = bpdu_filter(&netif);
+    ret = opennsl_knet_filter_create(0, &filter);
+        if ( ret != OPENNSL_E_NONE ) {
+        std::ostringstream err;
+        shellish::ostream() << "opennsl_knet_filter_create() failed " << opennsl_errmsg(ret);
+        return 2;
+    }
+    filter = l3_filter(&netif);
     ret = opennsl_knet_filter_create(0, &filter);
     if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
@@ -88,14 +130,12 @@ int KNETDelete (const shellish::arguments & args) {
     auto ret = opennsl_knet_netif_destroy(0, knet_id);
     if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
-        shellish::ostream() << "opennsl_knet_netif_destroy() failed " << opennsl_errmsg(ret);
-        return 1;
+        shellish::ostream() << "opennsl_knet_netif_destroy() failed " << opennsl_errmsg(ret); 
     }
     ret = opennsl_knet_filter_destroy(0, filter_id);
     if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
         shellish::ostream() << "opennsl_knet_netif_destroy() failed " << opennsl_errmsg(ret);
-        return 2;
     }
     return 0;
 }
@@ -103,11 +143,11 @@ int KNETDelete (const shellish::arguments & args) {
 int trav_fn(int unit, opennsl_knet_netif_t *info, void *user_data) {
     std::string mac;
     mac = mac_convert_bytes_to_sting(info->mac_addr);
-    shellish::ostream() << info->id << " - " << info->mac_addr << " - " << info->port << " - " << info->vlan <<std::endl;
+    shellish::ostream() << info->id << " - " << mac << " - " << info->port << " - " << info->vlan <<std::endl;
     return 0;
 }
 int trav_filter_fn(int unit, opennsl_knet_filter_t *info, void *user_data) {
-    shellish::ostream() << info->id << " - " << info->m_ingport <<std::endl;
+    shellish::ostream() << info->id << " - " << info->m_ingport << info->m_vlan << info->dest_type << info->dest_id <<std::endl;
     return 0;
 }
 
