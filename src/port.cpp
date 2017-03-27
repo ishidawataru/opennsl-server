@@ -58,6 +58,37 @@ int PortStat(const shellish::arguments & args) {
     std::string tmp_port = args[i_len_args-1];
     int port = std::stoi(tmp_port);
     int nstat;
+    opennsl_stat_val_t stat_arr[] = {
+        opennsl_spl_snmpIfInUcastPkts,
+        opennsl_spl_snmpIfInNUcastPkts,
+        opennsl_spl_snmpIfInDiscards,
+        opennsl_spl_snmpIfInErrors,
+        opennsl_spl_snmpIfInMulticastPkts,
+        opennsl_spl_snmpIfInBroadcastPkts,
+        snmpOpenNSLReceivedPkts64Octets,
+        snmpOpenNSLReceivedPkts65to127Octets,
+        snmpOpenNSLReceivedPkts128to255Octets,
+        snmpOpenNSLReceivedPkts256to511Octets,
+        snmpOpenNSLReceivedPkts512to1023Octets,
+        snmpOpenNSLReceivedPkts1024to1518Octets,
+        snmpOpenNSLReceivedPkts1519to2047Octets,
+        snmpOpenNSLReceivedPkts2048to4095Octets,
+        snmpOpenNSLReceivedPkts4095to9216Octets,
+        opennsl_spl_snmpIfOutUcastPkts,
+        opennsl_spl_snmpIfOutNUcastPkts,
+        opennsl_spl_snmpIfOutDiscards,
+        opennsl_spl_snmpIfOutErrors,
+        opennsl_spl_snmpIfOutMulticastPkts,
+        opennsl_spl_snmpIfOutBroadcastPkts,
+        snmpOpenNSLTransmittedPkts64Octets,
+        snmpOpenNSLTransmittedPkts65to127Octets,
+        snmpOpenNSLTransmittedPkts128to255Octets,
+        snmpOpenNSLTransmittedPkts256to511Octets,
+        snmpOpenNSLTransmittedPkts512to1023Octets,
+        snmpOpenNSLTransmittedPkts1024to1518Octets,
+        snmpOpenNSLTransmittedPkts1519to2047Octets,
+        snmpOpenNSLTransmittedPkts2048to4095Octets,
+        snmpOpenNSLTransmittedPkts4095to9216Octets,};
     nstat = (sizeof(stat_arr) / sizeof(opennsl_stat_val_t));
     uint64 val[30] = {0};
     opennsl_stat_val_t stat_arr[] = {
