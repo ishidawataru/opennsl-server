@@ -18,22 +18,45 @@
 extern "C" {
 #include "opennsl/error.h"
 #include "opennsl/knet.h"
+#include "opennsl/rx.h"
+
 }
 
-#define FILTER_RAW_DATA_SIZE                24
+#define DEFAULT_UNIT 0
+#define DEFAULT_PORT 1
+#define DEFAULT_VLAN 1
+#define MAX_DIGITS_IN_CHOICE 5
+#define KNET_INTF_COUNT 20
+#define IP_ADDR_LEN 16
+#define NETMASK_LEN 16
 
 bool MODE_KNET = false;
-
+int unit = DEFAULT_UNIT;
 
 opennsl_knet_netif_t get_netif (const shellish::arguments & args) {
     opennsl_knet_netif_t ret;
     opennsl_knet_netif_t_init(&ret);
+    opennsl_port_config_t pcfg;
     size_t i_len_args = args.argc();
     unsigned char* baseMac = mac_convert_str_to_bytes(args[i_len_args-1]);
     ret.type = OPENNSL_KNET_NETIF_T_TX_LOCAL_PORT;
     std::string tmp_port = args[i_len_args-3];
     std::string tmp_vlan = args[i_len_args-2];
-    //ret.vlan = std::stoi(tmp_vlan);
+    // Add CPU to VLAN
+    int vlan = std::stoi(tmp_vlan);
+    if (vlan == 0) {
+        vlan= DEFAULT_VLAN;
+    } 
+    rv = opennsl_port_config_get(unit, &pcfg);
+    if (rv != OPENNSL_E_NONE) {
+        printf("Failed to get port configuration. Error %s\n", opennsl_errmsg(rv));
+        return rv;
+    }
+    rv = opennsl_vlan_port_add(unit, vlan, pcfg.cpu, pcfg.cpu);
+    if (rv != OPENNSL_E_NONE) {
+        printf("Failed to add ports to VLAN. Error %s\n", opennsl_errmsg(rv));
+        return rv;
+    }
     ret.port = std::stoi(tmp_port);
     strcpy(ret.name, args[i_len_args-4].c_str());
     memcpy(ret.mac_addr, baseMac, 6);
@@ -41,44 +64,15 @@ opennsl_knet_netif_t get_netif (const shellish::arguments & args) {
     return ret;
 }
 
-opennsl_knet_filter_t bpdu_filter (const opennsl_knet_netif_t* netif) {
-    opennsl_knet_filter_t ret;
-    opennsl_knet_filter_t_init(&ret);
-    ret.type = OPENNSL_KNET_FILTER_T_RX_PKT;
-    ret.flags |= OPENNSL_KNET_FILTER_F_STRIP_TAG;
-    ret.dest_type = OPENNSL_KNET_DEST_T_NETIF;
-    ret.dest_id = netif->id;
-    ret.match_flags |= (OPENNSL_KNET_FILTER_M_INGPORT | OPENNSL_KNET_FILTER_M_RAW);
-    //ret.m_vlan = netif->vlan;
-    ret.m_ingport = netif->port;
-    ret.priority = 0;
-    ret.raw_size = 24;
-    memset(ret.m_raw_data, 0, FILTER_RAW_DATA_SIZE);
-    memset(ret.m_raw_mask, 0, FILTER_RAW_DATA_SIZE);
-    /* BPDU - based on dst mac */
-    ret.m_raw_data[0] = 0x01;
-    ret.m_raw_data[1] = 0x80;
-    ret.m_raw_data[2] = 0xC2;
-    ret.m_raw_data[3] = 0x00;
-    ret.m_raw_data[4] = 0x00;
-    /* Populate filter mask */
-    ret.m_raw_mask[0] = 0xFF;
-    ret.m_raw_mask[1] = 0xFF;
-    ret.m_raw_mask[2] = 0xFF;
-    ret.m_raw_mask[3] = 0xFF;
-    ret.m_raw_mask[4] = 0xFF;
-    return ret;
-}
 
-opennsl_knet_filter_t l3_filter (const opennsl_knet_netif_t* netif) {
+opennsl_knet_filter_t get_filter (const opennsl_knet_netif_t* netif) {
     opennsl_knet_filter_t ret;
     opennsl_knet_filter_t_init(&ret);
     ret.type = OPENNSL_KNET_FILTER_T_RX_PKT;
     ret.flags |= OPENNSL_KNET_FILTER_F_STRIP_TAG;
     ret.dest_type = OPENNSL_KNET_DEST_T_NETIF;
     ret.dest_id = netif->id;
-    ret.match_flags |= OPENNSL_KNET_FILTER_M_INGPORT | OPENNSL_KNET_FILTER_M_VLAN;
-    ret.m_vlan = netif->vlan;
+    ret.match_flags = OPENNSL_KNET_FILTER_M_INGPORT;
     ret.m_ingport = netif->port;
     ret.priority = 0;
     return ret;
@@ -103,16 +97,9 @@ int KNETAdd (const shellish::arguments & args) {
         shellish::ostream() << "opennsl_knet_netif_create() failed " << opennsl_errmsg(ret);
         return 1;
     }
-    auto filter = bpdu_filter(&netif);
+    auto filter = get_filter(&netif);
     ret = opennsl_knet_filter_create(0, &filter);
         if ( ret != OPENNSL_E_NONE ) {
-        std::ostringstream err;
-        shellish::ostream() << "opennsl_knet_filter_create() failed " << opennsl_errmsg(ret);
-        return 2;
-    }
-    filter = l3_filter(&netif);
-    ret = opennsl_knet_filter_create(0, &filter);
-    if ( ret != OPENNSL_E_NONE ) {
         std::ostringstream err;
         shellish::ostream() << "opennsl_knet_filter_create() failed " << opennsl_errmsg(ret);
         return 2;

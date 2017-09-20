@@ -23,6 +23,7 @@ extern "C" {
 
 bool MODE_VLAN = false;
 
+
 int VLANCreate(const shellish::arguments & args) {
     size_t i_len_args = args.argc();
     std::string tmp_vid = args[i_len_args-1];
