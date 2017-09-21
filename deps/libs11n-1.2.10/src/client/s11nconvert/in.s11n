@@ -1,0 +1,27 @@
+(s11n::parens)
+s11n_node=(map
+        pair=(pair
+                first=(string (v list_0))
+                second=(list
+                        s11n_node=(string (v Item #0))
+                        s11n_node=(string (v Item #1))
+                        s11n_node=(string (v Item #2))
+                )
+        )
+        pair=(pair
+                first=(string (v list_1))
+                second=(list
+                        s11n_node=(string (v Item #0))
+                        s11n_node=(string (v Item #1))
+                        s11n_node=(string (v Item #2))
+                )
+        )
+        pair=(pair
+                first=(string (v list_2))
+                second=(list
+                        s11n_node=(string (v Item #0))
+                        s11n_node=(string (v Item #1))
+                        s11n_node=(string (v Item #2))
+                )
+        )
+)

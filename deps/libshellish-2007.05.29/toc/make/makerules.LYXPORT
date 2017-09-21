@@ -1,0 +1,49 @@
+#!/bin/sh
+# Creates makefile rules for use with LYXPORT.make
+
+test 0 = ${#@} && {
+        echo "usage: $0 file1.lyx [... fileN.lyx]"
+        exit 1
+}
+thisapp="\$(TOC_MAKESDIR)/makerules.LYXPORT"
+filters_makefile="\$(TOC_MAKESDIR)/LYXPORT.make"
+
+exts="pdf html ps"
+echo "############################## LYXPORT rules:"
+for t in "$@"; do
+    echo "###################### ${t}:"
+    echo -n "CLEAN_FILES += "
+    for ext in $exts; do
+	echo -n ${t%%.lyx}.$ext" "
+    done
+    echo
+    cat <<EOF
+
+${t}_LYXPORT_ARGS ?= \$(LYXPORT_ARGS)
+.PHONY: lyxport-${t} LYXPORT-${t}
+
+lyxport-${t}:
+	\$(LYXPORT_BIN) \$(${t}_LYXPORT_ARGS) ${t} \$(${t}_LYXPORT_DEST)
+	root=\$(patsubst %.lyx,%,${t}); \\
+		for x in $exts; do \\
+			mv \$\$root/\$\$root.\$\$x . || exit; \\
+		done; \\
+		\$(PERL_BIN) -i -pe "s|\$\${root}.html||g" \$\${root}.html || exit; \\
+		rm -fr \$\${root}
+# that perl call cleans up the self-links in the html file, because
+# such links break if you rename the html file (as i always do :/)
+
+LYXPORT: lyxport-${t}
+LYXPORT-${t}: lyxport-${t}
+lyxport: lyxport-${t}
+LYXPORT-post: LYXPORT-${t}
+###################### /${t}
+EOF
+
+done
+echo "LYXPORT: LYXPORT-post"
+echo "lyxport: LYXPORT-post"
+echo "LYXPORT-post:"
+echo "# implement the LYXPORT-post target to implement post-lyxport logic."
+echo "############################## end LYXPORT rules"
+

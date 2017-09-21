@@ -1,0 +1,44 @@
+This is the highly unofficial TODO/wish list for shellish, in no
+particular order:
+
+
+- Allow users to plug in their own input collector for input_loop()
+and read_line(). The main idea is to allow curses/widget-based UIs to
+interoperate with shellish command handlers which prompt for input.
+
+
+- Find an interface for readline_cpp which allows GNU readline clients
+to plug in their completion handlers (which would simply be no-opts
+for non-readline clients).
+
+
+- Enhance the 'help' command to allow more verbose help text. Once
+backwards-compat convention would be to extend map_help() to use the
+first line of it's help text as a basic help and anything after a
+newline as "long help", or maybe a filename to read in and dump to the
+screen.
+
+
+- Improve signal handling, such that command handlers which need basic
+Ctrl-C catching don't have to install it themselves.
+
+
+- Removed wordexp() support and replace it with glob(). wordexp() is
+too problematic for the way we use try to use it.
+
+
+- Attempt to add some simple loop support. This'll be challenging, given
+the line-oriented nature of shellish. One idea:
+
+prompt> shellish-while command [args]<ENTER>
+fetch lines, without doing any expansions on them, until:
+shellish-end-while
+
+then dispatch the commands one at a time. Same for:
+
+prompt> shellish-foreach VAR in LIST
+...
+shellish-end-foreach
+
+Such loop constructs need to be recursive, though.
+

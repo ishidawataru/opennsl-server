@@ -1,0 +1,22 @@
+include toc.make
+
+S11N_NS ?= s11n
+
+
+HEADERS = node_tree.hpp
+
+
+
+DIST_FILES += $(HEADERS)
+
+SYMLINK_HEADERS = $(INSTALL_PACKAGE_HEADERS)
+HEADER_PATH = include/s11n.net/s11n/nodeutil
+SYMLINK_HEADERS_DEST = $(top_srcdir)/$(HEADER_PATH)
+INSTALL_PACKAGE_HEADERS = $(HEADERS)
+INSTALL_PACKAGE_HEADERS_DEST = $(prefix)/$(HEADER_PATH)
+
+include $(TOC_MAKESDIR)/SYMLINK_HEADERS.make
+
+all: SYMLINK_HEADERS
+
+

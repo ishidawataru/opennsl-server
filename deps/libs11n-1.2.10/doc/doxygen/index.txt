@@ -1,0 +1,38 @@
+//  This is used by Doxygen to generate the index page.
+/**
+
+@mainpage libs11n API docs
+
+Author/Maintainer: stephan beal <stephan@s11n.net>
+
+Home page: http://s11n.net/
+
+Development mailing list: s11n-devel@lists.sourceforge.net
+
+Please feel free to contact the mailing list or the maintainer directly
+with any feedback or questions.
+
+An overview of the libraries:
+
+- s11n: an object serialization framework. It provides a powerful,
+flexible, easy-to-use interface for serializing a wide variety
+of data types.
+
+- s11nlite: the "lite" interface to libs11n. New s11n users are HIGHLY
+encouraged to start in the s11nlite namespace.
+
+ACHTUNG: These API docs are supplemented by the library manual.
+They explain the details of the API, but not how to use the API
+in client code. The library manual fills those gaps. Please look over
+the library manual before attempting to use this framework.
+
+License:
+
+The majority of this code in released into the Public Domain.
+Some source code falls under other non-restrictive licenses such
+as LGPL or BSD, as described in their source files. <em>None</em> of the
+code documented here falls under the GNU GPL or related, restrictive
+licenses. See http://s11n.net/license.php for the thinking behind
+that.
+
+*/

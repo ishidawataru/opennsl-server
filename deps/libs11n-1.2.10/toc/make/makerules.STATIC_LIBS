@@ -1,0 +1,37 @@
+#!/bin/sh
+# creates some makefile code for the $(STATIC_LIBS) var
+
+test -z "$1" && {
+    echo "usage: $0 lib1 [lib2 ...]"
+    exit 1
+}
+
+cat <<EOF
+STATIC_LIBS_COMMON_DEPS = $0 \$(STATIC_LIBS_DEPSFILE) \$(STATIC_LIBS_OBJECTS)  \$(STATIC_LIBS_MAKEFILE) Makefile
+
+
+ifneq (,\$(CCDV_BIN))
+    STATIC_LIBS_QUIET_PREFIX = @
+else
+    STATIC_LIBS_QUIET_PREFIX =
+endif
+EOF
+for t in $@; do
+        afile=$t.a
+cat <<EOF
+${afile}: \$(STATIC_LIBS_COMMON_DEPS) \$(${t}_a_OBJECTS)
+	\$(STATIC_LIBS_QUIET_PREFIX)\$(call toc_link_static_lib,${t});
+
+STATIC_LIBS: ${afile}
+
+
+${t}_a_INSTALL ?= 1
+ifeq (1,\$(${t}_a_INSTALL))
+# ^^^ disable install if ${t}_a_INSTALL is set to non-1 value
+INSTALL_LIBS += ${afile}
+
+endif
+# ^^^^ ${t}_a_INSTALL
+
+EOF
+done

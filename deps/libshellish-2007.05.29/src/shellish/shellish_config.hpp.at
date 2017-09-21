@@ -1,0 +1,40 @@
+#ifndef SHELLISH_CONFIG_HPP_INCLUDED
+#define SHELLISH_CONFIG_HPP_INCLUDED 1
+
+#define shellish_URL "http://s11n.net/shellish/"
+#define shellish_HAVE_LIBREADLINECPP (@HAVE_LIBREADLINECPP@)
+
+#define shellish_SHELLISH_VERSION "@PACKAGE_VERSION@"
+
+#define shellish_SHARED_DATA_DIR "@shellish_SHARED_DATA_DIR@"
+#define shellish_HOME_LIB_DIR "${HOME}/.shellish"
+
+#define shellish_ENABLE_S11N (@SHELLISH_ENABLE_S11N@)
+
+#define shellish_SHARED_LIB_DIR "@shellish_SHARED_LIB_DIR@"
+
+// default path used for path("classpath")
+#define shellish_SHARED_LIB_PATH ".:${HOME}/.shellish:${HOME}/.shellish/lib:@shellish_SHARED_LIB_DIR@:${LD_LIBRARY_PATH}"
+
+
+
+// shellish_AUTOLOAD_LIBS == colon-delim list of libs to load during shellish::init():
+#define shellish_AUTOLOAD_LIBS ""
+
+
+#if defined(WIN32)
+#  define shellish_CONFIG_PLUGINS_PATH std::string("C:\\s11n.net\\lib\\plugins") /* arbitrary choice */
+#  define shellish_CONFIG_HAVE_LIBLTDL 0
+#  define shellish_CONFIG_HAVE_LIBDL 0
+#  define shellish_CONFIG_DLL_EXTENSION std::string(".dll")
+#else
+#  define shellish_CONFIG_PLUGINS_PATH std::string(".:@prefix@/share/s11n/plugins:@prefix@/lib/s11n/plugins")
+#  define shellish_CONFIG_HAVE_LIBLTDL (@shellish_CONFIG_HAVE_LIBLTDL@)
+#  define shellish_CONFIG_HAVE_LIBDL (@shellish_CONFIG_HAVE_LIBDL@)
+#  define shellish_CONFIG_DLL_EXTENSION std::string(".so:.dynlib")
+#endif
+
+
+#define shellish_HAVE_PTHREAD (@shellish_HAVE_PTHREAD@)
+
+#endif // SHELLISH_CONFIG_HPP_INCLUDED

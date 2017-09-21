@@ -1,0 +1,11 @@
+#!/do/not/make
+#^^^ only to help emacs out.
+
+configure_with_libreadline = @configure_with_libreadline@
+
+INCLUDES = @INCLUDES@ -I.
+INSTALL_HEADERS_DEST = $(prefix)/include/s11n.net/readline
+
+CLEAN_FILES += $(wildcard *.o *~)
+
+CXXFLAGS += -fPIC

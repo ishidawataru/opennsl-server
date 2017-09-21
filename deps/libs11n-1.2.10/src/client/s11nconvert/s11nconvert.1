@@ -1,0 +1,158 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH s11nconvert 1 "Version 1.2.x" s11n "User Manuals"
+.SH NAME
+s11nconvert \- a tool to convert data between arbitrary data formats supported by libs11n.
+
+.SH SYNOPSIS
+s11nconvert [options]
+.P
+At a minimum, the -s option must be given to specify the output serializer (i.e. the output format).
+
+
+.SH DESCRIPTION
+.B s11nconvert
+
+converts data files and streams between the various i/o formats (e.g.,
+"serializers") supported by libs11n. By default it reads from stdin
+and writes to stdout, but it can be told to read from a file with -f
+and write to a file using -o.
+
+.SH OPTIONS
+All options may begin with either "-" or "--".  Arguments
+and their values may optionally be separated by '=', and a '=' is
+required if the value starts with a '-'.  Values with spaces
+in them must be quoted. Order of the arguments is insignificant,
+and if an arg is repeated only the last one is recognized unless
+otherwise noted.
+
+.IP "?, help"
+Show help text and exit with code 0.
+
+.IP "bz"
+Compresses output using libbz2 compression (i.e., compatible with
+bzip2), if your library includes this support.  Note that this only
+works for FILES, and not streams like stdin/stdout (sorry about that).
+See the -z option for additional details.
+
+.IP "dl DLLNAME"
+Opens the given DLL. May be used multiple times. All DLLs are loaded
+before the Serializer (-s or -S) is loaded, DLL names may be absolute file
+names or base filenames if those files are in the LD_LIBRARY_PATH.
+e.g. '-dl myplugin' is fine if myplugin.so is in the search path.
+Note that -dl is not necessary when the Serializers' names (-S/-s)
+specify dynamically-loadable serializers, as the normal object
+creation process will do the DLL lookup if needed. If loading
+a DLL fails, the application will exit. To treat failed loads
+as a non-fatal error use the -DL option.
+
+.IP "DL DLLNAME"
+Exactly like -dl but does not cause s11nconvert to exit if DLLNAME cannot be loaded.
+     
+.IP "f filename, file=filename"
+Sets the name of the input file. Default is to read from stdin. The name
+'-' is also treated as stdin.
+
+.IP "K, known-serializers"
+Lists all SERIALIZERS which s11nconvert knows about. It works
+in conjunction with -dl and -DL, so DLLs which contain Serializers
+can be opened and their Serializers will show up in the output.
+Using this option causes the application to exit with code 0
+after the list is output, so it is suitable for use in, e.g.,
+shell code to generate a list of available Serializers.
+
+.IP "o filename, output=filename"
+Sets the name of the output file. Default is to write to stdout.
+The name '-' is also treated as stdout.
+
+.IP "S INPUT_SERIALIZER"
+FORCE a given Serializer for INPUT. Use this in conjunction with -dl
+DLLNAME to load a Serializer from a DLL and force it to act as the
+input handler. This is useful when, e.g., the Serializer treats
+filenames as db keys or something similar, or when you need to
+load SERIALIZER from a DLL.
+
+.IP "s SERIALIZER, format=SERIALIZER"
+Sets the output format. SERIALIZER must be a class name recognized by libs11n.
+Use the -K option to get a list of serializers supported by your library.
+
+.IP "V, version"
+Prints version information and exits with code 0.
+
+.IP "v, verbose"
+Verbose mode (more output).
+
+.IP "z"
+Compresses output using zlib compression (i.e., compatible with gzip),
+if your library includes this support.  Note that this only works for
+FILES, and not streams like stdin/stdout (sorry about that).
+If libs11n was not built with the optional zfstream library, then 
+using -z is considered an error.
+
+.SH "ERROR CODES"
+s11nconvert has the following error codes:
+.P
+1 = No output Serializer was specified. Use the -s option.
+.P
+2 = Input file not found.
+.P
+3 = No input file was specified. You will see this only if you
+use if the -f/--file option and pass an empty file name, because
+stdin is used if you do not specify -f.
+.P
+4 = Reading input file failed. Not found, not readable, not parsable, etc.
+.P
+5 = Some error happened during saving. File not writable, out of drive space, etc.
+.P
+6 = The Serializer specified by -S could not be loaded.
+.P
+7 = Generic usage errror. e.g., -z and -bz used together, or -z/-bz
+used when libs11n was not built with zfstream support.
+.P
+8 = No Serializers could be found, which means we can neither load nor save data.
+This is normally indicitive of an installation problem regarding
+your libs11n. When hacking on s11n itself, this indicates that the Serializer
+factory registrations never happened: did you link using the -rdynamic/--export-dynamic
+flag?
+.P
+9 = An exception was thrown somewhere and the main app caught it before exiting.
+The exception message will go to stderr.
+
+.SH EXAMPLES
+
+.IP "s11nconvert -f in.s11n -s parens -o out.s11n -bz"
+Converts in.s11n, regardless of its input format, to the 'parens' format, saving the results to
+file out.s11n and compressing it with bz2 compression (if your libzfstream
+supports libbz2, otherwise the output is uncompressed).
+
+.IP "cat in.s11n | s11nconvert -s simplexml"
+Converts stdin to the simplexml format, writing the result to stdout.
+
+.IP "s11nconvert -S mysql_serializer -f 'node name' -s parens -o out.s11n"
+Loads the DLL mysql_serializer.so and forces the class mysql_serializer to act as the input parser,
+then passes it the filename "node name", which in this case is treated as a db lookup key. The output
+is saved to out.s11n, in the parens format.
+
+.IP "s11nconvert --known-serializers"
+Lists all Serializers which s11nconvert can "see". Note that
+some Serializers have several aliases, and may show up in the output
+list more than once (e.g., "compact" and "51191011" are aliases for the same
+Serializer).
+
+.SH AUTHOR
+stephan beal (stephan@s11n.net), with contributions and feedback from the
+s11n development group:
+.P
+s11n-devel@lists.sourceforge.net
+.P
+http://s11n.net
+.P
+If you find s11n useful and would like to contribute to its development,
+please feel free to contact us.
+
+.SH LICENSE
+.IP "Public Domain"
+.P
+This software comes with no warranty of any type. Use at your own risk. That said,
+i use it almost daily and have no problems with it :).

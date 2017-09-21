@@ -1,0 +1,27 @@
+#!/bin/sh
+# creates some makefile code for the $(BIN_PROGRAMS) var
+
+test -z "$1" && {
+    echo "usage: $0 appone [apptwo ...]"
+    exit 1
+}
+cat <<EOF
+BIN_PROGRAMS_COMMON_DEPS += $0
+ifneq (,\$(CCDV_BIN))
+    BIN_PROGRAMS_QUIET_PREFIX = @
+else
+    BIN_PROGRAMS_QUIET_PREFIX =
+endif
+
+EOF
+for t in $@; do
+    cat <<EOF
+\$(${t}_bin_OBJECTS): \$(BIN_PROGRAMS_COMMON_DEPS)
+$t: \$(${t}_bin_OBJECTS) 
+	\$(BIN_PROGRAMS_QUIET_PREFIX)\$(call toc_link_binary,${t})
+
+
+CLEAN_FILES += $t
+BIN_PROGRAMS: $t
+EOF
+done

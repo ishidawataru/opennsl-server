@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. ./find_toc.sh || exit
+
+export PACKAGE_NAME=libreadline_cpp
+export PACKAGE_VERSION="2005.12.22"
+# YYYY.MM.DD
+
+
+# toconfigure will call configure.${PACKAGE_NAME}, so package-specific
+# processing should be done there.
+source ${TOC_HOME}/sbin/toconfigure "$@"
+

@@ -1,0 +1,25 @@
+#!/bin/sh
+# creates some makefile code for the $(C_BINS_FROM_SOURCES) var
+
+test -z "$1" && {
+    echo "usage: $0 appone [apptwo ...]"
+    exit 1
+}
+echo "C_BINS_FROM_SOURCES_COMMON_DEPS += $0"
+
+cat <<EOF
+ifneq (,\$(CCDV_BIN))
+    C_BINS_FROM_SOURCES_QUIET_PREFIX = @
+else
+    C_BINS_FROM_SOURCES_QUIET_PREFIX =
+endif
+EOF
+for t in $@; do
+    cat <<EOF
+$t: \$(C_BINS_FROM_SOURCES_COMMON_DEPS) \$(${t}_bin_SOURCES) \$(${t}_bin_OBJECTS)
+	\$(C_BINS_FROM_SOURCES_QUIET_PREFIX)\$(call toc_compile_c_binary,${t},)
+CLEAN_FILES += $t
+bin-$t: $t
+bins: bin-$t
+EOF
+done

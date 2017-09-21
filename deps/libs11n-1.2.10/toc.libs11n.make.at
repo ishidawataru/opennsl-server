@@ -1,0 +1,24 @@
+#!/do/not/make
+#^^^ only to help emacs out.
+
+CLEAN_FILES += $(wildcard *.o *~)
+
+CXXFLAGS += -fPIC
+
+INSTALL_PACKAGE_HEADERS_DEST = $(prefix)/include/s11n.net/s11n
+INSTALL_LIBS_DEST = $(prefix)/lib
+# i really want the serializers in lib/s11n, but INSTALL_xxx_DEST
+# support doesn't work for two diff values in one makefile.
+
+############################################################
+# we fudge the linker args for clients which live in this source tree,
+# so that we link against the in-tree libs11n insead of a previously
+# installed copy somewhere else.
+LIBS11N_CLIENT_INTREE_LDADD = -L$(top_srcdir)/src \
+				$(LIBS11N_CLIENT_LDADD)
+############################################################
+
+INCLUDES := -I. -I$(top_srcdir)/include $(INCLUDES)
+
+
+S11N_PLAIN_SOURCES_ROOT = $(top_srcdir)/plain

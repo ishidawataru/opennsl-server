@@ -1,0 +1,53 @@
+#!/bin/sh
+# For use in generating rules for LYX_EXPORT.make.
+
+test 0 = ${#@} && {
+        echo "usage: $0 file1.lyx [... fileN.lyx]"
+        exit 1
+}
+
+thisapp="\$(TOC_MAKESDIR)/makerules.LYX_EXPORT"
+filters_makefile="\$(TOC_MAKESDIR)/LYX_EXPORT.make"
+
+cat <<EOF
+############################## LYX_EXPORT rules:
+
+ifeq (,\$(LYX_BIN))
+\$(error LYX_BIN must be set to the path to lyx!)
+endif
+
+LYX_EXPORT_FORMATS ?= html pdf
+
+EOF
+
+for t in "$@"; do
+    echo "###################### ${t}_lyx:"
+    cat <<EOF
+
+${t}_lyx_FORMATS ?= \$(LYX_EXPORT_FORMATS)
+${t}_lyx_EXPORT_ARGS ?= \$(LYX_EXPORT_ARGS)
+LYX_EXPORT-${t}:
+	@for f in \$(${t}_lyx_FORMATS); do \\
+		of=${t}.\$\$f; \\
+		echo "Exporting ${t}.lyx to \$\$of..."; \\
+		if test -f \$\$of -a \\( \$\$of -nt ${t}.lyx \\); then echo "\$\$ is up to date."; continue; fi; \\
+		\$(LYX_BIN) -e \$\$f ${t}.lyx \$(${t}_lyx_EXPORT_ARGS) >/dev/null || exit; \\
+	done
+
+.PHONY: LYX_EXPORT-${t}
+LYX_EXPORT: LYX_EXPORT-${t}
+CLEAN_FILES += \$(patsubst %,${t}.%,\$(${t}_lyx_EXPORT_FORMATS))
+
+EOF
+
+done
+
+cat <<EOF
+# implement the LYX_EXPORT-post target to do post-export processing,
+# like renaming foo.XXX to foo-\$(PACKAGE_NAME).XXX.
+LYX_EXPORT-post:
+LYX_EXPORT: LYX_EXPORT-post
+EOF
+
+echo "############################## end LYX_EXPORT rules"
+
