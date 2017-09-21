@@ -23,6 +23,15 @@ int DriverInit(const shellish::arguments & args) {
         shellish::ostream() << "opennsl_driver_init() failed " << opennsl_errmsg(ret);
         return 1;
     }
+    if (!opennsl_rx_active(0)) {
+        shellish::ostream() << "starting opennsl rx layer" << std::endl;
+        auto rv = opennsl_rx_start(0, NULL);
+        if (OPENNSL_FAILURE(rv)){
+            std::ostringstream err;
+            shellish::ostream() << "opennsl_rx_start() failed " << opennsl_errmsg(rv);
+            return 2;
+        }
+    }
     return 0;
 }
 
