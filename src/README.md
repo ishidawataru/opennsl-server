@@ -10,15 +10,36 @@ Eventually I would like to convert this experiment into a quagga plugin so that 
     make
 
 ## Use
+    1. Activate the lasers
+    i2cset -y 1 0x61 0x0c 0x00 b
+    i2cset -y 1 0x61 0x0d 0x00 b
+    i2cset -y 1 0x61 0x0e 0x00 b
+
+    i2cset -y 1 0x62 0x0c 0x00 b
+    i2cset -y 1 0x62 0x0d 0x00 b
+    i2cset -y 1 0x62 0x0e 0x00 b
+    
+    #initialise the kernel modules
+    rmmod linux-user-bde
+    rmmod linux-bcm-knet
+    rmmod linux-kernel-bde
+    rm -f /dev/linux-kernel-bde
+    rm -f /dev/linux-user-bde
+    rm -f /dev/linux-bcm-knet
+
+    mknod /dev/linux-kernel-bde c 127 0
+    mknod /dev/linux-user-bde c 126 0
+    mknod /dev/linux-bcm-knet c 122 0
+
+    insmod linux-kernel-bde.ko
+    insmod linux-user-bde.ko
+    insmod linux-bcm-knet.ko
+    
+    3. Run OSH
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<OPENNSL_DIR>
+    export OPENNSL_CONFIG_FILE=config.as5712
     ./osh
-    osh> show running-config
-        ## Running-Config
-        ! ports
-            ...
-        ! vlan
-            ...
-        ! knet
-            ...
+    osh> conf t
     
 ## Contributions
 Contributions to opennsl-man are definitely welcome, if you'd like to get involved please get intouch through github.
