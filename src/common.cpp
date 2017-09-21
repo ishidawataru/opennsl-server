@@ -2,11 +2,14 @@
 #include <cstring>
 #include <string>
 
+#ifndef __common_
+#define __common_
 uint8_t* mac_convert_str_to_bytes(const std::string mac) {
     unsigned char* bytes = new unsigned char[6];
-    int values[6];
-    int i;
-    char * x;
+    int values[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    int i = 0;
+    char * x = new char[6];
+    
     if(6 == sscanf( mac.c_str(), "%x:%x:%x:%x:%x:%x%c", &values[0], &values[1], &values[2], &values[3], &values[4], &values[5], x))
     {
         /* convert to uint8_t */
@@ -33,3 +36,5 @@ std::string mac_convert_bytes_to_sting(const uint8_t baseMac[6]) {
     std::string mac = tmp_mac;
     return mac;
 }
+
+#endif

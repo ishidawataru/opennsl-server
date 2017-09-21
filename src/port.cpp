@@ -8,10 +8,8 @@
 #include <s11n.net/shellish/arguments.hpp>
 #include <s11n.net/shellish/builtins.hpp>
 
-#ifndef __common_
-#define __common_
 #include "common.cpp"
-#endif
+
 
 extern "C" {
 #include "opennsl/error.h"

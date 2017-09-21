@@ -10,10 +10,8 @@
 
 #include <s11n.net/shellish/shellish_debuggering_macros.hpp> // CERR
 
-#ifndef __common_
-#define __common_
 #include "common.cpp"
-#endif
+
 
 extern "C" {
 #include "opennsl/error.h"
@@ -43,6 +41,7 @@ opennsl_knet_netif_t get_netif (const shellish::arguments & args) {
     std::string tmp_port = args[i_len_args-3];
     std::string tmp_vlan = args[i_len_args-2];
     // Add CPU to VLAN
+    int rv;
     int vlan = std::stoi(tmp_vlan);
     if (vlan == 0) {
         vlan= DEFAULT_VLAN;
@@ -50,12 +49,10 @@ opennsl_knet_netif_t get_netif (const shellish::arguments & args) {
     rv = opennsl_port_config_get(unit, &pcfg);
     if (rv != OPENNSL_E_NONE) {
         printf("Failed to get port configuration. Error %s\n", opennsl_errmsg(rv));
-        return rv;
     }
     rv = opennsl_vlan_port_add(unit, vlan, pcfg.cpu, pcfg.cpu);
     if (rv != OPENNSL_E_NONE) {
         printf("Failed to add ports to VLAN. Error %s\n", opennsl_errmsg(rv));
-        return rv;
     }
     ret.port = std::stoi(tmp_port);
     strcpy(ret.name, args[i_len_args-4].c_str());

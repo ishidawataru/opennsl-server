@@ -3,6 +3,7 @@
 #include <cstring>
 #include <unordered_map>
 
+
 #include <s11n.net/shellish/shellish.hpp> // eshell framework
 #include <s11n.net/shellish/argv_parser.hpp>
 #include <s11n.net/shellish/arguments.hpp>
@@ -10,10 +11,7 @@
 
 #include <s11n.net/shellish/shellish_debuggering_macros.hpp> // CERR
 
-#ifndef __common_
-#define __common_
 #include "common.cpp"
-#endif
 
 extern "C" {
 #include "opennsl/error.h"
@@ -96,6 +94,7 @@ int L2DeleteAddress (const shellish::arguments & args) {
         shellish::ostream() << "opennsl_l2_addr_delete() failed " << opennsl_errmsg(ret);
         return 1;
     }
+    return 0;
 }
 
 int trav_fn(int unit, opennsl_l2_addr_t *info, void *user_data) {
