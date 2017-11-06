@@ -20,11 +20,19 @@
 #include <netlink/route/rtnl.h>
 #include <netlink/route/link.h>
 
+#include <arpa/inet.h>
+
 #include <pthread.h>
 
 #define OBJECT_TYPE_SHIFT 48
+#define VLAN_OFFSET 10
 
 static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_t dst);
+static sai_status_t ofdpa_sai_add_unicast_routing_flow(int gid, int vrf, bool packet_in, int dst_v4, int mask_v4) ;
+static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int priority);
+
+static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop);
+static sai_status_t ofdpa_sai_add_l3_unicast_group(int vid, ofdpaMacAddr_t src, ofdpaMacAddr_t dst, int ref_gid, int index, int *gid);
 
 static sai_object_id_t g_switch_id = (sai_object_id_t)SAI_OBJECT_TYPE_SWITCH << OBJECT_TYPE_SHIFT;
 static sai_object_id_t g_port_id = (sai_object_id_t)SAI_OBJECT_TYPE_PORT << OBJECT_TYPE_SHIFT;
@@ -41,6 +49,10 @@ static sai_object_id_t g_policer = (sai_object_id_t)SAI_OBJECT_TYPE_POLICER << O
 
 static uint32_t max_pkt_size = 0;
 static uint32_t port_num = 0;
+static int l3_unicast_idx = 0;
+static pthread_mutex_t m;
+
+#define MAX_NEIGHBORS 1024
 
 
 // FIXME use lane info to get matching with actual hardware
@@ -49,12 +61,21 @@ static uint32_t port_cnt = 0;
 static pthread_t pt;
 
 typedef struct {
+    uint32_t ip;
+    ofdpaMacAddr_t mac;
+} ofdpa_sai_neighbor_t;
+
+typedef struct {
     int index;
     char name[32];
     int fd;
     sai_object_id_t port_oid;
     sai_object_id_t hostif_oid;
     pthread_t pt;
+    sai_object_id_t router_if_oid;
+    int num_neighbor;
+    ofdpa_sai_neighbor_t neighbors[MAX_NEIGHBORS];
+    ofdpaMacAddr_t mac;
 } ofdpa_sai_port_t;
 
 static ofdpa_sai_port_t *ports;
@@ -106,6 +127,33 @@ static sai_status_t get_mac_address(const char *name, ofdpaMacAddr_t *mac) {
     nl_socket_free(sock);
 
     return SAI_STATUS_SUCCESS;
+}
+
+static bool is_broadcast(char *pkt) {
+    int i;
+    for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
+        if ( (pkt[i] & 0xff) != 0xff ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static ofdpaMacAddr_t mask_mac() {
+    ofdpaMacAddr_t mask;
+    int i;
+    for( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
+        mask.addr[i] = 0xff;
+    }
+    return mask;
+}
+
+static print_mac(ofdpaMacAddr_t mac) {
+    int i;
+    for( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
+        printf("%02x:", mac.addr[i] & 0xff);
+    }
+    printf("\n");
 }
 
 static sai_status_t ofdpa_err2sai_status(OFDPA_ERROR_t err) {
@@ -248,8 +296,34 @@ sai_status_t sai_create_router_interface(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
-    *rif_id = g_router_intf;
-    return SAI_STATUS_SUCCESS;
+    int i = 0, j;
+    sai_object_id_t oid;
+    bool found = false;
+    for ( i = 0; i < attr_count; i++ ) {
+        switch(attr_list[i].id) {
+        case SAI_ROUTER_INTERFACE_ATTR_TYPE:
+            if ( attr_list[i].value.s32 == SAI_ROUTER_INTERFACE_TYPE_LOOPBACK ) {
+                *rif_id = g_router_intf;
+                return SAI_STATUS_SUCCESS;
+            }
+            break;
+        case SAI_ROUTER_INTERFACE_ATTR_PORT_ID:
+            oid = attr_list[i].value.oid;
+            for ( j = 0; j < port_num; j++ ){
+                if ( ports[j].port_oid == oid ) {
+                    found = true;
+                    printf("router_if_oid for port %d: %lx\n", j, *rif_id);
+                    ports[j].router_if_oid = *rif_id;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    if ( found == true ) {
+        return SAI_STATUS_SUCCESS;
+    }
+    return SAI_STATUS_FAILURE;
 }
 
 sai_status_t sai_remove_router_interface(_In_ sai_object_id_t rif_id){
@@ -402,6 +476,7 @@ static sai_status_t ofdpa_sai_init_port() {
     }
     port_num = i;
     ports = malloc(port_num * sizeof(ofdpa_sai_port_t));
+    memset(ports, 0, port_num * sizeof(ofdpa_sai_port_t));
 
     for(i = 0; i < port_num; i++) {
         ofdpa_buffdesc buf;
@@ -421,7 +496,7 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
     OFDPA_ERROR_t err;
     sai_status_t status;
     ofdpaMacAddr_t src;
-    int i;
+    int i, idx;
 
     while (1) {
         int fd;
@@ -430,19 +505,26 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
             printf("Receive fail: %d\n", err);
             return NULL;
         }
-        printf("PKT: in-port: %d, reason: %d, table-id: %d\n", pkt.inPortNum, pkt.reason, pkt.tableId);
+        printf("RECV: in-port: %d, reason: %d, table-id: %d\n", pkt.inPortNum, pkt.reason, pkt.tableId);
 
-        if ( pkt.tableId == OFDPA_FLOW_TABLE_ID_SA_LOOKUP ) {
+//        for ( i = 0; i < pkt.pktData.size; i++ ) {
+//            printf("0x%02x ", pkt.pktData.pstart[i] & 0xff);
+//        }
+//        printf("\n");
+
+        idx = pkt.inPortNum - 1; // OFDPA indexing 1,2,3..., SAI indexing 0,1,2
+
+        if ( pkt.tableId == OFDPA_FLOW_TABLE_ID_SA_LOOKUP || ( pkt.tableId == OFDPA_FLOW_TABLE_ID_ACL_POLICY &&  is_broadcast(pkt.pktData.pstart)) ) {
             for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
                 src.addr[i] = pkt.pktData.pstart[i+6] & 0xff;
             }
-            status = ofdpa_sai_add_bridging_flow(pkt.inPortNum + 100, pkt.inPortNum, src);
+            status = ofdpa_sai_add_bridging_flow(idx + VLAN_OFFSET, idx, src);
             if ( status != SAI_STATUS_SUCCESS ) {
                 printf("failed to add bridging flow\n");
             }
         }
 
-        if ( (fd = ports[pkt.inPortNum].fd) > 0 ) {
+        if ( (fd = ports[idx].fd) > 0 ) {
             write(fd, pkt.pktData.pstart, pkt.pktData.size);
         }
     }
@@ -454,14 +536,20 @@ void *ofdpa_sai_pkt_send_loop(void *arg) {
     buf.pstart = (char *)malloc(max_pkt_size);
     OFDPA_ERROR_t err;
     ofdpa_sai_port_t *port = (ofdpa_sai_port_t *)arg;
-    int size;
+    int size, i;
 
     while (1) {
         size = read(port->fd, buf.pstart, buf.size);
         if ( size < 0 ) {
             return NULL;
         }
-        err = ofdpaPktSend(&buf, 0, port->index, 0);
+        printf("SEND: in-port: %d\n", port->index + 1);
+        buf.size = size;
+        for ( i = 0; i < size; i++ ) {
+            printf("0x%02x ", buf.pstart[i] & 0xff);
+        }
+        printf("\n");
+        err = ofdpaPktSend(&buf, 1, port->index + 1, port->index + 1);
         if ( err != OFDPA_E_NONE) {
             printf("Send fail: %d\n", err);
             continue;
@@ -473,6 +561,7 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
     int i;
     *switch_id = g_switch_id;
     OFDPA_ERROR_t err;
+    ofdpaMacAddr_t mac;
 
     printf("switch_id: %lx\n", g_switch_id);
 
@@ -492,6 +581,14 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
     ofdpaMaxPktSizeGet(&max_pkt_size);
 
     ofdpa_sai_init_port();
+
+    mac = mask_mac();
+
+    err = ofdpa_sai_add_acl_policy_flow(-1, 0x0806, NULL, &mac, 0);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add acl policy flow for arp request\n");
+        return err;
+    }
 
     pthread_create(&pt, NULL, &ofdpa_sai_pkt_recv_loop, NULL);
 
@@ -649,6 +746,35 @@ sai_status_t sai_create_route_entry(
         _In_ const sai_route_entry_t *route_entry,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
+    sai_ip4_t prefix, mask;
+    int i;
+    bool packet_in = false, forward = false;
+
+    if( route_entry->destination.addr_family != SAI_IP_ADDR_FAMILY_IPV4 ) {
+        return SAI_STATUS_SUCCESS;
+    }
+
+    for (  i = 0; i < attr_count; i++ ) {
+        switch (attr_list[i].id) {
+        case SAI_ROUTE_ENTRY_ATTR_PACKET_ACTION:
+            if ( attr_list[i].value.s32 == SAI_PACKET_ACTION_FORWARD ) {
+                forward = true;
+            }
+            printf("packet action: %d, %d\n", attr_list[i].value.s32, forward);
+        case SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID:
+            printf("nexthop oid: %lx\n", attr_list[i].value.oid);
+            if ( sai_object_type_query(attr_list[i].value.oid) == SAI_OBJECT_TYPE_PORT ) {
+                packet_in = true;
+            }
+        }
+    }
+    prefix = route_entry->destination.addr.ip4;
+    mask = route_entry->destination.mask.ip4;
+
+    if ( packet_in == true && forward == true ) {
+        return ofdpa_sai_add_unicast_routing_flow(0, 0, packet_in, (int)prefix, (int)mask);
+    }
+
     return SAI_STATUS_SUCCESS;
 }
 
@@ -783,21 +909,15 @@ static int tap_alloc(char *dev)
   return fd;
 }
 
-static ofdpaMacAddr_t mask_mac() {
-    ofdpaMacAddr_t mask;
-    int i;
-    for( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
-        mask.addr[i] = 0xff;
-    }
-    return mask;
-}
-
 static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_t dst) {
     ofdpaFlowEntry_t entry;
     ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_BRIDGING, &entry);
     ofdpaBridgingFlowEntry_t br;
+    port += 1; // convert to OFDPA indexing
+
     uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
     memset(&br, 0, sizeof(ofdpaBridgingFlowEntry_t));
+
 
     br.gotoTableId = OFDPA_FLOW_TABLE_ID_ACL_POLICY;
     br.groupID = gid;
@@ -813,6 +933,8 @@ static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_
 static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
     ofdpaFlowEntry_t entry;
     ofdpaTerminationMacFlowEntry_t mac;
+
+    port += 1; // convert to OFDPA indexing
 
     memset(&mac, 0, sizeof(ofdpaTerminationMacFlowEntry_t));
 
@@ -831,14 +953,17 @@ static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaM
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
 }
 
-static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst) {
+static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int priority) {
     ofdpaFlowEntry_t entry;
     ofdpaPolicyAclFlowEntry_t acl;
     memset(&acl, 0, sizeof(ofdpaPolicyAclFlowEntry_t));
     ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_ACL_POLICY, &entry);
+
+    port += 1; // convert to OFDPA indexing
+
     if ( port > 0 ) {
         acl.match_criteria.inPort = (uint32_t)port;
-        acl.match_criteria.inPortMask = OFDPA_INPORT_EXACT_MASK;
+        acl.match_criteria.inPortMask = OFDPA_INPORT_FIELD_MASK;
     }
     if ( src != NULL ) {
         acl.match_criteria.srcMac = *src;
@@ -856,15 +981,18 @@ static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdp
     }
     acl.outputPort = OFDPA_PORT_CONTROLLER;
     entry.flowData.policyAclFlowEntry = acl;
+    entry.priority = (uint32_t)priority;
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
 }
 
 static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop) {
     ofdpaGroupEntry_t group;
+    port += 1; // convert to OFDPA indexing
     uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
     sai_status_t err;
     ofdpaGroupBucketEntry_t bucket;
     ofdpaL2InterfaceGroupBucketData_t l2;
+
 
     ofdpaGroupEntryInit(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, &group);
     group.groupId = gid;
@@ -885,12 +1013,40 @@ static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop
     return ofdpa_err2sai_status(ofdpaGroupBucketEntryAdd(&bucket));
 }
 
+static sai_status_t ofdpa_sai_add_l3_unicast_group(int vid, ofdpaMacAddr_t src, ofdpaMacAddr_t dst, int ref_gid, int index, int *gid) {
+    ofdpaGroupEntry_t group;
+    *gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L3_UNICAST, 0, 0, index);
+    group.groupId = *gid;
+    sai_status_t err;
+    ofdpaGroupBucketEntry_t bucket;
+    ofdpaL3UnicastGroupBucketData_t l3;
+
+    err = ofdpa_err2sai_status(ofdpaGroupAdd(&group));
+    if ( err != SAI_STATUS_SUCCESS ) {
+        return err;
+    }
+
+    ofdpaGroupBucketEntryInit(OFDPA_GROUP_ENTRY_TYPE_L3_UNICAST, &bucket);
+
+    bucket.groupId = *gid;
+    bucket.referenceGroupId = (uint32_t)ref_gid;
+    l3.srcMac = src;
+    l3.dstMac = dst;
+    l3.vlanId = OFDPA_VID_PRESENT | (uint32_t)vid;
+
+    bucket.bucketData.l3Unicast = l3;
+    return ofdpa_err2sai_status(ofdpaGroupBucketEntryAdd(&bucket));
+}
+
 static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged) {
     ofdpaFlowEntry_t entry;
     ofdpaVlanFlowEntry_t vlan;
     sai_status_t err;
     ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_VLAN, &entry);
     memset(&vlan, 0, sizeof(ofdpaVlanFlowEntry_t));
+
+    port += 1; // convert to OFDPA indexing
+
     vlan.gotoTableId = OFDPA_FLOW_TABLE_ID_TERMINATION_MAC;
     vlan.match_criteria.inPort = (uint32_t)port;
     vlan.match_criteria.vlanId = OFDPA_VID_PRESENT | (uint16_t)vid;
@@ -905,6 +1061,28 @@ static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged
     vlan.setVlanIdAction = 1;
     vlan.newVlanId = OFDPA_VID_PRESENT | (uint16_t)vid;
     entry.flowData.vlanFlowEntry = vlan;
+    return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+}
+
+static sai_status_t ofdpa_sai_add_unicast_routing_flow(int gid, int vrf, bool packet_in, int dst_v4, int mask_v4) {
+    ofdpaFlowEntry_t entry;
+    ofdpaUnicastRoutingFlowEntry_t unicast;
+    ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_UNICAST_ROUTING, &entry);
+    memset(&unicast, 0, sizeof(ofdpaUnicastRoutingFlowEntry_t));
+    if ( vrf > 0 ) {
+        unicast.match_criteria.vrf = (uint16_t)vrf;
+        unicast.match_criteria.vrfMask = OFDPA_VRF_VALUE_MASK;
+    }
+    unicast.match_criteria.etherType = 0x0800;
+    unicast.match_criteria.dstIp4 = (in_addr_t)htonl((uint32_t)dst_v4);
+    unicast.match_criteria.dstIp4Mask = (in_addr_t)htonl((uint32_t)mask_v4);
+    unicast.gotoTableId = OFDPA_FLOW_TABLE_ID_ACL_POLICY;
+    if ( packet_in == true ) {
+        unicast.outputPort = OFDPA_PORT_CONTROLLER;
+    } else {
+        unicast.groupID = (uint32_t)gid;
+    }
+    entry.flowData.unicastRoutingFlowEntry = unicast;
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
 }
 
@@ -965,20 +1143,22 @@ sai_status_t sai_create_hostif(
 
     get_mac_address(name, &mac);
 
-    vid = port_idx + 100;
+    ports[port_idx].mac = mac;
 
-    err = ofdpa_sai_add_mac_termination_flow(vid, port_idx, mac);
+    vid = port_idx + VLAN_OFFSET; // vid use SAI indexing
+
+    err = ofdpa_sai_add_mac_termination_flow(vid, -1, mac);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add mac termination flow: vid: %d, port_idx: %d\n", vid, port_idx);
         return err;
     }
 
-    err = ofdpa_sai_add_acl_policy_flow(port_idx, 0x0806, NULL, &mac);
+    err = ofdpa_sai_add_acl_policy_flow(port_idx, 0x0806, NULL, &mac, 10);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add acl policy flow: port: %d\n", port_idx);
     }
 
-    err = ofdpa_sai_add_l2_interface_group(vid, port_idx, false);
+    err = ofdpa_sai_add_l2_interface_group(vid, port_idx, true);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add l2 interface group: %d %d\n", vid, port_idx);
     }
@@ -1174,12 +1354,196 @@ sai_hostif_api_t hostif_api = {
     .send_hostif_packet = sai_send_hostif_packet,
 };
 
+sai_status_t sai_create_next_hop(
+        _Out_ sai_object_id_t *next_hop_id,
+        _In_ sai_object_id_t switch_id,
+        _In_ uint32_t attr_count,
+        _In_ const sai_attribute_t *attr_list){
+    int i, idx = 0, j, jdx = 0;
+    sai_object_id_t oid;
+    bool found = false;
+    uint32_t ip4 = 0;
+    int gid = 0, ref_gid = 0, vid, port, ip;
+    ofdpaMacAddr_t src, dst;
+    sai_status_t err;
+
+    pthread_mutex_lock(&m);
+
+    for ( i = 0; i < attr_count; i++ ) {
+        switch ( attr_list[i].id ) {
+        case SAI_NEXT_HOP_ATTR_ROUTER_INTERFACE_ID:
+            oid = attr_list[i].value.oid;
+            for ( j = 0; j < port_num; j++ ){
+                if ( ports[j].router_if_oid == oid ) {
+                    found = true;
+                    idx = j;
+                }
+            }
+            break;
+        case SAI_NEXT_HOP_ATTR_IP:
+            ip4 = (uint32_t)attr_list[i].value.ipaddr.addr.ip4;
+            break;
+        }
+    }
+
+    printf("create next hop: %d %d\n", found, ip4);
+
+    if ( found == false || ip4 == 0 ) {
+        pthread_mutex_unlock(&m);
+        return SAI_STATUS_FAILURE;
+    }
+    found = false;
+
+    for ( i = 0; i < ports[idx].num_neighbor; i++ ) {
+        printf("idx: %d, i: %d, ip: %d, ip4: %d\n", idx, i, ports[idx].neighbors[i].ip, ip4);
+        if ( ports[idx].neighbors[i].ip == ip4 ) {
+            jdx = i;
+            found = true;
+        }
+    }
+
+    if ( found == false ) {
+        pthread_mutex_unlock(&m);
+        return SAI_STATUS_FAILURE;
+    }
+
+    vid = ports[idx].index + VLAN_OFFSET;
+    port = ports[idx].index + 1;
+    src = ports[idx].mac;
+    dst = ports[idx].neighbors[jdx].mac;
+    ip = ports[idx].neighbors[jdx].ip;
+    l3_unicast_idx++;
+
+    ref_gid = (int)ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
+
+    printf("ref-gid: %d\n", ref_gid);
+    print_mac(src);
+    print_mac(dst);
+
+    err = ofdpa_sai_add_l3_unicast_group(vid, src, dst, ref_gid, l3_unicast_idx, &gid);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add l3 unicast group: %d\n", vid);
+    }
+
+    printf("added l3 unciast group\n");
+
+    err = ofdpa_sai_add_unicast_routing_flow(gid, 0, false, (int)ip, (int)0xffffffff);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add unicast routing flow: %d\n", gid);
+        pthread_mutex_unlock(&m);
+        return err;
+    }
+
+    printf("added unicast routing flow\n");
+
+    pthread_mutex_unlock(&m);
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_remove_next_hop(
+        _In_ sai_object_id_t next_hop_id){
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_set_next_hop_attribute(
+        _In_ sai_object_id_t next_hop_id,
+        _In_ const sai_attribute_t *attr){
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_get_next_hop_attribute(
+        _In_ sai_object_id_t next_hop_id,
+        _In_ uint32_t attr_count,
+        _Inout_ sai_attribute_t *attr_list){
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_next_hop_api_t next_hop_api = {
+    .create_next_hop = sai_create_next_hop,
+    .remove_next_hop = sai_remove_next_hop,
+    .set_next_hop_attribute = sai_set_next_hop_attribute,
+    .get_next_hop_attribute = sai_get_next_hop_attribute,
+};
+
+sai_status_t sai_create_neighbor_entry(
+        _In_ const sai_neighbor_entry_t *neighbor_entry,
+        _In_ uint32_t attr_count,
+        _In_ const sai_attribute_t *attr_list){
+    int i, j, idx, jdx;
+    bool found = false;
+    ofdpaMacAddr_t mac;
+
+    pthread_mutex_lock(&m);
+
+    for ( i = 0; i < port_num; i++ ) {
+        if ( ports[i].router_if_oid == neighbor_entry->rif_id ) {
+            idx = i;
+            found = true;
+        }
+    }
+
+    if ( found == false ) {
+        pthread_mutex_unlock(&m);
+        return SAI_STATUS_FAILURE;
+    }
+
+
+    for ( i = 0; i < attr_count; i++ ) {
+        switch (attr_list[i].id) {
+        case SAI_NEIGHBOR_ENTRY_ATTR_DST_MAC_ADDRESS:
+            for ( j = 0; j < OFDPA_MAC_ADDR_LEN; j++ ) {
+                mac.addr[j] = attr_list[i].value.mac[j];
+            }
+        }
+    }
+
+    printf("create neighbor entry: %d %d %d\n", idx, jdx, neighbor_entry->ip_address.addr.ip4);
+
+    ports[idx].neighbors[jdx].mac = mac;
+    ports[idx].neighbors[jdx].ip = (uint32_t)neighbor_entry->ip_address.addr.ip4;
+
+    jdx = ports[idx].num_neighbor++;
+
+    pthread_mutex_unlock(&m);
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_remove_neighbor_entry(_In_ const sai_neighbor_entry_t *neighbor_entry){
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_set_neighbor_entry_attribute(
+        _In_ const sai_neighbor_entry_t *neighbor_entry,
+        _In_ const sai_attribute_t *attr){
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_get_neighbor_entry_attribute(
+        _In_ const sai_neighbor_entry_t *neighbor_entry,
+        _In_ uint32_t attr_count,
+        _Inout_ sai_attribute_t *attr_list){
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_remove_all_neighbor_entries(_In_ sai_object_id_t switch_id){
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_neighbor_api_t neighbor_api = {
+    .create_neighbor_entry = sai_create_neighbor_entry,
+    .remove_neighbor_entry = sai_remove_neighbor_entry,
+    .set_neighbor_entry_attribute = sai_set_neighbor_entry_attribute,
+    .get_neighbor_entry_attribute = sai_get_neighbor_entry_attribute,
+    .remove_all_neighbor_entries = sai_remove_all_neighbor_entries,
+};
+
 sai_object_type_t sai_object_type_query(_In_ sai_object_id_t sai_object_id) {
     printf("object-type-query: %lx\n", sai_object_id);
     return (sai_object_type_t)(sai_object_id >> OBJECT_TYPE_SHIFT);
 }
 
 sai_status_t sai_api_initialize(_In_ uint64_t flags, _In_ const service_method_table_t *services) {
+    pthread_mutex_init(&m, NULL);
     return SAI_STATUS_SUCCESS;
 }
 
@@ -1208,6 +1572,12 @@ sai_status_t sai_api_query(_In_ sai_api_t sai_api_id, _Out_ void **api_method_ta
         break;
     case SAI_API_BRIDGE:
         *api_method_table = &bridge_api;
+        break;
+    case SAI_API_NEXT_HOP:
+        *api_method_table = &next_hop_api;
+        break;
+    case SAI_API_NEIGHBOR:
+        *api_method_table = &neighbor_api;
         break;
     default:
         printf("no api: %d\n", sai_api_id);
