@@ -66,7 +66,7 @@ typedef struct {
 } ofdpa_sai_neighbor_t;
 
 typedef struct {
-    int index;
+    int index; // OFDPA PORT NUM
     char name[32];
     int fd;
     sai_object_id_t port_oid;
@@ -356,11 +356,36 @@ sai_status_t sai_create_port(_Out_ sai_object_id_t *port_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
     int i;
+    uint32_t count, *list, index;
+    bool found = false;
     for( i = 0; i < attr_count; i++ ) {
+        switch (attr_list[i].id) {
+        case SAI_PORT_ATTR_HW_LANE_LIST:
+            count = attr_list[i].value.u32list.count;
+            list = attr_list[i].value.u32list.list;
+            if ( count != 1 ) {
+                printf("specify ofdpa port num in lane configuration\n");
+                return SAI_STATUS_NOT_SUPPORTED;
+            }
+            index = list[0];
+            found = true;
+            break;
+        }
         printf("create port attr: %d\n", attr_list[i].id);
     }
-    ports[port_cnt++].port_oid = *port_id;
-    return SAI_STATUS_SUCCESS;
+    if ( found == false ) {
+        printf("no lane found\n");
+        return SAI_STATUS_NOT_SUPPORTED;
+    }
+    for ( i = 0; i < port_num; i++ ) {
+        printf("ports[%d].index = %d, index: %d\n", i, ports[i].index, index);
+        if ( ports[i].index == index ) {
+            ports[i].port_oid = *port_id;
+            return SAI_STATUS_SUCCESS;
+        }
+    }
+    printf("not found index: %d\n", index);
+    return SAI_STATUS_FAILURE;
 }
 
 sai_status_t sai_remove_port(_In_ sai_object_id_t port_id) {
@@ -465,7 +490,8 @@ static sai_status_t enableSourceMacLearning() {
 }
 
 static sai_status_t ofdpa_sai_init_port() {
-    uint32_t i = 0, next;
+    uint32_t i = 0, j, next;
+    port_num = 0;
     OFDPA_ERROR_t err;
     while(1){
         err = ofdpaPortNextGet(i, &next);
@@ -473,17 +499,29 @@ static sai_status_t ofdpa_sai_init_port() {
             break;
         }
         i = next;
+        port_num++;
     }
-    port_num = i;
+    printf("port_num: %d\n", port_num);
     ports = malloc(port_num * sizeof(ofdpa_sai_port_t));
     memset(ports, 0, port_num * sizeof(ofdpa_sai_port_t));
 
+    j = 0;
+
     for(i = 0; i < port_num; i++) {
+        err = ofdpaPortNextGet(j, &next);
+        if ( err != OFDPA_E_NONE ) {
+            printf("should not happen: i: %d, j: %d\n", i, j);
+            return SAI_STATUS_FAILURE;
+        }
+
+        j = next;
+
         ofdpa_buffdesc buf;
-        ports[i].index = i;
+        ports[i].index = next;
         buf.size = 32;
         buf.pstart = ports[i].name;
-        ofdpaPortNameGet(i, &buf);
+        ofdpaPortNameGet(next, &buf);
+        printf("i: %d, j: %d, name: %s\n", i, j, ports[i].name);
     }
 
     return SAI_STATUS_SUCCESS;
@@ -512,13 +550,24 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
 //        }
 //        printf("\n");
 
-        idx = pkt.inPortNum - 1; // OFDPA indexing 1,2,3..., SAI indexing 0,1,2
+        idx = -1;
+
+        for ( i = 0; i < port_num; i++ ) {
+            if ( ports[i].index == pkt.inPortNum ) {
+                idx = i;
+            }
+        }
+
+        if ( idx < 0 ) {
+            printf("failed to find port: %d\n", pkt.inPortNum);
+            return NULL;
+        }
 
         if ( pkt.tableId == OFDPA_FLOW_TABLE_ID_SA_LOOKUP || ( pkt.tableId == OFDPA_FLOW_TABLE_ID_ACL_POLICY &&  is_broadcast(pkt.pktData.pstart)) ) {
             for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
                 src.addr[i] = pkt.pktData.pstart[i+6] & 0xff;
             }
-            status = ofdpa_sai_add_bridging_flow(idx + VLAN_OFFSET, idx, src);
+            status = ofdpa_sai_add_bridging_flow(idx + VLAN_OFFSET, pkt.inPortNum, src);
             if ( status != SAI_STATUS_SUCCESS ) {
                 printf("failed to add bridging flow\n");
             }
@@ -543,13 +592,14 @@ void *ofdpa_sai_pkt_send_loop(void *arg) {
         if ( size < 0 ) {
             return NULL;
         }
-        printf("SEND: in-port: %d\n", port->index + 1);
+        printf("SEND: in-port: %d, size: %d\n", port->index, size);
         buf.size = size;
-        for ( i = 0; i < size; i++ ) {
-            printf("0x%02x ", buf.pstart[i] & 0xff);
-        }
-        printf("\n");
-        err = ofdpaPktSend(&buf, 1, port->index + 1, port->index + 1);
+//        for ( i = 0; i < size; i++ ) {
+//            printf("0x%02x ", buf.pstart[i] & 0xff);
+//        }
+//        printf("\n");
+        err = ofdpaPktSend(&buf, 0, port->index, 0);
+        buf.size = max_pkt_size;
         if ( err != OFDPA_E_NONE) {
             printf("Send fail: %d\n", err);
             continue;
@@ -584,7 +634,7 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
 
     mac = mask_mac();
 
-    err = ofdpa_sai_add_acl_policy_flow(-1, 0x0806, NULL, &mac, 0);
+    err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &mac, 0);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add acl policy flow for arp request\n");
         return err;
@@ -913,7 +963,6 @@ static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_
     ofdpaFlowEntry_t entry;
     ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_BRIDGING, &entry);
     ofdpaBridgingFlowEntry_t br;
-    port += 1; // convert to OFDPA indexing
 
     uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
     memset(&br, 0, sizeof(ofdpaBridgingFlowEntry_t));
@@ -933,8 +982,6 @@ static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_
 static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
     ofdpaFlowEntry_t entry;
     ofdpaTerminationMacFlowEntry_t mac;
-
-    port += 1; // convert to OFDPA indexing
 
     memset(&mac, 0, sizeof(ofdpaTerminationMacFlowEntry_t));
 
@@ -958,8 +1005,6 @@ static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdp
     ofdpaPolicyAclFlowEntry_t acl;
     memset(&acl, 0, sizeof(ofdpaPolicyAclFlowEntry_t));
     ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_ACL_POLICY, &entry);
-
-    port += 1; // convert to OFDPA indexing
 
     if ( port > 0 ) {
         acl.match_criteria.inPort = (uint32_t)port;
@@ -987,7 +1032,6 @@ static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdp
 
 static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop) {
     ofdpaGroupEntry_t group;
-    port += 1; // convert to OFDPA indexing
     uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
     sai_status_t err;
     ofdpaGroupBucketEntry_t bucket;
@@ -1045,8 +1089,6 @@ static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged
     ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_VLAN, &entry);
     memset(&vlan, 0, sizeof(ofdpaVlanFlowEntry_t));
 
-    port += 1; // convert to OFDPA indexing
-
     vlan.gotoTableId = OFDPA_FLOW_TABLE_ID_TERMINATION_MAC;
     vlan.match_criteria.inPort = (uint32_t)port;
     vlan.match_criteria.vlanId = OFDPA_VID_PRESENT | (uint16_t)vid;
@@ -1091,7 +1133,7 @@ sai_status_t sai_create_hostif(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
-    int i, j, fd, port_idx, vid;
+    int i, j, fd, port_idx, vid, ofdpa_idx;
     sai_object_type_t obj_type;
     sai_object_id_t port_oid;
     char *name = NULL;
@@ -1146,24 +1188,25 @@ sai_status_t sai_create_hostif(
     ports[port_idx].mac = mac;
 
     vid = port_idx + VLAN_OFFSET; // vid use SAI indexing
+    ofdpa_idx = ports[port_idx].index;
 
-    err = ofdpa_sai_add_mac_termination_flow(vid, -1, mac);
+    err = ofdpa_sai_add_mac_termination_flow(vid, 0, mac);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add mac termination flow: vid: %d, port_idx: %d\n", vid, port_idx);
         return err;
     }
 
-    err = ofdpa_sai_add_acl_policy_flow(port_idx, 0x0806, NULL, &mac, 10);
+    err = ofdpa_sai_add_acl_policy_flow(ofdpa_idx, 0x0806, NULL, &mac, 10);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add acl policy flow: port: %d\n", port_idx);
     }
 
-    err = ofdpa_sai_add_l2_interface_group(vid, port_idx, true);
+    err = ofdpa_sai_add_l2_interface_group(vid, ofdpa_idx, true);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add l2 interface group: %d %d\n", vid, port_idx);
     }
 
-    err = ofdpa_sai_add_vlan_flow_entry(vid, port_idx, false);
+    err = ofdpa_sai_add_vlan_flow_entry(vid, ofdpa_idx, false);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add vlan flow entry: %d %d\n", vid, port_idx);
     }
@@ -1407,8 +1450,8 @@ sai_status_t sai_create_next_hop(
         return SAI_STATUS_FAILURE;
     }
 
-    vid = ports[idx].index + VLAN_OFFSET;
-    port = ports[idx].index + 1;
+    vid = idx + VLAN_OFFSET;
+    port = ports[idx].index;
     src = ports[idx].mac;
     dst = ports[idx].neighbors[jdx].mac;
     ip = ports[idx].neighbors[jdx].ip;
