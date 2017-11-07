@@ -63,6 +63,8 @@ static pthread_t pt;
 typedef struct {
     uint32_t ip;
     ofdpaMacAddr_t mac;
+    int gid;  // OFDPA l3 unicast group id
+    sai_object_id_t oid; // SAI NEXTHOP oid
 } ofdpa_sai_neighbor_t;
 
 typedef struct {
@@ -797,8 +799,9 @@ sai_status_t sai_create_route_entry(
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
     sai_ip4_t prefix, mask;
-    int i;
+    int i, j, gid = -1;
     bool packet_in = false, forward = false;
+    sai_object_id_t oid;
 
     if( route_entry->destination.addr_family != SAI_IP_ADDR_FAMILY_IPV4 ) {
         return SAI_STATUS_SUCCESS;
@@ -815,6 +818,8 @@ sai_status_t sai_create_route_entry(
             printf("nexthop oid: %lx\n", attr_list[i].value.oid);
             if ( sai_object_type_query(attr_list[i].value.oid) == SAI_OBJECT_TYPE_PORT ) {
                 packet_in = true;
+            } else {
+                oid = attr_list[i].value.oid;
             }
         }
     }
@@ -823,6 +828,24 @@ sai_status_t sai_create_route_entry(
 
     if ( packet_in == true && forward == true ) {
         return ofdpa_sai_add_unicast_routing_flow(0, 0, packet_in, (int)prefix, (int)mask);
+    }
+
+    for ( i = 0; i < port_num; i++ ) {
+        for ( j = 0; j < ports[i].num_neighbor; j++ ) {
+            if ( ports[i].neighbors[j].oid == oid ) {
+                gid = ports[i].neighbors[j].gid;
+                break;
+            }
+        }
+        if ( gid > 0 ) {
+            break;
+        }
+    }
+
+    printf("nexthop oid: %lx, gid: %0x\n", oid, gid);
+
+    if ( gid > 0 ) {
+        return ofdpa_sai_add_unicast_routing_flow(gid, 0, packet_in, (int)prefix, (int)mask);
     }
 
     return SAI_STATUS_SUCCESS;
@@ -1449,6 +1472,8 @@ sai_status_t sai_create_next_hop(
         pthread_mutex_unlock(&m);
         return SAI_STATUS_FAILURE;
     }
+
+    ports[idx].neighbors[jdx].oid = *next_hop_id;
 
     vid = idx + VLAN_OFFSET;
     port = ports[idx].index;
