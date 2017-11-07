@@ -177,7 +177,7 @@ static uint32_t ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_t type, int vid, int p
         ofdpaGroupPortIdSet(&id, (uint32_t)port);
     }
     if ( index > 0 ) {
-        ofdpaGroupIndexSet(&id, (uint32_t)port);
+        ofdpaGroupIndexSet(&id, (uint32_t)index);
     }
     return id;
 }
@@ -400,9 +400,7 @@ sai_status_t sai_set_port_attribute(_In_ sai_object_id_t port_id, _In_ const sai
 
 sai_status_t sai_get_port_attribute(_In_ sai_object_id_t port_id, _In_ uint32_t attr_count, _Inout_ sai_attribute_t *attr_list) {
     int i, count;
-    printf("port get attr count: %d\n", attr_count);
     for( i = 0; i < attr_count; i++ ) {
-        printf("port get attr: %d\n", attr_list[i].id);
         switch (attr_list[i].id) {
         case SAI_PORT_ATTR_QOS_QUEUE_LIST:
             return SAI_STATUS_NOT_SUPPORTED;
@@ -658,27 +656,22 @@ sai_status_t sai_set_switch_attribute(_In_ sai_object_id_t switch_id, _In_ const
 sai_status_t sai_get_switch_attribute(_In_ sai_object_id_t switch_id, _In_ sai_uint32_t attr_count, _Inout_ sai_attribute_t *attr_list) {
     int i, count;
     for(i = 0; i < attr_count; i++){
-        printf("get attr: %d\n", attr_list[i].id);
         switch (attr_list[i].id) {
         case SAI_SWITCH_ATTR_PORT_NUMBER:
             attr_list[i].value.u32 = 1;
             break;
         case SAI_SWITCH_ATTR_PORT_LIST:
             count = attr_list[i].value.objlist.count;
-            printf("count: %d\n", count);
             if ( count < 1 ) {
                 return SAI_STATUS_BUFFER_OVERFLOW;
             }
-            printf("gportid: %lx\n", g_port_id);
             attr_list[i].value.objlist.list[0] = g_port_id;
             attr_list[i].value.objlist.count = 1;
             break;
         case SAI_SWITCH_ATTR_CPU_PORT:
-            printf("g_cpu_port_id: %lx\n", g_cpu_port_id);
             attr_list[i].value.oid = g_cpu_port_id;
             break;
         case SAI_SWITCH_ATTR_DEFAULT_VIRTUAL_ROUTER_ID:
-            printf("gvrid: %lx\n", g_virtual_rid);
             attr_list[i].value.oid = g_virtual_rid;
             break;
         case SAI_SWITCH_ATTR_DEFAULT_1Q_BRIDGE_ID:
@@ -991,6 +984,7 @@ static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_
     uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
     memset(&br, 0, sizeof(ofdpaBridgingFlowEntry_t));
 
+    printf("add_bridging_flow: vid: %d, port: %d, gid: %d\n", vid, port, gid);
 
     br.gotoTableId = OFDPA_FLOW_TABLE_ID_ACL_POLICY;
     br.groupID = gid;
@@ -1493,6 +1487,7 @@ sai_status_t sai_create_next_hop(
     err = ofdpa_sai_add_l3_unicast_group(vid, src, dst, ref_gid, l3_unicast_idx, &gid);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add l3 unicast group: %d\n", vid);
+        return SAI_STATUS_FAILURE;
     }
 
     printf("setting gid: %x\n", gid);
@@ -1546,8 +1541,6 @@ sai_status_t sai_create_neighbor_entry(
     bool found = false;
     ofdpaMacAddr_t mac;
 
-    pthread_mutex_lock(&m);
-
     for ( i = 0; i < port_num; i++ ) {
         if ( ports[i].router_if_oid == neighbor_entry->rif_id ) {
             idx = i;
@@ -1556,7 +1549,6 @@ sai_status_t sai_create_neighbor_entry(
     }
 
     if ( found == false ) {
-        pthread_mutex_unlock(&m);
         return SAI_STATUS_FAILURE;
     }
 
@@ -1577,7 +1569,6 @@ sai_status_t sai_create_neighbor_entry(
 
     jdx = ports[idx].num_neighbor++;
 
-    pthread_mutex_unlock(&m);
     return SAI_STATUS_SUCCESS;
 }
 
