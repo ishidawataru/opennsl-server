@@ -833,6 +833,7 @@ sai_status_t sai_create_route_entry(
     for ( i = 0; i < port_num; i++ ) {
         for ( j = 0; j < ports[i].num_neighbor; j++ ) {
             if ( ports[i].neighbors[j].oid == oid ) {
+                printf("oid: %lx\n", oid);
                 gid = ports[i].neighbors[j].gid;
                 break;
             }
@@ -1473,6 +1474,7 @@ sai_status_t sai_create_next_hop(
         return SAI_STATUS_FAILURE;
     }
 
+    printf("setting nexthop oid: %lx\n", *next_hop_id);
     ports[idx].neighbors[jdx].oid = *next_hop_id;
 
     vid = idx + VLAN_OFFSET;
@@ -1492,6 +1494,9 @@ sai_status_t sai_create_next_hop(
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add l3 unicast group: %d\n", vid);
     }
+
+    printf("setting gid: %x\n", gid);
+    ports[idx].neighbors[jdx].gid = gid;
 
     printf("added l3 unciast group\n");
 
