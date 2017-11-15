@@ -87,6 +87,7 @@ typedef struct {
     ofdpa_sai_neighbor_t neighbors[MAX_NEIGHBORS];
     ofdpaMacAddr_t mac;
     sai_object_id_t bridge_port_oid;
+    sai_object_id_t vlan_member_id;
     int i; // index of the list
     int vid; // current vid
     bool tagged;
@@ -125,6 +126,16 @@ static ofdpa_sai_port_t* get_ofdpa_sai_port_by_bridge_port_oid(sai_object_id_t o
     return NULL;
 }
 
+static ofdpa_sai_port_t* get_ofdpa_sai_port_by_vlan_member_id(sai_object_id_t oid) {
+    int i;
+    for ( i = 0; i < port_num; i++ ) {
+        if ( ports[i].vlan_member_id == oid ) {
+            return &ports[i];
+        }
+    }
+    return NULL;
+}
+
 struct ofdpa_sai_vlan_s;
 
 typedef struct ofdpa_sai_vlan_s {
@@ -132,7 +143,11 @@ typedef struct ofdpa_sai_vlan_s {
     int vid;
     int num_ports;
     ofdpa_sai_port_t ports[MAX_PORTS];
+    int num_neighbor;
+    ofdpa_sai_neighbor_t neighbors[MAX_NEIGHBORS];
+    sai_object_id_t router_if_oid;
     struct ofdpa_sai_vlan_s *next;
+    ofdpaMacAddr_t mac;
 } ofdpa_sai_vlan_t;
 
 static ofdpa_sai_vlan_t *vlans;
@@ -368,8 +383,10 @@ sai_status_t sai_create_vlan_member(
 
     old_vid = port->vid;
     port->vid = vlan->vid;
+    port->vlan_member_id = *vlan_member_id;
 
     port->disabled = true;
+    port->num_neighbor = 0;
 
     err = ofdpa_sai_flush_bridging_flows(old_vid, port->index);
     if ( err != SAI_STATUS_SUCCESS ) {
@@ -410,6 +427,7 @@ sai_status_t sai_create_vlan_member(
     err = ofdpa_sai_add_vlan_flow_entry(vlan->vid, port->index, port->tagged);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add vlan flow entry: %d %d\n", vlan->vid, port->index);
+        return err;
     }
 
     port->disabled = false;
@@ -418,6 +436,72 @@ sai_status_t sai_create_vlan_member(
 }
 
 sai_status_t sai_remove_vlan_member(_In_ sai_object_id_t vlan_member_id){
+    int old_vid;
+    bool old_tagged;
+    ofdpa_sai_port_t *port = NULL;
+    sai_status_t err;
+
+    if ( vlan_member_id == g_vlan_member ) {
+        return SAI_STATUS_SUCCESS;
+    }
+
+    port = get_ofdpa_sai_port_by_vlan_member_id(vlan_member_id);
+    if ( port == NULL ) {
+        return SAI_STATUS_FAILURE;
+    }
+    old_tagged = port->tagged;
+    port->tagged = false;
+    old_vid = port->vid;
+    port->vid = port->i + VLAN_OFFSET;
+    port->vlan_member_id = 0;
+
+    port->disabled = true;
+    port->num_neighbor = 0;
+
+    err = ofdpa_sai_flush_bridging_flows(old_vid, port->index);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to flush briding table: vid: %d, port: %d\n", old_vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_delete_vlan_flow_entry(old_vid, port->index, old_tagged);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete vlan flow: vid: %d, port: %d\n", old_vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_delete_l2_interface_group(old_vid, port->index);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete l2 intefrace group\n");
+        return err;
+    }
+
+    err = ofdpa_sai_delete_mac_termination_flow(old_vid, 0, port->mac);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete mac termination flow: vid: %d, port: %d\n", port->vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_add_mac_termination_flow(port->vid, 0, port->mac);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add mac termination flow: vid: %d, port: %d\n", port->vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_add_l2_interface_group(port->vid, port->index, !port->tagged);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add l2 intefrace group\n");
+        return err;
+    }
+
+    err = ofdpa_sai_add_vlan_flow_entry(port->vid, port->index, port->tagged);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add vlan flow entry: %d %d\n", port->vid, port->index);
+        return err;
+    }
+
+    port->disabled = false;
+
     return SAI_STATUS_SUCCESS;
 }
 
@@ -478,9 +562,11 @@ sai_status_t sai_create_router_interface(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
-    int i = 0, j;
-    sai_object_id_t oid;
-    bool found = false;
+    int i, j;
+    ofdpa_sai_port_t *port;
+    ofdpa_sai_vlan_t *vlan;
+    ofdpaMacAddr_t mac;
+
     for ( i = 0; i < attr_count; i++ ) {
         switch(attr_list[i].id) {
         case SAI_ROUTER_INTERFACE_ATTR_TYPE:
@@ -490,22 +576,32 @@ sai_status_t sai_create_router_interface(
             }
             break;
         case SAI_ROUTER_INTERFACE_ATTR_PORT_ID:
-            oid = attr_list[i].value.oid;
-            for ( j = 0; j < port_num; j++ ){
-                if ( ports[j].port_oid == oid ) {
-                    found = true;
-                    printf("router_if_oid for port %d: %lx\n", j, *rif_id);
-                    ports[j].router_if_oid = *rif_id;
-                    break;
-                }
+            port = get_ofdpa_sai_port_by_port_oid(attr_list[i].value.oid);
+            break;
+        case SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS:
+            for ( j = 0; j < OFDPA_MAC_ADDR_LEN; j++ ) {
+                mac.addr[j] = attr_list[i].value.mac[j];
             }
+        case SAI_ROUTER_INTERFACE_ATTR_VLAN_ID:
+            vlan = get_ofdpa_sai_vlan_by_vlan_oid(attr_list[i].value.oid);
             break;
         }
     }
-    if ( found == true ) {
-        return SAI_STATUS_SUCCESS;
+
+    if ( port == NULL  && vlan == NULL ) {
+        return SAI_STATUS_FAILURE;
     }
-    return SAI_STATUS_FAILURE;
+
+    if ( port != NULL ) {
+        port->router_if_oid = *rif_id;
+    }
+
+    if ( vlan != NULL ) {
+        vlan->router_if_oid = *rif_id;
+        vlan->mac = mac;
+    }
+
+    return SAI_STATUS_SUCCESS;
 }
 
 sai_status_t sai_remove_router_interface(_In_ sai_object_id_t rif_id){
@@ -1871,7 +1967,6 @@ sai_neighbor_api_t neighbor_api = {
 };
 
 sai_object_type_t sai_object_type_query(_In_ sai_object_id_t sai_object_id) {
-    printf("object-type-query: %lx\n", sai_object_id);
     return (sai_object_type_t)(sai_object_id >> OBJECT_TYPE_SHIFT);
 }
 
