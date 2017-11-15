@@ -28,7 +28,11 @@
 #define VLAN_OFFSET 10
 
 static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged);
+static sai_status_t ofdpa_sai_add_untagged_vlan_flow_entry(int vid, int port);
+static sai_status_t ofdpa_sai_add_tagged_vlan_flow_entry(int vid, int port);
 static sai_status_t ofdpa_sai_delete_vlan_flow_entry(int vid, int port, bool tagged);
+static sai_status_t ofdpa_sai_delete_untagged_vlan_flow_entry(int vid, int port);
+static sai_status_t ofdpa_sai_delete_tagged_vlan_flow_entry(int vid, int port);
 
 static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_t dst);
 static sai_status_t ofdpa_sai_flush_bridging_flows(int vid, int port);
@@ -75,7 +79,18 @@ typedef struct {
     sai_object_id_t oid; // SAI NEXTHOP oid
 } ofdpa_sai_neighbor_t;
 
-typedef struct {
+struct ofdpa_sai_port_s;
+struct ofdpa_sai_vlan_member_s;
+
+typedef struct ofdpa_sai_vlan_member_s {
+    sai_object_id_t oid; // SAI VLAN MEMBER oid
+    int vid;
+    bool tagged;
+    struct ofdpa_sai_port_s *port;
+    struct ofdpa_sai_vlan_member_s *next;
+} ofdpa_sai_vlan_member_t;
+
+typedef struct ofdpa_sai_port_s {
     int index; // OFDPA PORT NUM
     char name[32];
     int fd;
@@ -87,11 +102,10 @@ typedef struct {
     ofdpa_sai_neighbor_t neighbors[MAX_NEIGHBORS];
     ofdpaMacAddr_t mac;
     sai_object_id_t bridge_port_oid;
-    sai_object_id_t vlan_member_id;
     int i; // index of the list
-    int vid; // current vid
-    bool tagged;
+    int vid; // current access vid
     bool disabled;
+    ofdpa_sai_vlan_member_t *vlans;
 } ofdpa_sai_port_t;
 
 static ofdpa_sai_port_t *ports;
@@ -128,12 +142,66 @@ static ofdpa_sai_port_t* get_ofdpa_sai_port_by_bridge_port_oid(sai_object_id_t o
 
 static ofdpa_sai_port_t* get_ofdpa_sai_port_by_vlan_member_id(sai_object_id_t oid) {
     int i;
+    ofdpa_sai_vlan_member_t *vlan = NULL;
     for ( i = 0; i < port_num; i++ ) {
-        if ( ports[i].vlan_member_id == oid ) {
-            return &ports[i];
+        vlan = ports[i].vlans;
+        while ( vlan != NULL ) {
+            if ( vlan->oid == oid ) {
+                return &ports[i];
+            }
+            vlan = vlan->next;
         }
     }
     return NULL;
+}
+
+static ofdpa_sai_vlan_member_t* get_ofdpa_sai_vlan_member_by_vlan_member_id(sai_object_id_t oid) {
+    int i;
+    ofdpa_sai_vlan_member_t *vlan = NULL;
+    for ( i = 0; i < port_num; i++ ) {
+        vlan = ports[i].vlans;
+        while ( vlan != NULL ) {
+            if ( vlan->oid == oid ) {
+                return vlan;
+            }
+        }
+    }
+    return NULL;
+}
+
+static sai_status_t ofdpa_sai_add_vlan_member(ofdpa_sai_port_t *port, sai_object_id_t vlan_member_id, int vid, bool tagged) {
+    ofdpa_sai_vlan_member_t *vlan, *prev = NULL;
+    vlan = malloc(sizeof(ofdpa_sai_vlan_member_t));
+    memset(vlan, 0, sizeof(ofdpa_sai_vlan_member_t));
+    vlan->oid = vlan_member_id;
+    vlan->vid = vid;
+    vlan->tagged = tagged;
+    vlan->port = port;
+    if ( port->vlans == NULL ){
+        port->vlans = vlan;
+    } else {
+        vlan = port->vlans;
+        while ( vlan != NULL ) {
+            prev = vlan;
+            vlan = vlan->next;
+        }
+        prev->next = vlan;
+    }
+    return SAI_STATUS_SUCCESS;
+}
+
+static sai_status_t ofdpa_sai_delete_vlan_member(ofdpa_sai_port_t *port, sai_object_id_t vlan_member_id) {
+    ofdpa_sai_vlan_member_t *vlan = port->vlans, *prev = NULL;
+    while ( vlan != NULL ) {
+        if ( vlan->oid == vlan_member_id ) {
+            prev->next = vlan->next;
+            free(vlan);
+            return SAI_STATUS_SUCCESS;
+        }
+        prev = vlan;
+        vlan = vlan->next;
+    }
+    return SAI_STATUS_FAILURE;
 }
 
 struct ofdpa_sai_vlan_s;
@@ -210,8 +278,6 @@ static sai_status_t get_mac_address(const char *name, ofdpaMacAddr_t *mac) {
     addr = rtnl_link_get_addr(link);
 
     nl_addr2str(addr, buf, 64);
-
-    printf("addr: %s\n", buf);
 
     p = (char *)nl_addr_get_binary_addr(addr);
 
@@ -374,42 +440,41 @@ sai_status_t sai_create_vlan_member(
         return SAI_STATUS_MANDATORY_ATTRIBUTE_MISSING;
     }
 
-    old_tagged = port->tagged;
-    if ( pop ) {
-        port->tagged = false;
-    } else {
-        port->tagged = true;
-    }
-
     old_vid = port->vid;
-    port->vid = vlan->vid;
-    port->vlan_member_id = *vlan_member_id;
+    if ( pop ) {
+        port->vid = vlan->vid;
+    }
+    // if this is about adding another VLAN to trunk port
+    // we don't change port's vid
+    // port's vid is for access port
+
+    ofdpa_sai_add_vlan_member(port, *vlan_member_id, vlan->vid, !pop);
 
     port->disabled = true;
     port->num_neighbor = 0;
 
-    err = ofdpa_sai_flush_bridging_flows(old_vid, port->index);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to flush briding table: vid: %d, port: %d\n", old_vid, port->index);
-        return err;
-    }
+    if ( pop ) {
+        // if this vlan is for access, we need to remove existing flows for
+        // vlan access
+        // but we don't need to remove rules for tagged flow
+        err = ofdpa_sai_delete_untagged_vlan_flow_entry(old_vid, port->index);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to delete vlan flow: vid: %d, port: %d\n", old_vid, port->index);
+            return err;
+        }
 
-    err = ofdpa_sai_delete_vlan_flow_entry(old_vid, port->index, old_tagged);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to delete vlan flow: vid: %d, port: %d\n", old_vid, port->index);
-        return err;
-    }
+        err = ofdpa_sai_flush_bridging_flows(old_vid, port->index);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to flush briding table: vid: %d, port: %d\n", old_vid, port->index);
+            return err;
+        }
 
-    err = ofdpa_sai_delete_l2_interface_group(old_vid, port->index);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to delete l2 intefrace group\n");
-        return err;
-    }
+        err = ofdpa_sai_delete_l2_interface_group(old_vid, port->index);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to delete l2 intefrace group: vid %d, port: %d\n", old_vid, port->index);
+            return err;
+        }
 
-    err = ofdpa_sai_delete_mac_termination_flow(old_vid, 0, port->mac);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to delete mac termination flow: vid: %d, port: %d\n", vlan->vid, port->index);
-        return err;
     }
 
     err = ofdpa_sai_add_mac_termination_flow(vlan->vid, 0, port->mac);
@@ -418,13 +483,13 @@ sai_status_t sai_create_vlan_member(
         return err;
     }
 
-    err = ofdpa_sai_add_l2_interface_group(vlan->vid, port->index, !port->tagged);
+    err = ofdpa_sai_add_l2_interface_group(vlan->vid, port->index, pop);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add l2 intefrace group\n");
         return err;
     }
 
-    err = ofdpa_sai_add_vlan_flow_entry(vlan->vid, port->index, port->tagged);
+    err = ofdpa_sai_add_vlan_flow_entry(vlan->vid, port->index, !pop);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add vlan flow entry: %d %d\n", vlan->vid, port->index);
         return err;
@@ -440,23 +505,22 @@ sai_status_t sai_remove_vlan_member(_In_ sai_object_id_t vlan_member_id){
     bool old_tagged;
     ofdpa_sai_port_t *port = NULL;
     sai_status_t err;
+    ofdpa_sai_vlan_member_t *vlan = NULL;
 
     if ( vlan_member_id == g_vlan_member ) {
         return SAI_STATUS_SUCCESS;
     }
 
-    port = get_ofdpa_sai_port_by_vlan_member_id(vlan_member_id);
-    if ( port == NULL ) {
+    vlan = get_ofdpa_sai_vlan_member_by_vlan_member_id(vlan_member_id);
+    if ( vlan == NULL ) {
         return SAI_STATUS_FAILURE;
     }
-    old_tagged = port->tagged;
-    port->tagged = false;
-    old_vid = port->vid;
-    port->vid = port->i + VLAN_OFFSET;
-    port->vlan_member_id = 0;
+
+    old_vid = vlan->vid;
+    old_tagged = vlan->tagged;
+    port = vlan->port;
 
     port->disabled = true;
-    port->num_neighbor = 0;
 
     err = ofdpa_sai_flush_bridging_flows(old_vid, port->index);
     if ( err != SAI_STATUS_SUCCESS ) {
@@ -482,27 +546,24 @@ sai_status_t sai_remove_vlan_member(_In_ sai_object_id_t vlan_member_id){
         return err;
     }
 
-    err = ofdpa_sai_add_mac_termination_flow(port->vid, 0, port->mac);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add mac termination flow: vid: %d, port: %d\n", port->vid, port->index);
-        return err;
-    }
+    if ( !vlan->tagged ) {
+        port->vid = port->i + VLAN_OFFSET;
 
-    err = ofdpa_sai_add_l2_interface_group(port->vid, port->index, !port->tagged);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add l2 intefrace group\n");
-        return err;
-    }
+        err = ofdpa_sai_add_l2_interface_group(port->vid, port->index, true);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to add l2 intefrace group\n");
+            return err;
+        }
 
-    err = ofdpa_sai_add_vlan_flow_entry(port->vid, port->index, port->tagged);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add vlan flow entry: %d %d\n", port->vid, port->index);
-        return err;
+        err = ofdpa_sai_add_untagged_vlan_flow_entry(port->vid, port->index);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to add vlan flow entry: %d %d\n", port->vid, port->index);
+            return err;
+        }
     }
 
     port->disabled = false;
-
-    return SAI_STATUS_SUCCESS;
+    return ofdpa_sai_delete_vlan_member(port, vlan_member_id);
 }
 
 sai_status_t sai_set_vlan_member_attribute(
@@ -799,7 +860,6 @@ static sai_status_t ofdpa_sai_init_port() {
         ofdpaPortNameGet(next, &buf);
         ports[i].i = i;
         ports[i].vid = i + VLAN_OFFSET;
-        ports[i].tagged = false;
     }
 
     return SAI_STATUS_SUCCESS;
@@ -1469,6 +1529,16 @@ static ofdpaFlowEntry_t _ofdpa_sai_create_vlan_flow_entry(int vid, int port, boo
     return entry;
 }
 
+static sai_status_t ofdpa_sai_add_untagged_vlan_flow_entry(int vid, int port) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, false);
+    return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+}
+
+static sai_status_t ofdpa_sai_add_tagged_vlan_flow_entry(int vid, int port) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, true);
+    return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+}
+
 static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged) {
     ofdpaFlowEntry_t entry;
     sai_status_t err;
@@ -1479,6 +1549,16 @@ static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged
     }
     entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, false);
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+}
+
+static sai_status_t ofdpa_sai_delete_untagged_vlan_flow_entry(int vid, int port) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, false);
+    return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
+}
+
+static sai_status_t ofdpa_sai_delete_tagged_vlan_flow_entry(int vid, int port) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, true);
+    return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
 }
 
 static sai_status_t ofdpa_sai_delete_vlan_flow_entry(int vid, int port, bool tagged) {
@@ -1584,12 +1664,12 @@ sai_status_t sai_create_hostif(
         printf("failed to add acl policy flow: port: %d\n", port->i);
     }
 
-    err = ofdpa_sai_add_l2_interface_group(vid, ofdpa_idx, !port->tagged);
+    err = ofdpa_sai_add_l2_interface_group(vid, ofdpa_idx, true);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add l2 interface group: %d %d\n", vid, port->i);
     }
 
-    err = ofdpa_sai_add_vlan_flow_entry(vid, ofdpa_idx, port->tagged);
+    err = ofdpa_sai_add_vlan_flow_entry(vid, ofdpa_idx, false);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add vlan flow entry: %d %d\n", vid, port->i);
     }
