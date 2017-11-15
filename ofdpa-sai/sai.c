@@ -27,12 +27,23 @@
 #define OBJECT_TYPE_SHIFT 48
 #define VLAN_OFFSET 10
 
+static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged);
+static sai_status_t ofdpa_sai_delete_vlan_flow_entry(int vid, int port, bool tagged);
+
 static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_t dst);
+static sai_status_t ofdpa_sai_flush_bridging_flows(int vid, int port);
+
 static sai_status_t ofdpa_sai_add_unicast_routing_flow(int gid, int vrf, bool packet_in, int dst_v4, int mask_v4) ;
 static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int priority);
 
 static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop);
+static sai_status_t ofdpa_sai_delete_l2_interface_group(int vid, int port);
+
 static sai_status_t ofdpa_sai_add_l3_unicast_group(int vid, ofdpaMacAddr_t src, ofdpaMacAddr_t dst, int ref_gid, int index, int *gid);
+
+static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst);
+static sai_status_t ofdpa_sai_modify_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst);
+static sai_status_t ofdpa_sai_delete_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst);
 
 static sai_object_id_t g_switch_id = (sai_object_id_t)SAI_OBJECT_TYPE_SWITCH << OBJECT_TYPE_SHIFT;
 static sai_object_id_t g_port_id = (sai_object_id_t)SAI_OBJECT_TYPE_PORT << OBJECT_TYPE_SHIFT;
@@ -53,10 +64,7 @@ static int l3_unicast_idx = 0;
 static pthread_mutex_t m;
 
 #define MAX_NEIGHBORS 1024
-
-
-// FIXME use lane info to get matching with actual hardware
-static uint32_t port_cnt = 0;
+#define MAX_PORTS 128
 
 static pthread_t pt;
 
@@ -78,9 +86,81 @@ typedef struct {
     int num_neighbor;
     ofdpa_sai_neighbor_t neighbors[MAX_NEIGHBORS];
     ofdpaMacAddr_t mac;
+    sai_object_id_t bridge_port_oid;
+    int i; // index of the list
+    int vid; // current vid
+    bool tagged;
+    bool disabled;
 } ofdpa_sai_port_t;
 
 static ofdpa_sai_port_t *ports;
+
+static ofdpa_sai_port_t* get_ofdpa_sai_port_by_port_index(int index) {
+    int i;
+    for ( i = 0; i < port_num; i++ ) {
+        if ( ports[i].index == index ) {
+            return &ports[i];
+        }
+    }
+    return NULL;
+}
+
+static ofdpa_sai_port_t* get_ofdpa_sai_port_by_port_oid(sai_object_id_t oid) {
+    int i;
+    for ( i = 0; i < port_num; i++ ) {
+        if ( ports[i].port_oid == oid ) {
+            return &ports[i];
+        }
+    }
+    return NULL;
+}
+
+static ofdpa_sai_port_t* get_ofdpa_sai_port_by_bridge_port_oid(sai_object_id_t oid) {
+    int i;
+    for ( i = 0; i < port_num; i++ ) {
+        if ( ports[i].bridge_port_oid == oid ) {
+            return &ports[i];
+        }
+    }
+    return NULL;
+}
+
+struct ofdpa_sai_vlan_s;
+
+typedef struct ofdpa_sai_vlan_s {
+    sai_object_id_t oid; // SAI VLAN OID
+    int vid;
+    int num_ports;
+    ofdpa_sai_port_t ports[MAX_PORTS];
+    struct ofdpa_sai_vlan_s *next;
+} ofdpa_sai_vlan_t;
+
+static ofdpa_sai_vlan_t *vlans;
+
+static ofdpa_sai_vlan_t* append_new_vlan() {
+    ofdpa_sai_vlan_t *v = vlans, *prev = NULL;
+    while ( v != NULL ) {
+        prev = v;
+        v = v->next;
+    }
+    v = malloc(sizeof(ofdpa_sai_vlan_t));
+    memset(v, 0, sizeof(ofdpa_sai_vlan_t));
+
+    prev->next = v;
+
+    return v;
+}
+
+static ofdpa_sai_vlan_t* get_ofdpa_sai_vlan_by_vlan_oid(sai_object_id_t oid) {
+    ofdpa_sai_vlan_t *v = vlans;
+    while (v != NULL ) {
+        if ( v->oid == oid ) {
+            return v;
+        }
+        v = v->next;
+    }
+    return NULL;
+}
 
 static sai_status_t get_mac_address(const char *name, ofdpaMacAddr_t *mac) {
     struct nl_sock *sock;
@@ -187,6 +267,23 @@ sai_status_t sai_create_vlan(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
+    ofdpa_sai_vlan_t *vlan;
+    int i, vid = 0;
+    for ( i = 0; i < attr_count; i++ ) {
+        switch ( attr_list[i].id ) {
+        case SAI_VLAN_ATTR_VLAN_ID:
+            vid = (int)attr_list[i].value.u16;
+            break;
+        }
+    }
+    if ( vid == 0 ) {
+        return SAI_STATUS_FAILURE;
+    }
+
+    vlan = append_new_vlan();
+    vlan->oid = *vlan_id;
+    vlan->vid = vid;
+
     return SAI_STATUS_SUCCESS;
 }
 
@@ -234,6 +331,89 @@ sai_status_t sai_create_vlan_member(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
+    int i, mode, old_vid;
+    ofdpa_sai_vlan_t *vlan = NULL;
+    ofdpa_sai_port_t *port = NULL;
+    sai_object_id_t oid;
+    sai_status_t err;
+    bool pop = true, old_tagged;
+    for ( i = 0; i < attr_count; i++ ) {
+        switch ( attr_list[i].id ) {
+        case SAI_VLAN_MEMBER_ATTR_VLAN_ID:
+            oid = attr_list[i].value.oid;
+            vlan = get_ofdpa_sai_vlan_by_vlan_oid(oid);
+            break;
+        case SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID:
+            oid = attr_list[i].value.oid;
+            port = get_ofdpa_sai_port_by_bridge_port_oid(oid);
+            break;
+        case SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE:
+            if ( attr_list[i].value.s32 == SAI_VLAN_TAGGING_MODE_TAGGED ) {
+                pop = false;
+            }
+            break;
+        }
+    }
+
+    if ( vlan == NULL || port == NULL ) {
+        return SAI_STATUS_MANDATORY_ATTRIBUTE_MISSING;
+    }
+
+    old_tagged = port->tagged;
+    if ( pop ) {
+        port->tagged = false;
+    } else {
+        port->tagged = true;
+    }
+
+    old_vid = port->vid;
+    port->vid = vlan->vid;
+
+    port->disabled = true;
+
+    err = ofdpa_sai_flush_bridging_flows(old_vid, port->index);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to flush briding table: vid: %d, port: %d\n", old_vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_delete_vlan_flow_entry(old_vid, port->index, old_tagged);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete vlan flow: vid: %d, port: %d\n", old_vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_delete_l2_interface_group(old_vid, port->index);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete l2 intefrace group\n");
+        return err;
+    }
+
+    err = ofdpa_sai_delete_mac_termination_flow(old_vid, 0, port->mac);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete mac termination flow: vid: %d, port: %d\n", vlan->vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_add_mac_termination_flow(vlan->vid, 0, port->mac);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add mac termination flow: vid: %d, port: %d\n", vlan->vid, port->index);
+        return err;
+    }
+
+    err = ofdpa_sai_add_l2_interface_group(vlan->vid, port->index, !port->tagged);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add l2 intefrace group\n");
+        return err;
+    }
+
+    err = ofdpa_sai_add_vlan_flow_entry(vlan->vid, port->index, port->tagged);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add vlan flow entry: %d %d\n", vlan->vid, port->index);
+    }
+
+    port->disabled = false;
+
     return SAI_STATUS_SUCCESS;
 }
 
@@ -521,7 +701,9 @@ static sai_status_t ofdpa_sai_init_port() {
         buf.size = 32;
         buf.pstart = ports[i].name;
         ofdpaPortNameGet(next, &buf);
-        printf("i: %d, j: %d, name: %s\n", i, j, ports[i].name);
+        ports[i].i = i;
+        ports[i].vid = i + VLAN_OFFSET;
+        ports[i].tagged = false;
     }
 
     return SAI_STATUS_SUCCESS;
@@ -533,8 +715,8 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
     pkt.pktData.pstart = (char *)malloc(max_pkt_size);
     OFDPA_ERROR_t err;
     sai_status_t status;
-    ofdpaMacAddr_t src;
-    int i, idx;
+    ofdpa_sai_port_t *port = NULL;
+    int i;
 
     while (1) {
         int fd;
@@ -550,30 +732,29 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
 //        }
 //        printf("\n");
 
-        idx = -1;
-
-        for ( i = 0; i < port_num; i++ ) {
-            if ( ports[i].index == pkt.inPortNum ) {
-                idx = i;
-            }
-        }
-
-        if ( idx < 0 ) {
+        port = get_ofdpa_sai_port_by_port_index(pkt.inPortNum);
+        if ( port == NULL ) {
             printf("failed to find port: %d\n", pkt.inPortNum);
             return NULL;
         }
 
+        if ( port->disabled ) {
+            printf("port %d is disabled\n", port->index);
+            continue;
+        }
+
         if ( pkt.tableId == OFDPA_FLOW_TABLE_ID_SA_LOOKUP || ( pkt.tableId == OFDPA_FLOW_TABLE_ID_ACL_POLICY &&  is_broadcast(pkt.pktData.pstart)) ) {
+            ofdpaMacAddr_t src;
             for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
                 src.addr[i] = pkt.pktData.pstart[i+6] & 0xff;
             }
-            status = ofdpa_sai_add_bridging_flow(idx + VLAN_OFFSET, pkt.inPortNum, src);
+            status = ofdpa_sai_add_bridging_flow(port->vid, pkt.inPortNum, src);
             if ( status != SAI_STATUS_SUCCESS ) {
                 printf("failed to add bridging flow\n");
             }
         }
 
-        if ( (fd = ports[idx].fd) > 0 ) {
+        if ( (fd = port->fd) > 0 ) {
             write(fd, pkt.pktData.pstart, pkt.pktData.size);
         }
     }
@@ -743,6 +924,32 @@ sai_status_t sai_create_bridge_port(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
+    int i;
+    sai_object_id_t port_oid;
+    ofdpa_sai_port_t *port = NULL;
+
+    for ( i = 0; i < attr_count; i++ ) {
+        switch ( attr_list[i].id ) {
+        case SAI_BRIDGE_PORT_ATTR_TYPE:
+            if ( attr_list[i].value.s32 != SAI_BRIDGE_PORT_TYPE_PORT ) {
+                return SAI_STATUS_NOT_SUPPORTED;
+            }
+            break;
+        case SAI_BRIDGE_PORT_ATTR_PORT_ID:
+            port_oid = attr_list[i].value.oid;
+            port = get_ofdpa_sai_port_by_port_oid(port_oid);
+            break;
+        case SAI_BRIDGE_PORT_ATTR_ADMIN_STATE:
+            break;
+        }
+    }
+
+    if ( port == NULL ) {
+        return SAI_STATUS_MANDATORY_ATTRIBUTE_MISSING;
+    }
+
+    port->bridge_port_oid = *bridge_port_id;
+
     return SAI_STATUS_SUCCESS;
 }
 
@@ -997,7 +1204,31 @@ static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
 }
 
-static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
+static sai_status_t ofdpa_sai_flush_bridging_flows(int vid, int port) {
+    ofdpaFlowEntry_t flow;
+    sai_status_t err;
+    ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_BRIDGING, &flow);
+    uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
+
+    while ( true ) {
+        err = ofdpa_err2sai_status(ofdpaFlowNextGet(&flow, &flow));
+        if ( err != SAI_STATUS_SUCCESS ) {
+            break;
+        }
+
+        if ( flow.flowData.bridgingFlowEntry.groupID != gid ) {
+            continue;
+        }
+
+        err = ofdpa_err2sai_status(ofdpaFlowDelete(&flow));
+        if ( err != SAI_STATUS_SUCCESS ) {
+            return err;
+        }
+    }
+    return SAI_STATUS_SUCCESS;
+}
+
+static ofdpaFlowEntry_t _ofdpa_sai_create_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
     ofdpaFlowEntry_t entry;
     ofdpaTerminationMacFlowEntry_t mac;
 
@@ -1015,7 +1246,23 @@ static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaM
     mac.match_criteria.destMacMask = mask_mac();
     mac.gotoTableId = OFDPA_FLOW_TABLE_ID_UNICAST_ROUTING;
     entry.flowData.terminationMacFlowEntry = mac;
+
+    return entry;
+}
+
+static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_mac_termination_flow(vid, port, dst);
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+}
+
+static sai_status_t ofdpa_sai_modify_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_mac_termination_flow(vid, port, dst);
+    return ofdpa_err2sai_status(ofdpaFlowModify(&entry));
+}
+
+static sai_status_t ofdpa_sai_delete_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_mac_termination_flow(vid, port, dst);
+    return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
 }
 
 static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int priority) {
@@ -1075,6 +1322,11 @@ static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop
     return ofdpa_err2sai_status(ofdpaGroupBucketEntryAdd(&bucket));
 }
 
+static sai_status_t ofdpa_sai_delete_l2_interface_group(int vid, int port) {
+    uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
+    return ofdpa_err2sai_status(ofdpaGroupDelete(gid));
+}
+
 static sai_status_t ofdpa_sai_add_l3_unicast_group(int vid, ofdpaMacAddr_t src, ofdpaMacAddr_t dst, int ref_gid, int index, int *gid) {
     ofdpaGroupEntry_t group;
     *gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L3_UNICAST, 0, 0, index);
@@ -1100,10 +1352,9 @@ static sai_status_t ofdpa_sai_add_l3_unicast_group(int vid, ofdpaMacAddr_t src, 
     return ofdpa_err2sai_status(ofdpaGroupBucketEntryAdd(&bucket));
 }
 
-static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged) {
+static ofdpaFlowEntry_t _ofdpa_sai_create_vlan_flow_entry(int vid, int port, bool tagged) {
     ofdpaFlowEntry_t entry;
     ofdpaVlanFlowEntry_t vlan;
-    sai_status_t err;
     ofdpaFlowEntryInit(OFDPA_FLOW_TABLE_ID_VLAN, &entry);
     memset(&vlan, 0, sizeof(ofdpaVlanFlowEntry_t));
 
@@ -1112,16 +1363,40 @@ static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged
     vlan.match_criteria.vlanId = OFDPA_VID_PRESENT | (uint16_t)vid;
     vlan.match_criteria.vlanIdMask  = OFDPA_VID_PRESENT | OFDPA_VID_EXACT_MASK;
     entry.flowData.vlanFlowEntry = vlan;
-    err = ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
-    if ( tagged || err != SAI_STATUS_SUCCESS ) {
-        return err;
+    if ( tagged ) {
+        return entry;
     }
-
     vlan.match_criteria.vlanId = 0;
     vlan.setVlanIdAction = 1;
     vlan.newVlanId = OFDPA_VID_PRESENT | (uint16_t)vid;
     entry.flowData.vlanFlowEntry = vlan;
+    return entry;
+}
+
+static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged) {
+    ofdpaFlowEntry_t entry;
+    sai_status_t err;
+    entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, true);
+    err = ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+    if ( tagged || err != SAI_STATUS_SUCCESS ) {
+        return err;
+    }
+    entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, false);
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+}
+
+static sai_status_t ofdpa_sai_delete_vlan_flow_entry(int vid, int port, bool tagged) {
+    ofdpaFlowEntry_t entry;
+    sai_status_t err;
+    if ( !tagged ) {
+        entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, false);
+        err = ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
+        if ( err != SAI_STATUS_SUCCESS ) {
+            return err;
+        }
+    }
+    entry = _ofdpa_sai_create_vlan_flow_entry(vid, port, true);
+    return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
 }
 
 static sai_status_t ofdpa_sai_add_unicast_routing_flow(int gid, int vrf, bool packet_in, int dst_v4, int mask_v4) {
@@ -1151,13 +1426,14 @@ sai_status_t sai_create_hostif(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
-    int i, j, fd, port_idx, vid, ofdpa_idx;
+    int i, fd, vid, ofdpa_idx;
     sai_object_type_t obj_type;
     sai_object_id_t port_oid;
     char *name = NULL;
-    bool port_exists = false;
     ofdpaMacAddr_t mac;
     sai_status_t err;
+    ofdpa_sai_port_t *port = NULL;
+
     for( i = 0; i < attr_count; i++ ) {
         switch (attr_list[i].id) {
         case SAI_HOSTIF_ATTR_TYPE:
@@ -1171,12 +1447,9 @@ sai_status_t sai_create_hostif(
             if ( obj_type != SAI_OBJECT_TYPE_PORT ) {
                 return SAI_STATUS_NOT_SUPPORTED;
             }
-            for( j = 0; j < port_num; j++ ) {
-                if ( ports[j].port_oid == port_oid ) {
-                    port_exists = true;
-                    port_idx = j;
-                    break;
-                }
+            port = get_ofdpa_sai_port_by_port_oid(port_oid);
+            if ( port == NULL ) {
+                return SAI_STATUS_MANDATORY_ATTRIBUTE_MISSING;
             }
             break;
         case SAI_HOSTIF_ATTR_NAME:
@@ -1189,47 +1462,43 @@ sai_status_t sai_create_hostif(
         return SAI_STATUS_MANDATORY_ATTRIBUTE_MISSING;
     }
 
-    if ( port_exists == false ) {
-        return SAI_STATUS_MANDATORY_ATTRIBUTE_MISSING;
-    }
-
     fd = tap_alloc(name);
     if ( fd < 0 ) {
         return SAI_STATUS_FAILURE;
     }
 
-    ports[port_idx].hostif_oid = *hif_id;
-    ports[port_idx].fd = fd;
+    port->hostif_oid = *hif_id;
+    port->fd = fd;
 
     get_mac_address(name, &mac);
 
-    ports[port_idx].mac = mac;
+    port->mac = mac;
 
-    vid = port_idx + VLAN_OFFSET; // vid use SAI indexing
-    ofdpa_idx = ports[port_idx].index;
+    vid = port->vid;
+    ofdpa_idx = port->index;
 
     err = ofdpa_sai_add_mac_termination_flow(vid, 0, mac);
     if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add mac termination flow: vid: %d, port_idx: %d\n", vid, port_idx);
+        printf("failed to add mac termination flow: vid: %d, port_idx: %d\n", vid, port->i);
         return err;
     }
 
     err = ofdpa_sai_add_acl_policy_flow(ofdpa_idx, 0x0806, NULL, &mac, 10);
     if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add acl policy flow: port: %d\n", port_idx);
+        printf("failed to add acl policy flow: port: %d\n", port->i);
     }
 
-    err = ofdpa_sai_add_l2_interface_group(vid, ofdpa_idx, true);
+    err = ofdpa_sai_add_l2_interface_group(vid, ofdpa_idx, !port->tagged);
     if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add l2 interface group: %d %d\n", vid, port_idx);
+        printf("failed to add l2 interface group: %d %d\n", vid, port->i);
     }
 
-    err = ofdpa_sai_add_vlan_flow_entry(vid, ofdpa_idx, false);
+    err = ofdpa_sai_add_vlan_flow_entry(vid, ofdpa_idx, port->tagged);
     if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add vlan flow entry: %d %d\n", vid, port_idx);
+        printf("failed to add vlan flow entry: %d %d\n", vid, port->i);
     }
 
-    pthread_create(&ports[port_idx].pt, NULL, ofdpa_sai_pkt_send_loop, (void *)&ports[port_idx]);
+    pthread_create(&port->pt, NULL, ofdpa_sai_pkt_send_loop, (void *)port);
 
     printf("send loop thread created for %s\n", name);
 
@@ -1471,7 +1740,7 @@ sai_status_t sai_create_next_hop(
     printf("setting nexthop oid: %lx\n", *next_hop_id);
     ports[idx].neighbors[jdx].oid = *next_hop_id;
 
-    vid = idx + VLAN_OFFSET;
+    vid = ports[idx].vid;
     port = ports[idx].index;
     src = ports[idx].mac;
     dst = ports[idx].neighbors[jdx].mac;
@@ -1607,7 +1876,12 @@ sai_object_type_t sai_object_type_query(_In_ sai_object_id_t sai_object_id) {
 }
 
 sai_status_t sai_api_initialize(_In_ uint64_t flags, _In_ const service_method_table_t *services) {
+    ofdpa_sai_vlan_t *v;
     pthread_mutex_init(&m, NULL);
+    v = malloc(sizeof(ofdpa_sai_vlan_t));
+    memset(v, 0, sizeof(ofdpa_sai_vlan_t));
+    vlans = v;
+
     return SAI_STATUS_SUCCESS;
 }
 
