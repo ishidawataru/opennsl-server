@@ -164,13 +164,14 @@ static ofdpa_sai_vlan_member_t* get_ofdpa_sai_vlan_member_by_vlan_member_id(sai_
             if ( vlan->oid == oid ) {
                 return vlan;
             }
+            vlan = vlan->next;
         }
     }
     return NULL;
 }
 
 static sai_status_t ofdpa_sai_add_vlan_member(ofdpa_sai_port_t *port, sai_object_id_t vlan_member_id, int vid, bool tagged) {
-    ofdpa_sai_vlan_member_t *vlan, *prev = NULL;
+    ofdpa_sai_vlan_member_t *vlan, *prev = NULL, *tmp;
     vlan = malloc(sizeof(ofdpa_sai_vlan_member_t));
     memset(vlan, 0, sizeof(ofdpa_sai_vlan_member_t));
     vlan->oid = vlan_member_id;
@@ -180,13 +181,14 @@ static sai_status_t ofdpa_sai_add_vlan_member(ofdpa_sai_port_t *port, sai_object
     if ( port->vlans == NULL ){
         port->vlans = vlan;
     } else {
-        vlan = port->vlans;
-        while ( vlan != NULL ) {
-            prev = vlan;
-            vlan = vlan->next;
+        tmp = port->vlans;
+        while ( tmp != NULL ) {
+            prev = tmp;
+            tmp = tmp->next;
         }
         prev->next = vlan;
     }
+
     return SAI_STATUS_SUCCESS;
 }
 
@@ -194,7 +196,11 @@ static sai_status_t ofdpa_sai_delete_vlan_member(ofdpa_sai_port_t *port, sai_obj
     ofdpa_sai_vlan_member_t *vlan = port->vlans, *prev = NULL;
     while ( vlan != NULL ) {
         if ( vlan->oid == vlan_member_id ) {
-            prev->next = vlan->next;
+            if ( prev != NULL ) {
+                prev->next = vlan->next;
+            } else {
+                port->vlans = vlan->next;
+            }
             free(vlan);
             return SAI_STATUS_SUCCESS;
         }
@@ -1189,7 +1195,6 @@ sai_status_t sai_create_route_entry(
     for ( i = 0; i < port_num; i++ ) {
         for ( j = 0; j < ports[i].num_neighbor; j++ ) {
             if ( ports[i].neighbors[j].oid == oid ) {
-                printf("oid: %lx\n", oid);
                 gid = ports[i].neighbors[j].gid;
                 break;
             }
