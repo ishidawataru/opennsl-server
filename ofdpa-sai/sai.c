@@ -2239,3 +2239,7 @@ sai_status_t sai_log_set(_In_ sai_api_t sai_api_id, _In_ sai_log_level_t log_lev
 sai_object_id_t sai_switch_id_query(_In_ sai_object_id_t sai_object_id) {
     return g_switch_id;
 }
+
+sai_status_t sai_dbg_generate_dump(_In_ const char *dump_file_name) {
+    return SAI_STATUS_SUCCESS;
+}
