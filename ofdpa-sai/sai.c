@@ -72,11 +72,14 @@ static pthread_mutex_t m;
 
 static pthread_t pt;
 
-typedef struct {
+struct ofdpa_sai_neighbor_s;
+
+typedef struct ofdpa_sai_neighbor_s {
     uint32_t ip;
     ofdpaMacAddr_t mac;
     int gid;  // OFDPA l3 unicast group id
     sai_object_id_t oid; // SAI NEXTHOP oid
+    struct ofdpa_sai_neighbor_s *next;
 } ofdpa_sai_neighbor_t;
 
 struct ofdpa_sai_port_s;
@@ -89,6 +92,11 @@ typedef struct ofdpa_sai_vlan_member_s {
     struct ofdpa_sai_port_s *port;
     struct ofdpa_sai_vlan_member_s *next;
 } ofdpa_sai_vlan_member_t;
+
+typedef struct ofdpa_sai_neighbor_db_s {
+    ofdpa_sai_neighbor_t *head;
+    int cnt;
+} ofdpa_sai_neighbor_db_t;
 
 typedef struct ofdpa_sai_port_s {
     int index; // OFDPA PORT NUM
@@ -106,9 +114,33 @@ typedef struct ofdpa_sai_port_s {
     int vid; // current access vid
     bool disabled;
     ofdpa_sai_vlan_member_t *vlans;
+    ofdpa_sai_neighbor_db_t *neigh_db;
 } ofdpa_sai_port_t;
 
+struct ofdpa_sai_vlan_s;
+
+typedef struct ofdpa_sai_vlan_s {
+    sai_object_id_t oid; // SAI VLAN OID
+    int vid;
+    int num_ports;
+    ofdpa_sai_port_t ports[MAX_PORTS];
+    int num_neighbor;
+    ofdpa_sai_neighbor_t neighbors[MAX_NEIGHBORS];
+    sai_object_id_t router_if_oid;
+    struct ofdpa_sai_vlan_s *next;
+    ofdpaMacAddr_t mac;
+} ofdpa_sai_vlan_t;
+
 static ofdpa_sai_port_t *ports;
+static ofdpa_sai_vlan_t *vlans;
+
+static print_mac(ofdpaMacAddr_t mac) {
+    int i;
+    for( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
+        printf("%02x:", mac.addr[i] & 0xff);
+    }
+    printf("\n");
+}
 
 static ofdpa_sai_port_t* get_ofdpa_sai_port_by_port_index(int index) {
     int i;
@@ -150,6 +182,43 @@ static ofdpa_sai_port_t* get_ofdpa_sai_port_by_vlan_member_id(sai_object_id_t oi
                 return &ports[i];
             }
             vlan = vlan->next;
+        }
+    }
+    return NULL;
+}
+
+static ofdpa_sai_neighbor_t* get_ofdpa_sai_mac_by_mac(ofdpa_sai_neighbor_db_t *db, ofdpaMacAddr_t mac) {
+    printf("db: %p\n", db);
+    ofdpa_sai_neighbor_t *n = db->head;
+    int i;
+    bool found;
+    while ( n != NULL ) {
+        found = true;
+        printf("n->mac:");
+        print_mac(n->mac);
+        printf("mac:");
+        print_mac(mac);
+        for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
+            if ( n->mac.addr[i] != mac.addr[i] ) {
+                found = false;
+                break;
+            }
+        }
+
+        if ( found == true ) {
+            return n;
+        }
+
+        n = n->next;
+    }
+    return NULL;
+}
+
+static ofdpa_sai_port_t* get_ofdpa_sai_port_by_mac(int vid, ofdpaMacAddr_t mac) {
+    int i;
+    for ( i = 0; i < port_num; i++ ) {
+        if ( get_ofdpa_sai_mac_by_mac(ports[i].neigh_db, mac) != NULL ) {
+            return &ports[i];
         }
     }
     return NULL;
@@ -210,22 +279,6 @@ static sai_status_t ofdpa_sai_delete_vlan_member(ofdpa_sai_port_t *port, sai_obj
     return SAI_STATUS_FAILURE;
 }
 
-struct ofdpa_sai_vlan_s;
-
-typedef struct ofdpa_sai_vlan_s {
-    sai_object_id_t oid; // SAI VLAN OID
-    int vid;
-    int num_ports;
-    ofdpa_sai_port_t ports[MAX_PORTS];
-    int num_neighbor;
-    ofdpa_sai_neighbor_t neighbors[MAX_NEIGHBORS];
-    sai_object_id_t router_if_oid;
-    struct ofdpa_sai_vlan_s *next;
-    ofdpaMacAddr_t mac;
-} ofdpa_sai_vlan_t;
-
-static ofdpa_sai_vlan_t *vlans;
-
 static ofdpa_sai_vlan_t* append_new_vlan() {
     ofdpa_sai_vlan_t *v = vlans, *prev = NULL;
     while ( v != NULL ) {
@@ -249,6 +302,51 @@ static ofdpa_sai_vlan_t* get_ofdpa_sai_vlan_by_vlan_oid(sai_object_id_t oid) {
         v = v->next;
     }
     return NULL;
+}
+
+static ofdpa_sai_vlan_t* get_ofdpa_sai_vlan_by_router_if_oid(sai_object_id_t oid) {
+    ofdpa_sai_vlan_t *v = vlans;
+    while (v != NULL ) {
+        if ( v->router_if_oid == oid ) {
+            return v;
+        }
+        v = v->next;
+    }
+    return NULL;
+}
+
+static ofdpa_sai_neighbor_db_t* new_neigh_db() {
+    ofdpa_sai_neighbor_db_t *db;
+    ofdpa_sai_neighbor_t *n;
+    db = malloc(sizeof(ofdpa_sai_neighbor_db_t));
+    memset(db, 0, sizeof(ofdpa_sai_neighbor_db_t));
+    n = malloc(sizeof(ofdpa_sai_neighbor_t));
+    memset(n, 0, sizeof(ofdpa_sai_neighbor_t));
+
+    db->head = n;
+
+    return db;
+}
+
+static int ofdpa_sai_add_neighbor_to_db(ofdpa_sai_neighbor_db_t *db, ofdpaMacAddr_t mac) {
+    ofdpa_sai_neighbor_t *n = db->head, *prev = NULL;
+    while ( n != NULL ) {
+        prev = n;
+        n = n->next;
+    }
+    n = malloc(sizeof(ofdpa_sai_neighbor_t));
+    memset(n, 0, sizeof(ofdpa_sai_neighbor_t));
+    n->mac = mac;
+    prev->next = n;
+    return 0;
+}
+
+static int ofdpa_sai_add_neighbor_to_port(ofdpa_sai_port_t *port, ofdpaMacAddr_t mac) {
+    return ofdpa_sai_add_neighbor_to_db(port->neigh_db, mac);
+}
+
+static void ipstr(sai_ip4_t ip, char *str) {
+    sprintf(str, "%d.%d.%d.%d", ip & 0xff, (ip >> 8) & 0xff, (ip >> 16) & 0xff, (ip >> 24) & 0xff);
 }
 
 static sai_status_t get_mac_address(const char *name, ofdpaMacAddr_t *mac) {
@@ -317,17 +415,12 @@ static ofdpaMacAddr_t mask_mac() {
     return mask;
 }
 
-static print_mac(ofdpaMacAddr_t mac) {
-    int i;
-    for( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
-        printf("%02x:", mac.addr[i] & 0xff);
-    }
-    printf("\n");
-}
-
 static sai_status_t ofdpa_err2sai_status(OFDPA_ERROR_t err) {
     switch ( err ) {
     case OFDPA_E_NONE:
+        return SAI_STATUS_SUCCESS;
+    case OFDPA_E_EXISTS:
+        printf("OFDPA EXISTS\n");
         return SAI_STATUS_SUCCESS;
     }
     printf("OFDPA ERR: %d\n", err);
@@ -866,6 +959,7 @@ static sai_status_t ofdpa_sai_init_port() {
         ofdpaPortNameGet(next, &buf);
         ports[i].i = i;
         ports[i].vid = i + VLAN_OFFSET;
+        ports[i].neigh_db = new_neigh_db();
     }
 
     return SAI_STATUS_SUCCESS;
@@ -910,12 +1004,14 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
             for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
                 src.addr[i] = pkt.pktData.pstart[i+6] & 0xff;
             }
+            if ( ofdpa_sai_add_neighbor_to_port(port, src) != 0 ) {
+                printf("failed to add neighbor to db\n");
+            }
             status = ofdpa_sai_add_bridging_flow(port->vid, pkt.inPortNum, src);
             if ( status != SAI_STATUS_SUCCESS ) {
                 printf("failed to add bridging flow\n");
             }
         }
-
         if ( (fd = port->fd) > 0 ) {
             write(fd, pkt.pktData.pstart, pkt.pktData.size);
         }
@@ -1164,6 +1260,7 @@ sai_status_t sai_create_route_entry(
     int i, j, gid = -1;
     bool packet_in = false, forward = false;
     sai_object_id_t oid;
+    char sprefix[32], smask[32];
 
     if( route_entry->destination.addr_family != SAI_IP_ADDR_FAMILY_IPV4 ) {
         return SAI_STATUS_SUCCESS;
@@ -1189,6 +1286,9 @@ sai_status_t sai_create_route_entry(
     mask = route_entry->destination.mask.ip4;
 
     if ( packet_in == true && forward == true ) {
+        ipstr(prefix, sprefix);
+        ipstr(mask, smask);
+        printf("adding packet-in flow: %s %s\n", sprefix, smask);
         return ofdpa_sai_add_unicast_routing_flow(0, 0, packet_in, (int)prefix, (int)mask);
     }
 
@@ -1870,15 +1970,15 @@ sai_status_t sai_create_next_hop(
         _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
-    int i, idx = 0, j, jdx = 0;
+    int i, j;
     sai_object_id_t oid;
-    bool found = false;
     uint32_t ip4 = 0;
-    int gid = 0, ref_gid = 0, vid, port, ip;
+    int gid = 0, ref_gid = 0, vid, index, ip;
     ofdpaMacAddr_t src, dst;
     sai_status_t err;
-
-    pthread_mutex_lock(&m);
+    ofdpa_sai_vlan_t *vlan = NULL;
+    ofdpa_sai_port_t *port = NULL;
+    ofdpa_sai_neighbor_t *neighbor = NULL;
 
     for ( i = 0; i < attr_count; i++ ) {
         switch ( attr_list[i].id ) {
@@ -1886,49 +1986,68 @@ sai_status_t sai_create_next_hop(
             oid = attr_list[i].value.oid;
             for ( j = 0; j < port_num; j++ ){
                 if ( ports[j].router_if_oid == oid ) {
-                    found = true;
-                    idx = j;
+                    port = &ports[j];
+                }
+            }
+            if ( port == NULL ) {
+                vlan = get_ofdpa_sai_vlan_by_router_if_oid(oid);
+                if ( vlan == NULL ) {
+                    return SAI_STATUS_FAILURE;
                 }
             }
             break;
         case SAI_NEXT_HOP_ATTR_IP:
             ip4 = (uint32_t)attr_list[i].value.ipaddr.addr.ip4;
+            if ( ip4 == 0 ) {
+                return SAI_STATUS_FAILURE;
+            }
             break;
         }
     }
 
-    printf("create next hop: %d %d\n", found, ip4);
+    printf("create next hop: %d\n", ip4);
 
-    if ( found == false || ip4 == 0 ) {
-        pthread_mutex_unlock(&m);
+    if ( port != NULL ) {
+        for ( i = 0; i < port->num_neighbor; i++ ) {
+            if ( port->neighbors[i].ip == ip4 ) {
+                neighbor = &port->neighbors[i];
+            }
+        }
+    } else if ( vlan != NULL ) {
+        for ( i = 0; i < vlan->num_neighbor; i++ ) {
+            if ( vlan->neighbors[i].ip == ip4 ) {
+                neighbor = &vlan->neighbors[i];
+            }
+        }
+
+        if ( neighbor == NULL ) {
+            return SAI_STATUS_FAILURE;
+        }
+
+        port = get_ofdpa_sai_port_by_mac(0, neighbor->mac);
+        if ( port == NULL ) {
+            return SAI_STATUS_FAILURE;
+        }
+
+    } else {
         return SAI_STATUS_FAILURE;
     }
-    found = false;
 
-    for ( i = 0; i < ports[idx].num_neighbor; i++ ) {
-        printf("idx: %d, i: %d, ip: %d, ip4: %d\n", idx, i, ports[idx].neighbors[i].ip, ip4);
-        if ( ports[idx].neighbors[i].ip == ip4 ) {
-            jdx = i;
-            found = true;
-        }
-    }
-
-    if ( found == false ) {
-        pthread_mutex_unlock(&m);
+    if ( neighbor == NULL ) {
         return SAI_STATUS_FAILURE;
     }
 
     printf("setting nexthop oid: %lx\n", *next_hop_id);
-    ports[idx].neighbors[jdx].oid = *next_hop_id;
+    neighbor->oid = *next_hop_id;
 
-    vid = ports[idx].vid;
-    port = ports[idx].index;
-    src = ports[idx].mac;
-    dst = ports[idx].neighbors[jdx].mac;
-    ip = ports[idx].neighbors[jdx].ip;
+    vid = port->vid;
+    index = port->index;
+    src = port->mac;
+    dst = neighbor->mac;
+    ip = neighbor->ip;
     l3_unicast_idx++;
 
-    ref_gid = (int)ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
+    ref_gid = (int)ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, index, 0);
 
     printf("ref-gid: %d\n", ref_gid);
     print_mac(src);
@@ -1941,20 +2060,18 @@ sai_status_t sai_create_next_hop(
     }
 
     printf("setting gid: %x\n", gid);
-    ports[idx].neighbors[jdx].gid = gid;
+    neighbor->gid = gid;
 
     printf("added l3 unciast group\n");
 
     err = ofdpa_sai_add_unicast_routing_flow(gid, 0, false, (int)ip, (int)0xffffffff);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add unicast routing flow: %d\n", gid);
-        pthread_mutex_unlock(&m);
         return err;
     }
 
     printf("added unicast routing flow\n");
 
-    pthread_mutex_unlock(&m);
     return SAI_STATUS_SUCCESS;
 }
 
@@ -1987,21 +2104,23 @@ sai_status_t sai_create_neighbor_entry(
         _In_ const sai_neighbor_entry_t *neighbor_entry,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
-    int i, j, idx, jdx;
-    bool found = false;
+    int i, j, idx = -1, jdx;
     ofdpaMacAddr_t mac;
+    ofdpa_sai_vlan_t *vlan = NULL;
+    char ip[32];
 
     for ( i = 0; i < port_num; i++ ) {
         if ( ports[i].router_if_oid == neighbor_entry->rif_id ) {
             idx = i;
-            found = true;
         }
     }
 
-    if ( found == false ) {
-        return SAI_STATUS_FAILURE;
+    if ( idx < 0 ) {
+        vlan = get_ofdpa_sai_vlan_by_router_if_oid(neighbor_entry->rif_id);
+        if ( vlan == NULL ) {
+            return SAI_STATUS_FAILURE;
+        }
     }
-
 
     for ( i = 0; i < attr_count; i++ ) {
         switch (attr_list[i].id) {
@@ -2012,12 +2131,18 @@ sai_status_t sai_create_neighbor_entry(
         }
     }
 
-    printf("create neighbor entry: %d %d %d\n", idx, jdx, neighbor_entry->ip_address.addr.ip4);
+    ipstr(neighbor_entry->ip_address.addr.ip4, ip);
+    printf("create neighbor entry: %d %d %s\n", idx, jdx, ip);
 
-    ports[idx].neighbors[jdx].mac = mac;
-    ports[idx].neighbors[jdx].ip = (uint32_t)neighbor_entry->ip_address.addr.ip4;
-
-    jdx = ports[idx].num_neighbor++;
+    if ( vlan == NULL ) {
+        jdx = ports[idx].num_neighbor++;
+        ports[idx].neighbors[jdx].mac = mac;
+        ports[idx].neighbors[jdx].ip = (uint32_t)neighbor_entry->ip_address.addr.ip4;
+    } else {
+        jdx = vlan->num_neighbor++;
+        vlan->neighbors[jdx].mac = mac;
+        vlan->neighbors[jdx].ip = (uint32_t)neighbor_entry->ip_address.addr.ip4;
+    }
 
     return SAI_STATUS_SUCCESS;
 }
