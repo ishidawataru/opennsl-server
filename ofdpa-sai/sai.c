@@ -27,6 +27,8 @@
 #define OBJECT_TYPE_SHIFT 48
 #define VLAN_OFFSET 10
 
+#define ETHER_TYPE_VLAN 0x8100
+
 static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged);
 static sai_status_t ofdpa_sai_add_untagged_vlan_flow_entry(int vid, int port);
 static sai_status_t ofdpa_sai_add_tagged_vlan_flow_entry(int vid, int port);
@@ -993,12 +995,14 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
             printf("Receive fail: %d\n", err);
             return NULL;
         }
-        printf("RECV: in-port: %d, reason: %d, table-id: %d\n", pkt.inPortNum, pkt.reason, pkt.tableId);
 
-//        for ( i = 0; i < pkt.pktData.size; i++ ) {
-//            printf("0x%02x ", pkt.pktData.pstart[i] & 0xff);
-//        }
-//        printf("\n");
+        pthread_mutex_lock(&m);
+        printf("RECV: in-port: %d, reason: %d, table-id: %d\n", pkt.inPortNum, pkt.reason, pkt.tableId);
+        for ( i = 0; i < pkt.pktData.size; i++ ) {
+            printf("0x%02x ", pkt.pktData.pstart[i] & 0xff);
+        }
+        printf("\n");
+        pthread_mutex_unlock(&m);
 
         port = get_ofdpa_sai_port_by_port_index(pkt.inPortNum);
         if ( port == NULL ) {
@@ -1013,14 +1017,26 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
 
         if ( pkt.tableId == OFDPA_FLOW_TABLE_ID_SA_LOOKUP || ( pkt.tableId == OFDPA_FLOW_TABLE_ID_ACL_POLICY &&  is_broadcast(pkt.pktData.pstart)) ) {
             ofdpaMacAddr_t src;
+            int ether_type, vid = 0;
             for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
                 src.addr[i] = pkt.pktData.pstart[i+6] & 0xff;
             }
+            ether_type = (int)((pkt.pktData.pstart[12] & 0xff ) << 8 | (pkt.pktData.pstart[13] & 0xff ));
+            switch ( ether_type ) {
+            case ETHER_TYPE_VLAN:
+                vid = (int)((pkt.pktData.pstart[14] & 0xff ) << 8 | ( pkt.pktData.pstart[15] & 0xff ));
+                break;
+            default:
+                // access port vid
+                vid = port->vid;
+                break;
+            }
+            printf("ether_type: %d, vid: %d\n", ether_type, vid);
             // TODO avoid duplication
             if ( ofdpa_sai_add_neighbor_to_port(port, src) != 0 ) {
                 printf("failed to add neighbor to db\n");
             }
-            status = ofdpa_sai_add_bridging_flow(port->vid, pkt.inPortNum, src);
+            status = ofdpa_sai_add_bridging_flow(vid, pkt.inPortNum, src);
             if ( status != SAI_STATUS_SUCCESS ) {
                 printf("failed to add bridging flow\n");
             }
