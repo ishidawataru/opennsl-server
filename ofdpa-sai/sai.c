@@ -353,6 +353,15 @@ static void ipstr(sai_ip4_t ip, char *str) {
     sprintf(str, "%d.%d.%d.%d", ip & 0xff, (ip >> 8) & 0xff, (ip >> 16) & 0xff, (ip >> 24) & 0xff);
 }
 
+static void macstr(ofdpaMacAddr_t mac, char *str) {
+    sprintf(str, "%02x:%02x:%02x:%02x:%02x:%02x", mac.addr[0] & 0xff,
+                                                  mac.addr[1] & 0xff,
+                                                  mac.addr[2] & 0xff,
+                                                  mac.addr[3] & 0xff,
+                                                  mac.addr[4] & 0xff,
+                                                  mac.addr[5] & 0xff);
+}
+
 static sai_status_t get_mac_address(const char *name, ofdpaMacAddr_t *mac) {
     struct nl_sock *sock;
     struct rtnl_link *link;
@@ -1007,6 +1016,7 @@ void *ofdpa_sai_pkt_recv_loop(void *arg){
             for ( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
                 src.addr[i] = pkt.pktData.pstart[i+6] & 0xff;
             }
+            // TODO avoid duplication
             if ( ofdpa_sai_add_neighbor_to_port(port, src) != 0 ) {
                 printf("failed to add neighbor to db\n");
             }
@@ -1034,14 +1044,16 @@ void *ofdpa_sai_pkt_send_loop(void *arg) {
         if ( size < 0 ) {
             return NULL;
         }
+        pthread_mutex_lock(&m);
         printf("SEND: in-port: %d, size: %d\n", port->index, size);
         buf.size = size;
-//        for ( i = 0; i < size; i++ ) {
-//            printf("0x%02x ", buf.pstart[i] & 0xff);
-//        }
-//        printf("\n");
+        for ( i = 0; i < size; i++ ) {
+            printf("0x%02x ", buf.pstart[i] & 0xff);
+        }
+        printf("\n");
         err = ofdpaPktSend(&buf, 0, port->index, 0);
         buf.size = max_pkt_size;
+        pthread_mutex_unlock(&m);
         if ( err != OFDPA_E_NONE) {
             printf("Send fail: %d\n", err);
             continue;
@@ -1523,8 +1535,11 @@ static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_
 
     uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_INTERFACE, vid, port, 0);
     memset(&br, 0, sizeof(ofdpaBridgingFlowEntry_t));
+    char mac[32];
 
-    printf("add_bridging_flow: vid: %d, port: %d, gid: %d\n", vid, port, gid);
+    macstr(dst, mac);
+
+    printf("add bridging flow: vid: %d, port: %d, gid: %d, dst: %s\n", vid, port, gid, mac);
 
     br.gotoTableId = OFDPA_FLOW_TABLE_ID_ACL_POLICY;
     br.groupID = gid;
