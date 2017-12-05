@@ -62,6 +62,8 @@ static sai_object_id_t g_bridge_port = (sai_object_id_t)SAI_OBJECT_TYPE_BRIDGE_P
 static sai_object_id_t g_default_trap_group = (sai_object_id_t)SAI_OBJECT_TYPE_HOSTIF_TRAP_GROUP << OBJECT_TYPE_SHIFT;
 static sai_object_id_t g_policer = (sai_object_id_t)SAI_OBJECT_TYPE_POLICER << OBJECT_TYPE_SHIFT;
 
+static sai_port_state_change_notification_fn g_port_state_callback = NULL;
+
 static uint32_t max_pkt_size = 0;
 static uint32_t port_num = 0;
 static int l3_unicast_idx = 0;
@@ -71,6 +73,7 @@ static pthread_mutex_t m;
 #define MAX_PORTS 128
 
 static pthread_t pt;
+static pthread_t pt_notification;
 
 struct ofdpa_sai_neighbor_s;
 
@@ -1046,6 +1049,51 @@ void *ofdpa_sai_pkt_send_loop(void *arg) {
     }
 }
 
+void *ofdpa_sai_event_recv_loop(void *arg) {
+    OFDPA_ERROR_t err;
+    ofdpaPortEvent_t port_event;
+    ofdpaFlowEvent_t flow_event;
+    ofdpa_sai_port_t *port = NULL;
+
+    while ( ( err = ofdpaEventReceive(NULL) ) == OFDPA_E_NONE ) {
+        printf("event received\n");
+        memset(&port_event, 0, sizeof(port_event));
+        while (ofdpaPortEventNextGet(&port_event) == OFDPA_E_NONE) {
+            printf("port_event: %d %d %d\n", port_event.eventMask, port_event.portNum, port_event.state);
+            sai_port_oper_status_notification_t status = {0};
+
+            port = get_ofdpa_sai_port_by_port_index(port_event.portNum);
+            if ( port == NULL || port->port_oid == 0 ) {
+                printf("port not found. ignore\n");
+                continue;
+            }
+            status.port_id = port->port_oid;
+            switch ( port_event.state ) {
+            case 0:
+                status.port_state = SAI_PORT_OPER_STATUS_UP;
+                break;
+            case 1:
+                status.port_state = SAI_PORT_OPER_STATUS_DOWN;
+                break;
+            default:
+                printf("unknown state. ignore\n");
+                continue;
+            }
+
+            if ( g_port_state_callback != NULL ) {
+                g_port_state_callback(1, &status);
+            }
+
+        }
+        memset(&flow_event, 0, sizeof(flow_event));
+        while (ofdpaFlowEventNextGet(&flow_event) == OFDPA_E_NONE) {
+            printf("flow_event: %d\n", flow_event.eventMask);
+        }
+    }
+    printf("event receive failed: %d\n", err);
+    return NULL;
+}
+
 sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t attr_count, _In_ const sai_attribute_t *attr_list) {
     int i;
     *switch_id = g_switch_id;
@@ -1056,6 +1104,14 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
 
     for(i = 0; i < attr_count; i++){
         printf("attr: %d\n", attr_list[i].id);
+        switch ( attr_list[i].id ) {
+        case SAI_SWITCH_ATTR_PORT_STATE_CHANGE_NOTIFY:
+            printf("set port state change notify\n");
+            g_port_state_callback = (sai_port_state_change_notification_fn)(attr_list[i].value.ptr);
+            break;
+        default:
+            break;
+        }
     }
 
     err = ofdpaClientInitialize("sai");
@@ -1069,6 +1125,8 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
 
     ofdpaMaxPktSizeGet(&max_pkt_size);
 
+    ofdpaClientEventSockBind();
+
     ofdpa_sai_init_port();
 
     mac = mask_mac();
@@ -1080,6 +1138,10 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
     }
 
     pthread_create(&pt, NULL, &ofdpa_sai_pkt_recv_loop, NULL);
+
+    if ( g_port_state_callback != NULL ) {
+        pthread_create(&pt_notification, NULL, &ofdpa_sai_event_recv_loop, NULL);
+    }
 
     return SAI_STATUS_SUCCESS;
 }
