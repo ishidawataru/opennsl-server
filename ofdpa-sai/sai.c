@@ -63,6 +63,7 @@ static sai_object_id_t g_default_trap_group = (sai_object_id_t)SAI_OBJECT_TYPE_H
 static sai_object_id_t g_policer = (sai_object_id_t)SAI_OBJECT_TYPE_POLICER << OBJECT_TYPE_SHIFT;
 
 static sai_port_state_change_notification_fn g_port_state_callback = NULL;
+static sai_fdb_event_notification_fn g_fdb_event_callback = NULL;
 
 static uint32_t max_pkt_size = 0;
 static uint32_t port_num = 0;
@@ -799,6 +800,7 @@ sai_status_t sai_create_port(_Out_ sai_object_id_t *port_id,
     int i;
     uint32_t count, *list, index;
     bool found = false;
+    ofdpa_sai_port_t *port = NULL;
     for( i = 0; i < attr_count; i++ ) {
         switch (attr_list[i].id) {
         case SAI_PORT_ATTR_HW_LANE_LIST:
@@ -818,12 +820,10 @@ sai_status_t sai_create_port(_Out_ sai_object_id_t *port_id,
         printf("no lane found\n");
         return SAI_STATUS_NOT_SUPPORTED;
     }
-    for ( i = 0; i < port_num; i++ ) {
-        printf("ports[%d].index = %d, index: %d\n", i, ports[i].index, index);
-        if ( ports[i].index == index ) {
-            ports[i].port_oid = *port_id;
-            return SAI_STATUS_SUCCESS;
-        }
+    port = get_ofdpa_sai_port_by_port_index((int)index);
+    if ( port != NULL ) {
+        port->port_oid = *port_id;
+        return SAI_STATUS_SUCCESS;
     }
     printf("not found index: %d\n", index);
     return SAI_STATUS_FAILURE;
@@ -1105,6 +1105,16 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
     for(i = 0; i < attr_count; i++){
         printf("attr: %d\n", attr_list[i].id);
         switch ( attr_list[i].id ) {
+        case SAI_SWITCH_ATTR_INIT_SWITCH:
+            printf("attr init switch\n");
+            break;
+        case SAI_SWITCH_ATTR_SHUTDOWN_REQUEST_NOTIFY:
+            printf("shutdown req notify\n");
+            break;
+        case SAI_SWITCH_ATTR_FDB_EVENT_NOTIFY:
+            printf("set fdb event notify\n");
+            g_fdb_event_callback = (sai_fdb_event_notification_fn)(attr_list[i].value.ptr);
+            break;
         case SAI_SWITCH_ATTR_PORT_STATE_CHANGE_NOTIFY:
             printf("set port state change notify\n");
             g_port_state_callback = (sai_port_state_change_notification_fn)(attr_list[i].value.ptr);
