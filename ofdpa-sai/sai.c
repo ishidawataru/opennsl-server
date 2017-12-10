@@ -903,6 +903,61 @@ sai_status_t sai_get_port_attribute(_In_ sai_object_id_t port_id, _In_ uint32_t 
 }
 
 sai_status_t sai_get_port_stats(_In_ sai_object_id_t port_id, _In_ uint32_t number_of_counters, _In_ const sai_port_stat_t *counter_ids, _Out_ uint64_t *counters) {
+    ofdpa_sai_port_t *port = get_ofdpa_sai_port_by_port_oid(port_id);
+    int i;
+    ofdpaPortStats_t stats = {0};
+
+    if ( port == NULL ) {
+        printf("no port found for %lx", port_id);
+        return SAI_STATUS_FAILURE;
+    }
+
+    ofdpaPortStatsGet(port->index, &stats);
+
+    for ( i = 0; i < number_of_counters; i++ ) {
+        switch ( counter_ids[i] ) {
+        case SAI_PORT_STAT_IF_IN_OCTETS:
+            counters[i] = stats.rx_bytes;
+            break;
+        case SAI_PORT_STAT_IF_IN_UCAST_PKTS:
+            counters[i] = stats.rx_packets;
+            break;
+        case SAI_PORT_STAT_IF_IN_DISCARDS:
+            counters[i] = stats.rx_drops;
+            break;
+        case SAI_PORT_STAT_IF_IN_ERRORS:
+            counters[i] = stats.rx_errors;
+            break;
+        case SAI_PORT_STAT_IF_OUT_OCTETS:
+            counters[i] = stats.tx_bytes;
+            break;
+        case SAI_PORT_STAT_IF_OUT_UCAST_PKTS:
+            counters[i] = stats.tx_packets;
+            break;
+        case SAI_PORT_STAT_IF_OUT_DISCARDS:
+            counters[i] = stats.tx_drops;
+            break;
+        case SAI_PORT_STAT_IF_OUT_ERRORS:
+            counters[i] = stats.tx_errors;
+            break;
+        case SAI_PORT_STAT_ETHER_STATS_COLLISIONS:
+            counters[i] = stats.collisions;
+            break;
+        case SAI_PORT_STAT_ETHER_STATS_CRC_ALIGN_ERRORS:
+            counters[i] = stats.rx_crc_err;
+            break;
+        case SAI_PORT_STAT_ETHER_RX_OVERSIZE_PKTS:
+            counters[i] = stats.rx_over_err;
+            break;
+        case SAI_PORT_STAT_IN_DROPPED_PKTS:
+            counters[i] = stats.rx_drops;
+            break;
+        case SAI_PORT_STAT_OUT_DROPPED_PKTS:
+            counters[i] = stats.tx_drops;
+            break;
+        }
+    }
+
     return SAI_STATUS_SUCCESS;
 }
 
