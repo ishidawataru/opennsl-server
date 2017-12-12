@@ -894,6 +894,7 @@ sai_status_t sai_get_port_attribute(_In_ sai_object_id_t port_id, _In_ uint32_t 
         case SAI_PORT_ATTR_EEE_IDLE_TIME:
         case SAI_PORT_ATTR_BIND_MODE:
             return SAI_STATUS_NOT_SUPPORTED;
+        case SAI_PORT_ATTR_QOS_NUMBER_OF_QUEUES:
         case SAI_PORT_ATTR_NUMBER_OF_INGRESS_PRIORITY_GROUPS:
             attr_list[i].value.u32 = 0;
             break;
