@@ -40,7 +40,8 @@ static sai_status_t ofdpa_sai_add_bridging_flow(int vid, int port, ofdpaMacAddr_
 static sai_status_t ofdpa_sai_flush_bridging_flows(int vid, int port);
 
 static sai_status_t ofdpa_sai_add_unicast_routing_flow(int gid, int vrf, bool packet_in, int dst_v4, int mask_v4) ;
-static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int priority);
+static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int vid, int priority);
+static sai_status_t ofdpa_sai_delete_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int vid, int priority);
 
 static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop);
 static sai_status_t ofdpa_sai_delete_l2_interface_group(int vid, int port);
@@ -793,7 +794,7 @@ sai_status_t sai_create_router_interface(
             return err;
         }
 
-        err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &macaddr, 10);
+        err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &macaddr, 0, 10);
         if ( err != SAI_STATUS_SUCCESS ) {
             printf("failed to add acl policy flow: port: %s\n", name);
             return err;
@@ -1251,7 +1252,7 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
 
     mac = mask_mac();
 
-    err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &mac, 0);
+    err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &mac, 0, 0);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add acl policy flow for arp request\n");
         return err;
@@ -1711,7 +1712,7 @@ static sai_status_t ofdpa_sai_delete_mac_termination_flow(int vid, int port, ofd
     return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
 }
 
-static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int priority) {
+static ofdpaFlowEntry_t _ofdpa_sai_create_acl_policy_flow_entry(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int vid, int priority) {
     ofdpaFlowEntry_t entry;
     ofdpaPolicyAclFlowEntry_t acl;
     memset(&acl, 0, sizeof(ofdpaPolicyAclFlowEntry_t));
@@ -1735,10 +1736,26 @@ static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdp
     } else {
         acl.match_criteria.etherTypeMask = OFDPA_ETHERTYPE_ALL_MASK;
     }
+    if ( vid > 0 ) {
+        acl.match_criteria.vlanId = (uint16_t)vid;
+        acl.match_criteria.vlanIdMask = OFDPA_VID_EXACT_MASK;
+    } else {
+        acl.match_criteria.vlanIdMask = OFDPA_VID_FIELD_MASK;
+    }
     acl.outputPort = OFDPA_PORT_CONTROLLER;
     entry.flowData.policyAclFlowEntry = acl;
     entry.priority = (uint32_t)priority;
+    return entry;
+}
+
+static sai_status_t ofdpa_sai_add_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int vid, int priority) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_acl_policy_flow_entry(port, ether_type, src, dst, vid, priority);
     return ofdpa_err2sai_status(ofdpaFlowAdd(&entry));
+}
+
+static sai_status_t ofdpa_sai_delete_acl_policy_flow(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int vid, int priority) {
+    ofdpaFlowEntry_t entry = _ofdpa_sai_create_acl_policy_flow_entry(port, ether_type, src, dst, vid, priority);
+    return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
 }
 
 static sai_status_t ofdpa_sai_add_l2_interface_group(int vid, int port, bool pop) {
@@ -1952,7 +1969,7 @@ sai_status_t sai_create_hostif(
         return err;
     }
 
-    err = ofdpa_sai_add_acl_policy_flow(ofdpa_idx, 0x0806, NULL, &mac, 10);
+    err = ofdpa_sai_add_acl_policy_flow(ofdpa_idx, 0x0806, NULL, &mac, 0, 10);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add acl policy flow: port: %d\n", port->i);
         return err;
