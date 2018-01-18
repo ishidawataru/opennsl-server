@@ -533,6 +533,7 @@ sai_status_t sai_create_vlan_member(
     sai_object_id_t oid;
     sai_status_t err;
     bool pop = true, old_tagged;
+    ofdpaMacAddr_t mac;
     for ( i = 0; i < attr_count; i++ ) {
         switch ( attr_list[i].id ) {
         case SAI_VLAN_MEMBER_ATTR_VLAN_ID:
@@ -562,7 +563,6 @@ sai_status_t sai_create_vlan_member(
     // if this is about adding another VLAN to trunk port
     // we don't change port's vid
     // port's vid is for access port
-
     ofdpa_sai_add_vlan_member(port, *vlan_member_id, vlan->vid, !pop);
 
     port->disabled = true;
@@ -592,7 +592,7 @@ sai_status_t sai_create_vlan_member(
 
     }
 
-    err = ofdpa_sai_add_mac_termination_flow(vlan->vid, 0, port->mac);
+    err = ofdpa_sai_add_mac_termination_flow(vlan->vid, port->index, port->mac);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add mac termination flow: vid: %d, port: %d\n", vlan->vid, port->index);
         return err;
@@ -610,6 +610,13 @@ sai_status_t sai_create_vlan_member(
         return err;
     }
 
+    mac = mask_mac();
+    err = ofdpa_sai_add_acl_policy_flow(port->index, 0x0806, NULL, &mac, vlan->vid, 0);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to add acl policy flow for arp request\n");
+        return err;
+    }
+
     port->disabled = false;
 
     return SAI_STATUS_SUCCESS;
@@ -621,6 +628,7 @@ sai_status_t sai_remove_vlan_member(_In_ sai_object_id_t vlan_member_id){
     ofdpa_sai_port_t *port = NULL;
     sai_status_t err;
     ofdpa_sai_vlan_member_t *vlan = NULL;
+    ofdpaMacAddr_t mac;
 
     if ( vlan_member_id == g_vlan_member ) {
         return SAI_STATUS_SUCCESS;
@@ -640,6 +648,13 @@ sai_status_t sai_remove_vlan_member(_In_ sai_object_id_t vlan_member_id){
     err = ofdpa_sai_flush_bridging_flows(old_vid, port->index);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to flush briding table: vid: %d, port: %d\n", old_vid, port->index);
+        return err;
+    }
+
+    mac = mask_mac();
+    err = ofdpa_sai_delete_acl_policy_flow(port->index, 0x0806, NULL, &mac, vlan->vid, 0);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete acl policy flow for arp request\n");
         return err;
     }
 
@@ -1209,7 +1224,6 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
     int i;
     *switch_id = g_switch_id;
     OFDPA_ERROR_t err;
-    ofdpaMacAddr_t mac;
 
     printf("switch_id: %lx\n", g_switch_id);
 
@@ -1249,14 +1263,6 @@ sai_status_t sai_create_switch(_Out_ sai_object_id_t* switch_id, _In_ uint32_t a
     ofdpaClientEventSockBind();
 
     ofdpa_sai_init_port();
-
-    mac = mask_mac();
-
-    err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &mac, 0, 0);
-    if ( err != SAI_STATUS_SUCCESS ) {
-        printf("failed to add acl policy flow for arp request\n");
-        return err;
-    }
 
     pthread_create(&pt, NULL, &ofdpa_sai_pkt_recv_loop, NULL);
 
