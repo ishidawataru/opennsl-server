@@ -140,7 +140,7 @@ typedef struct ofdpa_sai_vlan_s {
 static ofdpa_sai_port_t *ports;
 static ofdpa_sai_vlan_t *vlans;
 
-static print_mac(ofdpaMacAddr_t mac) {
+static void print_mac(ofdpaMacAddr_t mac) {
     int i;
     for( i = 0; i < OFDPA_MAC_ADDR_LEN; i++ ) {
         printf("%02x:", mac.addr[i] & 0xff);
@@ -405,7 +405,7 @@ static sai_status_t get_mac_address(const char *name, ofdpaMacAddr_t *mac) {
     }
 
     rtnl_link_put(link);
-    rtnl_addr_put(addr);
+    nl_addr_put(addr);
     nl_socket_free(sock);
 
     return SAI_STATUS_SUCCESS;
