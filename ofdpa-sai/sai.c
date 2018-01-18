@@ -809,7 +809,7 @@ sai_status_t sai_create_router_interface(
             return err;
         }
 
-        err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &macaddr, 0, 10);
+        err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &macaddr, vlan->vid, 10);
         if ( err != SAI_STATUS_SUCCESS ) {
             printf("failed to add acl policy flow: port: %s\n", name);
             return err;
@@ -1969,13 +1969,13 @@ sai_status_t sai_create_hostif(
     // TODO: maybe we should move this sai_create_router_interface
     // as for vlan interface, mac termination flow is added there
     // we may do the same for normal interface
-    err = ofdpa_sai_add_mac_termination_flow(vid, 0, mac);
+    err = ofdpa_sai_add_mac_termination_flow(vid, ofdpa_idx, mac);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add mac termination flow: vid: %d, port_idx: %d\n", vid, port->i);
         return err;
     }
 
-    err = ofdpa_sai_add_acl_policy_flow(ofdpa_idx, 0x0806, NULL, &mac, 0, 10);
+    err = ofdpa_sai_add_acl_policy_flow(ofdpa_idx, 0x0806, NULL, &mac, vid, 10);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add acl policy flow: port: %d\n", port->i);
         return err;
