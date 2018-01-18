@@ -738,8 +738,8 @@ sai_status_t sai_create_router_interface(
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
     int i, j;
-    ofdpa_sai_port_t *port;
-    ofdpa_sai_vlan_t *vlan;
+    ofdpa_sai_port_t *port = NULL;
+    ofdpa_sai_vlan_t *vlan = NULL;
     ofdpaMacAddr_t mac;
 
     for ( i = 0; i < attr_count; i++ ) {
@@ -757,6 +757,7 @@ sai_status_t sai_create_router_interface(
             for ( j = 0; j < OFDPA_MAC_ADDR_LEN; j++ ) {
                 mac.addr[j] = attr_list[i].value.mac[j];
             }
+            break;
         case SAI_ROUTER_INTERFACE_ATTR_VLAN_ID:
             vlan = get_ofdpa_sai_vlan_by_vlan_oid(attr_list[i].value.oid);
             break;
@@ -772,14 +773,39 @@ sai_status_t sai_create_router_interface(
     }
 
     if ( vlan != NULL ) {
+        char name[16];
+        ofdpaMacAddr_t macaddr;
+        sprintf(name, "Vlan%d", vlan->vid);
+        sai_status_t err;
+
+        err = get_mac_address(name, &macaddr);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to get mac address of %s\n", name);
+            return SAI_STATUS_FAILURE;
+        }
+
         vlan->router_if_oid = *rif_id;
-        vlan->mac = mac;
+        vlan->mac = macaddr;
+
+        err = ofdpa_sai_add_mac_termination_flow(vlan->vid, 0, vlan->mac);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to add mac termination flow: vid: %d, port: %s\n", vlan->vid, name);
+            return err;
+        }
+
+        err = ofdpa_sai_add_acl_policy_flow(0, 0x0806, NULL, &macaddr, 10);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            printf("failed to add acl policy flow: port: %s\n", name);
+            return err;
+        }
+
     }
 
     return SAI_STATUS_SUCCESS;
 }
 
 sai_status_t sai_remove_router_interface(_In_ sai_object_id_t rif_id){
+    //TODO
     return SAI_STATUS_SUCCESS;
 }
 
@@ -1117,7 +1143,7 @@ void *ofdpa_sai_pkt_send_loop(void *arg) {
             return NULL;
         }
         pthread_mutex_lock(&m);
-        printf("SEND: in-port: %d, size: %d\n", port->index, size);
+        printf("SEND: out-port: %d, size: %d\n", port->index, size);
         buf.size = size;
         for ( i = 0; i < size; i++ ) {
             printf("0x%02x ", buf.pstart[i] & 0xff);
@@ -1917,6 +1943,9 @@ sai_status_t sai_create_hostif(
     vid = port->vid;
     ofdpa_idx = port->index;
 
+    // TODO: maybe we should move this sai_create_router_interface
+    // as for vlan interface, mac termination flow is added there
+    // we may do the same for normal interface
     err = ofdpa_sai_add_mac_termination_flow(vid, 0, mac);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add mac termination flow: vid: %d, port_idx: %d\n", vid, port->i);
@@ -1926,16 +1955,19 @@ sai_status_t sai_create_hostif(
     err = ofdpa_sai_add_acl_policy_flow(ofdpa_idx, 0x0806, NULL, &mac, 10);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add acl policy flow: port: %d\n", port->i);
+        return err;
     }
 
     err = ofdpa_sai_add_l2_interface_group(vid, ofdpa_idx, true);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add l2 interface group: %d %d\n", vid, port->i);
+        return err;
     }
 
     err = ofdpa_sai_add_vlan_flow_entry(vid, ofdpa_idx, false);
     if ( err != SAI_STATUS_SUCCESS ) {
         printf("failed to add vlan flow entry: %d %d\n", vid, port->i);
+        return err;
     }
 
     pthread_create(&port->pt, NULL, ofdpa_sai_pkt_send_loop, (void *)port);
