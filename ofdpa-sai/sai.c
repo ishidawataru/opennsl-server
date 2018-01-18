@@ -1726,7 +1726,7 @@ static ofdpaFlowEntry_t _ofdpa_sai_create_acl_policy_flow_entry(int port, int et
 
     if ( port > 0 ) {
         acl.match_criteria.inPort = (uint32_t)port;
-        acl.match_criteria.inPortMask = OFDPA_INPORT_FIELD_MASK;
+        acl.match_criteria.inPortMask = OFDPA_INPORT_EXACT_MASK;
     }
     if ( src != NULL ) {
         acl.match_criteria.srcMac = *src;
@@ -1743,10 +1743,10 @@ static ofdpaFlowEntry_t _ofdpa_sai_create_acl_policy_flow_entry(int port, int et
         acl.match_criteria.etherTypeMask = OFDPA_ETHERTYPE_ALL_MASK;
     }
     if ( vid > 0 ) {
-        acl.match_criteria.vlanId = (uint16_t)vid;
-        acl.match_criteria.vlanIdMask = OFDPA_VID_EXACT_MASK;
+        acl.match_criteria.vlanId = (uint16_t)(vid | OFDPA_VID_PRESENT);
+        acl.match_criteria.vlanIdMask = OFDPA_VID_PRESENT | OFDPA_VID_EXACT_MASK;
     } else {
-        acl.match_criteria.vlanIdMask = OFDPA_VID_FIELD_MASK;
+        acl.match_criteria.vlanIdMask = OFDPA_VID_NONE;
     }
     acl.outputPort = OFDPA_PORT_CONTROLLER;
     entry.flowData.policyAclFlowEntry = acl;
