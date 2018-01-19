@@ -309,6 +309,24 @@ static ofdpa_sai_vlan_t* append_new_vlan(sai_object_id_t oid, int vid) {
     return v;
 }
 
+static sai_status_t delete_vlan(sai_object_id_t oid) {
+    ofdpa_sai_vlan_t *v = vlans, *prev = NULL;
+    while (v != NULL ) {
+        if ( v->oid == oid ) {
+            if ( prev != NULL ) {
+                prev->next = v->next;
+            } else {
+                vlans = v->next;
+            }
+            free(v);
+            return SAI_STATUS_SUCCESS;
+        }
+        prev = v;
+        v = v->next;
+    }
+    return SAI_STATUS_FAILURE;
+}
+
 static ofdpa_sai_vlan_t* get_ofdpa_sai_vlan_by_vlan_oid(sai_object_id_t oid) {
     ofdpa_sai_vlan_t *v = vlans;
     while (v != NULL ) {
@@ -523,7 +541,18 @@ sai_status_t sai_create_vlan(
 
 sai_status_t sai_remove_vlan(
         _In_ sai_object_id_t vlan_id){
-    return SAI_STATUS_SUCCESS;
+    ofdpa_sai_vlan_t *vlan = get_ofdpa_sai_vlan_by_vlan_oid(vlan_id);
+    sai_status_t err;
+    if ( vlan == NULL ) {
+        printf("failed to find vlan with oid: %lx", vlan_id);
+        return SAI_STATUS_FAILURE;
+    }
+    err = ofdpa_sai_delete_dlf_flow(vlan->vid);
+    if ( err != SAI_STATUS_SUCCESS ) {
+        printf("failed to delete dlf flow for %d\n", vlan->vid);
+        return err;
+    }
+    return delete_vlan(vlan_id);
 }
 
 sai_status_t sai_set_vlan_attribute(
@@ -1842,11 +1871,6 @@ static sai_status_t ofdpa_sai_delete_dlf_flow(int vid) {
     sai_status_t err;
     uint32_t gid = ofdpa_sai_group_id(OFDPA_GROUP_ENTRY_TYPE_L2_FLOOD, vid, 0, 0);
 
-    err = ofdpa_err2sai_status(ofdpaGroupDelete(gid));
-    if ( err != SAI_STATUS_SUCCESS ) {
-        return err;
-    }
-
     printf("delete dlf flow: vid: %d, gid: %x\n", vid, gid);
 
     br.gotoTableId = OFDPA_FLOW_TABLE_ID_ACL_POLICY;
@@ -1855,7 +1879,12 @@ static sai_status_t ofdpa_sai_delete_dlf_flow(int vid) {
     br.match_criteria.vlanIdMask = OFDPA_VID_PRESENT | OFDPA_VID_EXACT_MASK;
 
     entry.flowData.bridgingFlowEntry = br;
-    return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
+    err = ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
+    if ( err != SAI_STATUS_SUCCESS ) {
+        return err;
+    }
+
+    return ofdpa_err2sai_status(ofdpaGroupDelete(gid));
 }
 
 static ofdpaFlowEntry_t _ofdpa_sai_create_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
@@ -2452,6 +2481,7 @@ sai_status_t sai_create_next_hop(
 
 sai_status_t sai_remove_next_hop(
         _In_ sai_object_id_t next_hop_id){
+    // TODO:
     return SAI_STATUS_SUCCESS;
 }
 
@@ -2523,6 +2553,7 @@ sai_status_t sai_create_neighbor_entry(
 }
 
 sai_status_t sai_remove_neighbor_entry(_In_ const sai_neighbor_entry_t *neighbor_entry){
+    // TODO:
     return SAI_STATUS_SUCCESS;
 }
 
