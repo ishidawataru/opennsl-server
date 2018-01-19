@@ -29,6 +29,12 @@
 
 #define ETHER_TYPE_VLAN 0x8100
 
+#define printf(...)          \
+    do {                     \
+        printf(__VA_ARGS__); \
+        fflush(stdout);      \
+    } while(0)
+
 static sai_status_t ofdpa_sai_add_vlan_flow_entry(int vid, int port, bool tagged);
 static sai_status_t ofdpa_sai_add_untagged_vlan_flow_entry(int vid, int port);
 static sai_status_t ofdpa_sai_add_tagged_vlan_flow_entry(int vid, int port);
