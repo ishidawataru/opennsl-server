@@ -589,6 +589,9 @@ sai_status_t sai_get_vlan_attribute(
         case SAI_VLAN_ATTR_UNKNOWN_LINKLOCAL_MCAST_OUTPUT_GROUP_ID:
         case SAI_VLAN_ATTR_INGRESS_ACL:
         case SAI_VLAN_ATTR_EGRESS_ACL:
+        case SAI_VLAN_ATTR_UNKNOWN_UNICAST_FLOOD_GROUP:
+        case SAI_VLAN_ATTR_UNKNOWN_MULTICAST_FLOOD_GROUP:
+        case SAI_VLAN_ATTR_BROADCAST_FLOOD_GROUP:
             return SAI_STATUS_NOT_SUPPORTED;
         }
     }
@@ -1032,7 +1035,6 @@ sai_status_t sai_get_port_attribute(_In_ sai_object_id_t port_id, _In_ uint32_t 
         case SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP:
         case SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP:
         case SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP:
-        case SAI_PORT_ATTR_QOS_WRED_PROFILE_ID:
         case SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID:
         case SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST:
         case SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST:
@@ -1042,7 +1044,7 @@ sai_status_t sai_get_port_attribute(_In_ sai_object_id_t port_id, _In_ uint32_t 
         case SAI_PORT_ATTR_HW_PROFILE_ID:
         case SAI_PORT_ATTR_EEE_ENABLE:
         case SAI_PORT_ATTR_EEE_IDLE_TIME:
-        case SAI_PORT_ATTR_BIND_MODE:
+        case SAI_PORT_ATTR_PORT_POOL_LIST:
             return SAI_STATUS_NOT_SUPPORTED;
         case SAI_PORT_ATTR_QOS_NUMBER_OF_QUEUES:
         case SAI_PORT_ATTR_NUMBER_OF_INGRESS_PRIORITY_GROUPS:
@@ -1470,6 +1472,10 @@ sai_status_t sai_get_bridge_attribute(
             attr_list[i].value.objlist.list[0] = g_bridge_port;
             attr_list[i].value.objlist.count = 1;
             break;
+	case SAI_BRIDGE_ATTR_UNKNOWN_UNICAST_FLOOD_GROUP:
+	case SAI_BRIDGE_ATTR_UNKNOWN_MULTICAST_FLOOD_GROUP:
+	case SAI_BRIDGE_ATTR_BROADCAST_FLOOD_GROUP:
+	    return SAI_STATUS_NOT_SUPPORTED;
         }
     }
  
@@ -2592,7 +2598,7 @@ sai_object_type_t sai_object_type_query(_In_ sai_object_id_t sai_object_id) {
     return (sai_object_type_t)(sai_object_id >> OBJECT_TYPE_SHIFT);
 }
 
-sai_status_t sai_api_initialize(_In_ uint64_t flags, _In_ const service_method_table_t *services) {
+sai_status_t sai_api_initialize(_In_ uint64_t flags, _In_ const sai_service_method_table_t *services) {
     ofdpa_sai_vlan_t *v;
     pthread_mutex_init(&m, NULL);
     v = malloc(sizeof(ofdpa_sai_vlan_t));
