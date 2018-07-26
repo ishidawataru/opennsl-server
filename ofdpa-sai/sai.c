@@ -65,6 +65,8 @@ static sai_status_t ofdpa_sai_add_mac_termination_flow(int vid, int port, ofdpaM
 static sai_status_t ofdpa_sai_modify_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst);
 static sai_status_t ofdpa_sai_delete_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst);
 
+static sai_status_t ofdpa_sai_get_port_oper_status(int port, sai_port_oper_status_t *status);
+
 static sai_object_id_t g_switch_id = (sai_object_id_t)SAI_OBJECT_TYPE_SWITCH << OBJECT_TYPE_SHIFT;
 static sai_object_id_t g_port_id = (sai_object_id_t)SAI_OBJECT_TYPE_PORT << OBJECT_TYPE_SHIFT;
 static sai_object_id_t g_queue_id = (sai_object_id_t)SAI_OBJECT_TYPE_QUEUE << OBJECT_TYPE_SHIFT;
@@ -962,9 +964,10 @@ sai_status_t sai_create_port(_Out_ sai_object_id_t *port_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list){
     int i;
-    uint32_t count, *list, index;
+    uint32_t count, *list, index, state=0;
     bool found = false;
     ofdpa_sai_port_t *port = NULL;
+    sai_status_t err;
     for( i = 0; i < attr_count; i++ ) {
         switch (attr_list[i].id) {
         case SAI_PORT_ATTR_HW_LANE_LIST:
@@ -985,12 +988,22 @@ sai_status_t sai_create_port(_Out_ sai_object_id_t *port_id,
         return SAI_STATUS_NOT_SUPPORTED;
     }
     port = get_ofdpa_sai_port_by_port_index((int)index);
-    if ( port != NULL ) {
-        port->port_oid = *port_id;
-        return SAI_STATUS_SUCCESS;
+    if ( port == NULL ) {
+        printf("not found index: %d\n", index);
+        return SAI_STATUS_FAILURE;
     }
-    printf("not found index: %d\n", index);
-    return SAI_STATUS_FAILURE;
+    port->port_oid = *port_id;
+
+    if ( g_port_state_callback != NULL ) {
+        sai_port_oper_status_notification_t status = {0};
+        status.port_id = port->port_oid;
+        err = ofdpa_sai_get_port_oper_status(port->index, &status.port_state);
+        if ( err != SAI_STATUS_SUCCESS ) {
+            return err;
+        }
+        g_port_state_callback(1, &status);
+    }
+    return SAI_STATUS_SUCCESS;
 }
 
 sai_status_t sai_remove_port(_In_ sai_object_id_t port_id) {
@@ -1934,6 +1947,28 @@ static sai_status_t ofdpa_sai_modify_mac_termination_flow(int vid, int port, ofd
 static sai_status_t ofdpa_sai_delete_mac_termination_flow(int vid, int port, ofdpaMacAddr_t dst) {
     ofdpaFlowEntry_t entry = _ofdpa_sai_create_mac_termination_flow(vid, port, dst);
     return ofdpa_err2sai_status(ofdpaFlowDelete(&entry));
+}
+
+static sai_status_t ofdpa_sai_get_port_oper_status(int port, sai_port_oper_status_t *status) {
+    uint32_t state = 0;
+    OFDPA_ERROR_t err;
+    err = ofdpaPortStateGet(port, &state);
+    if ( err != OFDPA_E_NONE) {
+        printf("state get failed: %d", port);
+        return SAI_STATUS_FAILURE;
+    }
+    switch ( state ) {
+    case 0:
+        *status = SAI_PORT_OPER_STATUS_UP;
+        break;
+    case 1:
+        *status = SAI_PORT_OPER_STATUS_DOWN;
+        break;
+    default:
+        printf("unknown port state: %d\n", state);
+        return SAI_STATUS_FAILURE;
+    }
+    return SAI_STATUS_SUCCESS;
 }
 
 static ofdpaFlowEntry_t _ofdpa_sai_create_acl_policy_flow_entry(int port, int ether_type, ofdpaMacAddr_t *src, ofdpaMacAddr_t *dst, int vid, int priority) {
