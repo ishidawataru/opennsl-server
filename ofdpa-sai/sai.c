@@ -1103,9 +1103,13 @@ sai_status_t sai_get_port_stats(_In_ sai_object_id_t port_id, _In_ uint32_t numb
         case SAI_PORT_STAT_IF_OUT_DISCARDS:
             counters[i] = stats.tx_drops;
             break;
-        case SAI_PORT_STAT_IF_OUT_ERRORS:
-            counters[i] = stats.tx_errors;
-            break;
+//
+// IF_OUT_ERRORS is not supported
+// https://github.com/Broadcom-Switch/of-dpa/blob/master/src/include/ofdpa_datatypes.h#L2290
+//
+//        case SAI_PORT_STAT_IF_OUT_ERRORS:
+//            counters[i] = stats.tx_errors;
+//            break;
         case SAI_PORT_STAT_ETHER_STATS_COLLISIONS:
             counters[i] = stats.collisions;
             break;
@@ -1121,6 +1125,8 @@ sai_status_t sai_get_port_stats(_In_ sai_object_id_t port_id, _In_ uint32_t numb
         case SAI_PORT_STAT_OUT_DROPPED_PKTS:
             counters[i] = stats.tx_drops;
             break;
+        default:
+            counters[i] = 0;
         }
     }
 
