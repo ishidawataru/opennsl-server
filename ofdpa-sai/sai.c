@@ -1011,13 +1011,44 @@ sai_status_t sai_remove_port(_In_ sai_object_id_t port_id) {
 }
 
 sai_status_t sai_set_port_attribute(_In_ sai_object_id_t port_id, _In_ const sai_attribute_t *attr) {
+    ofdpa_sai_port_t *port = get_ofdpa_sai_port_by_port_oid(port_id);
+    OFDPA_PORT_CONFIG_t config = 0;
+    sai_status_t err;
+    if ( port == NULL ) {
+        printf("[set port] no port found for %lx. however ignore...\n", port_id);
+        return SAI_STATUS_SUCCESS;
+    }
+    switch (attr->id) {
+    case SAI_PORT_ATTR_ADMIN_STATE:
+        if ( !attr->value.booldata ) {
+            config = OFDPA_PORT_CONFIG_DOWN;
+        }
+        err = ofdpa_err2sai_status(ofdpaPortConfigSet(port->index, config));
+        if ( err != SAI_STATUS_SUCCESS ) {
+            return err;
+        }
+        break;
+    }
     return SAI_STATUS_SUCCESS;
 }
 
 sai_status_t sai_get_port_attribute(_In_ sai_object_id_t port_id, _In_ uint32_t attr_count, _Inout_ sai_attribute_t *attr_list) {
+    ofdpa_sai_port_t *port;
+    sai_status_t err;
     int i, count;
     for( i = 0; i < attr_count; i++ ) {
         switch (attr_list[i].id) {
+        case SAI_PORT_ATTR_OPER_STATUS:
+            port = get_ofdpa_sai_port_by_port_oid(port_id);
+            if ( port == NULL ) {
+                printf("[get port] no port found for %lx. howerver ignore..\n", port_id);
+                return SAI_STATUS_SUCCESS;
+            }
+            err = ofdpa_sai_get_port_oper_status(port->index, &attr_list[i].value.s32);
+            if ( err != SAI_STATUS_SUCCESS ) {
+                return err;
+            }
+            break;
         case SAI_PORT_ATTR_QOS_QUEUE_LIST:
             return SAI_STATUS_NOT_SUPPORTED;
 //            count = attr_list[i].value.objlist.count;
@@ -1138,8 +1169,8 @@ sai_status_t sai_clear_port_all_stats(
     ofdpa_sai_port_t *port = get_ofdpa_sai_port_by_port_oid(port_id);
 
     if ( port == NULL ) {
-        printf("no port found for %lx", port_id);
-        return SAI_STATUS_FAILURE;
+        printf("[clear stats] no port found for %lx", port_id);
+        return SAI_STATUS_SUCCESS;
     }
 
     ofdpaPortStatsClear(port->index);
@@ -1326,7 +1357,7 @@ void *ofdpa_sai_event_recv_loop(void *arg) {
         printf("event received\n");
         memset(&port_event, 0, sizeof(port_event));
         while (ofdpaPortEventNextGet(&port_event) == OFDPA_E_NONE) {
-            printf("port_event: %d %d %d\n", port_event.eventMask, port_event.portNum, port_event.state);
+            printf("port_event: %d %d %s\n", port_event.eventMask, port_event.portNum, port_event.state ? "down" : "up" );
             sai_port_oper_status_notification_t status = {0};
 
             port = get_ofdpa_sai_port_by_port_index(port_event.portNum);
