@@ -1133,16 +1133,26 @@ sai_status_t sai_get_port_stats(_In_ sai_object_id_t port_id, _In_ uint32_t numb
     return SAI_STATUS_SUCCESS;
 }
 
+sai_status_t sai_clear_port_all_stats(
+        _In_ sai_object_id_t port_id){
+    ofdpa_sai_port_t *port = get_ofdpa_sai_port_by_port_oid(port_id);
+
+    if ( port == NULL ) {
+        printf("no port found for %lx", port_id);
+        return SAI_STATUS_FAILURE;
+    }
+
+    ofdpaPortStatsClear(port->index);
+
+    return SAI_STATUS_SUCCESS;
+}
+
 sai_status_t sai_clear_port_stats(
         _In_ sai_object_id_t port_id,
         _In_ uint32_t number_of_counters,
         _In_ const sai_port_stat_t *counter_ids){
-    return SAI_STATUS_SUCCESS;
-}
-
-sai_status_t sai_clear_port_all_stats(
-        _In_ sai_object_id_t port_id){
-    return SAI_STATUS_SUCCESS;
+    //NOTE: OF-DPA doesn't have granular stat clear API
+    return sai_clear_port_all_stats(port_id);
 }
 
 sai_port_api_t port_api = {
